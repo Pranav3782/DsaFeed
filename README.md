@@ -1,20 +1,42 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# DSAfeed
 
-# Run and deploy your AI Studio app
+DSAfeed is an interactive, Duolingo-style learning platform for Data Structures and Algorithms. It makes learning complex coding concepts simple and fun through bite-sized lessons, interactive quizzes, and daily streaks.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/3948ff3e-ccbd-4198-9c1c-1762a2d15445
+- **Simple Concept Explainers:** Learn complex DSA concepts through easy-to-understand analogies and plain English summaries without the heavy textbook jargon.
+- **Interactive Practice:** Solve code-ordering puzzles and fill-in-the-blank style exercises to test your understanding.
+- **Quizzes:** Take fast-paced quizzes to earn XP and level up.
+- **Daily Streaks:** Keep your daily streak alive by learning every day. Use your earned XP to buy a "Streak Freeze" if you need to take a day off.
+- **User Profiles:** Create an account to track your progress, unlock badges, and customize your profile card.
 
-## Run Locally
+## Technologies Used
 
-**Prerequisites:**  Node.js
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS
+- **Database & Authentication:** Supabase
+- **Icons & Animations:** Lucide React, Framer Motion
 
+## How to Run Locally
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Prerequisites
+Make sure you have Node.js installed on your machine.
+
+### 1. Clone and Install
+First, clone the repository and install the dependencies.
+```bash
+npm install
+```
+
+### 2. Set Up Environment Variables
+Create a file named `.env` in the root folder and add your Supabase credentials:
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 3. Run the App
+Start the local development server:
+```bash
+npm run dev
+```
+Open the provided local URL (usually `http://localhost:5173`) in your browser to view the app!
