@@ -1,0 +1,6 @@
+{
+  "name": "DSAfeed",
+  "description": "A minimal, friendly, interactive DSA learning platform with quizzes, code ordering exercises, and simple explanations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
