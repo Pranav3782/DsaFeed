@@ -107,7 +107,7 @@ export default function App() {
     setTimeout(() => {
       setActiveTab(tab);
       setIsTabLoading(false);
-    }, 600);
+    }, 2000);
   };
 
   // Auth State
@@ -134,7 +134,7 @@ export default function App() {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       handleSession(session).finally(() => {
-        setTimeout(() => setIsInitialLoading(false), 800);
+        setTimeout(() => setIsInitialLoading(false), 2000);
       });
     });
 
@@ -310,7 +310,7 @@ export default function App() {
       setSelectedTopic(topic);
       markTaskProgress('read');
       setIsModalLoading(false);
-    }, 500);
+    }, 2000);
   };
 
   const handleRefillStreak = () => {
