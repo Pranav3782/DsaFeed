@@ -12,6 +12,7 @@ import { DsaMyths } from './components/DsaMyths';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { Chatbot } from './components/Chatbot';
 import { FeedbackPage } from './components/FeedbackPage';
+import { PricingPage } from './components/PricingPage';
 import { FaqSection } from './components/FaqSection';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
@@ -648,6 +649,12 @@ export default function App() {
         {/* FEEDBACK TAB */}
         {activeTab === 'feedback' && (
           <FeedbackPage onBack={() => handleTabChange(previousTab)} />
+        )}
+        {/* PRICING TAB */}
+        {activeTab === 'pricing' && (
+          <div className="py-4 animate-in fade-in duration-200">
+            <PricingPage />
+          </div>
         )}
         {/* FAQ Section - ONLY RENDERED ON HOME PAGE */}
         {activeTab === 'home' && <FaqSection />}
