@@ -8,6 +8,7 @@ import { QuizPlayer } from './components/QuizPlayer';
 import { CodeOrderingExercise } from './components/CodeOrderingExercise';
 import { ConceptExplainer } from './components/ConceptExplainer';
 import { ProfileDashboard } from './components/ProfileDashboard';
+import { DsaMyths } from './components/DsaMyths';
 import { FaqSection } from './components/FaqSection';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
@@ -622,6 +623,13 @@ export default function App() {
               onResetProgress={handleResetProgress}
               onSignOut={handleSignOut}
             />
+          </div>
+        )}
+
+        {/* MYTHS TAB */}
+        {activeTab === 'myths' && (
+          <div className="py-4 animate-in fade-in duration-200">
+            <DsaMyths />
           </div>
         )}
 

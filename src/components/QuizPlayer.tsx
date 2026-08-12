@@ -156,8 +156,8 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
                         className={`w-full p-4 rounded-2xl border text-left text-sm sm:text-base font-bold transition flex items-center justify-between gap-3 ${cardStyle}`}
                       >
                         <div className="flex items-center gap-3">
-                          <span className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black ${
-                            isAnswered && isCorrect ? 'bg-[#55C990] text-white' : 'bg-white border border-[#EAEAEA] text-[#101B3D]'
+                          <span className={`w-9 h-9 shrink-0 rounded-[14px] flex items-center justify-center text-sm font-black transition-colors ${
+                            isAnswered && isCorrect ? 'bg-[#55C990] text-white shadow-inner' : 'bg-[#FAFAFA] border border-[#EAEAEA] text-[#101B3D]'
                           }`}>
                             {String.fromCharCode(65 + idx)}
                           </span>
