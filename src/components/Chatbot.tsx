@@ -115,7 +115,7 @@ export const Chatbot: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 z-[90] bg-[#101B3D]/10 backdrop-blur-sm sm:hidden"
+            className="fixed inset-0 z-[90] bg-[#101B3D]/10 backdrop-blur-sm cursor-pointer"
           />
         )}
       </AnimatePresence>
@@ -131,8 +131,7 @@ export const Chatbot: React.FC = () => {
             className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 z-[100] w-full sm:w-[380px] h-full sm:h-[600px] sm:max-h-[80vh] bg-white sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[#EAEAEA]"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#101B3D] to-[#3478E5] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-8 blur-2xl" />
+            <div className="bg-[#101B3D] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm relative overflow-hidden">
               <div className="flex items-center gap-3 relative z-10">
                 <div className="w-8 h-8 rounded-full bg-[#3478E5] flex items-center justify-center text-white">
                   <Bot className="w-5 h-5" />
@@ -161,7 +160,7 @@ export const Chatbot: React.FC = () => {
                 >
                   <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                     msg.sender === 'user' 
-                      ? 'bg-gradient-to-br from-[#3478E5] to-[#2864C6] text-white rounded-br-sm shadow-md' 
+                      ? 'bg-[#3478E5] text-white rounded-br-sm shadow-md' 
                       : 'bg-white border border-[#EAEAEA] text-[#101B3D] rounded-bl-sm shadow-sm'
                   }`}>
                     {msg.text}
