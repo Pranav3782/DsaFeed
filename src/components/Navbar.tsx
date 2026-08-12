@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
 import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles } from 'lucide-react';
 import { UserProgress, UserProfile, NavTab } from '../types';
+import { DsaFeedLogo } from './DsaFeedLogo';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -54,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('home')}
             className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#3478E5] rounded-xl p-1 transition shrink-0"
           >
-            <img src={logoImage} alt="DSAfeed Logo" className="h-8 sm:h-9 lg:h-10 object-contain rounded-md mix-blend-multiply" />
+            <DsaFeedLogo className="h-7 sm:h-8 lg:h-9" textColor="#101B3D" accentColor="#3478E5" />
           </button>
 
           {/* Desktop Navigation */}
