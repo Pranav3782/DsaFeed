@@ -11,6 +11,7 @@ import { ProfileDashboard } from './components/ProfileDashboard';
 import { DsaMyths } from './components/DsaMyths';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { Chatbot } from './components/Chatbot';
+import { FeedbackPage } from './components/FeedbackPage';
 import { FaqSection } from './components/FaqSection';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
@@ -100,12 +101,19 @@ const EMPTY_PROGRESS: UserProgress = {
 export default function App() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [previousTab, setPreviousTab] = useState<NavTab>('home');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isTabLoading, setIsTabLoading] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
 
   const handleTabChange = (tab: NavTab) => {
     if (tab === activeTab) return;
+    
+    // If navigating to feedback, store where we came from
+    if (tab === 'feedback') {
+      setPreviousTab(activeTab);
+    }
+    
     setIsTabLoading(true);
     setTimeout(() => {
       setActiveTab(tab);
@@ -636,6 +644,10 @@ export default function App() {
         {/* TERMS & CONDITIONS TAB */}
         {activeTab === 'terms' && (
           <TermsConditions onBackToHome={() => handleTabChange('home')} />
+        )}
+        {/* FEEDBACK TAB */}
+        {activeTab === 'feedback' && (
+          <FeedbackPage onBack={() => handleTabChange(previousTab)} />
         )}
         {/* FAQ Section - ONLY RENDERED ON HOME PAGE */}
         {activeTab === 'home' && <FaqSection />}

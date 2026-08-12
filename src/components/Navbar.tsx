@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
-import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles, ShieldAlert } from 'lucide-react';
+import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles, ShieldAlert, MessageSquareHeart } from 'lucide-react';
 import { UserProgress, UserProfile, NavTab } from '../types';
 import { DsaFeedLogo } from './DsaFeedLogo';
 
@@ -112,6 +112,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               </>
             )}
 
+            {/* Feedback Button - SHOWN EVERYWHERE EXCEPT HOME */}
+            {activeTab !== 'home' && (
+              <button
+                onClick={() => setActiveTab('feedback')}
+                title="Give Feedback or Suggestions"
+                className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition ml-1"
+              >
+                <MessageSquareHeart className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
+              </button>
+            )}
+
             {/* User Profile / Auth State */}
             {user?.isLoggedIn ? (
               <div className="flex items-center gap-1 lg:gap-2 pl-1.5 lg:pl-2 border-l border-[#EAEAEA]">
@@ -150,6 +161,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
             
+            {/* Feedback Button Mobile - SHOWN EVERYWHERE EXCEPT HOME */}
+            {activeTab !== 'home' && (
+              <button
+                onClick={() => setActiveTab('feedback')}
+                title="Give Feedback"
+                className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition"
+              >
+                <MessageSquareHeart className="w-5 h-5" />
+              </button>
+            )}
             {/* Mobile streak pill - ONLY WHEN LOGGED IN */}
             {user?.isLoggedIn && (
               <button 
