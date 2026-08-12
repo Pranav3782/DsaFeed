@@ -126,6 +126,7 @@ export default function App() {
   // Auth State
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   const [isFirstLogin, setIsFirstLogin] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -311,7 +312,7 @@ export default function App() {
   // Handlers for Start Learning CTA
   const handleStartLearning = () => {
     if (!user?.isLoggedIn) {
-      setIsAuthModalOpen(true);
+      setShowOnboarding(true);
     } else {
       scrollToTopicsSection();
     }
@@ -677,8 +678,11 @@ export default function App() {
       {activeTab === 'home' && <Chatbot />}
 
       {/* Modals & Overlays */}
-      {!user?.isLoggedIn && (
-        <OnboardingFlow onComplete={() => setIsAuthModalOpen(true)} />
+      {showOnboarding && !user?.isLoggedIn && (
+        <OnboardingFlow onComplete={() => {
+          setShowOnboarding(false);
+          setIsAuthModalOpen(true);
+        }} />
       )}
       
       <AuthModal
