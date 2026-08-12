@@ -98,7 +98,7 @@ export interface UserProfile {
   activityHistory?: Record<string, number>; // date string YYYY-MM-DD -> level 1 to 4
 }
 
-export type NavTab = 'home' | 'practice' | 'quiz' | 'concepts' | 'profile' | 'leaderboard' | 'privacy' | 'terms' | 'myths' | 'feedback' | 'pricing';
+export type NavTab = 'home' | 'practice' | 'quiz' | 'concepts' | 'profile' | 'leaderboard' | 'privacy' | 'terms' | 'myths' | 'feedback' | 'pricing' | 'flashcards';
 
 export interface UserBadge {
   id: string;

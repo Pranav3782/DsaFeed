@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
-import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles, ShieldAlert, MessageSquareHeart, CreditCard } from 'lucide-react';
+import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles, ShieldAlert, MessageSquareHeart, CreditCard, Layers } from 'lucide-react';
 import { UserProgress, UserProfile, NavTab } from '../types';
 import { DsaFeedLogo } from './DsaFeedLogo';
 
@@ -30,6 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'home' as const, label: 'Home', icon: BookOpen },
     { id: 'practice' as const, label: 'Practice', icon: Code2 },
     { id: 'quiz' as const, label: 'Quizzes', icon: HelpCircle },
+    { id: 'flashcards' as const, label: 'Flashcards', icon: Layers },
     { id: 'concepts' as const, label: 'Concepts', icon: Sparkles },
     { id: 'myths' as const, label: 'Myths', icon: ShieldAlert },
     { id: 'pricing' as const, label: 'Pricing', icon: CreditCard },

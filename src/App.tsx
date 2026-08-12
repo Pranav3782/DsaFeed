@@ -13,6 +13,7 @@ import { OnboardingFlow } from './components/OnboardingFlow';
 import { Chatbot } from './components/Chatbot';
 import { FeedbackPage } from './components/FeedbackPage';
 import { PricingPage } from './components/PricingPage';
+import { FlashcardsPage } from './components/FlashcardsPage';
 import { FaqSection } from './components/FaqSection';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
@@ -654,6 +655,15 @@ export default function App() {
         {activeTab === 'pricing' && (
           <div className="py-4 animate-in fade-in duration-200">
             <PricingPage />
+          </div>
+        )}
+        {/* FLASHCARDS TAB */}
+        {activeTab === 'flashcards' && (
+          <div className="py-4 animate-in fade-in duration-200">
+            <FlashcardsPage 
+              userProgress={userProgress} 
+              onGoToConcepts={() => handleTabChange('concepts')} 
+            />
           </div>
         )}
         {/* FAQ Section - ONLY RENDERED ON HOME PAGE */}
