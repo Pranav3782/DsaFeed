@@ -433,7 +433,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-[#FFFDF9] text-[#111111] antialiased relative transition-colors duration-200">
       
       {/* Top Navbar */}
-      {user?.isLoggedIn && (
+      {user?.isLoggedIn && activeTab !== 'privacy' && activeTab !== 'terms' && (
         <Navbar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
