@@ -54,7 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('home')}
             className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#3478E5] rounded-xl p-1 transition shrink-0"
           >
-            <img src={logoImage} alt="DSAfeed Logo" className="h-8 sm:h-9 lg:h-10 object-contain rounded-md" />
+            <img src={logoImage} alt="DSAfeed Logo" className="h-8 sm:h-9 lg:h-10 object-contain rounded-md mix-blend-multiply" />
           </button>
 
           {/* Desktop Navigation */}
