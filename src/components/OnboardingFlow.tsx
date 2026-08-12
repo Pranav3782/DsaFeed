@@ -70,7 +70,7 @@ const SCREENS = [
 ];
 
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
-  const [step, setStep] = useState<'prompt' | 'carousel' | 'hidden'>('carousel');
+  const [step, setStep] = useState<'prompt' | 'carousel' | 'hidden'>('prompt');
   const [currentScreen, setCurrentScreen] = useState(0);
 
   const handleDismiss = () => {
@@ -107,6 +107,43 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-md">
+          {step === 'prompt' && (
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: -20 }}
+              className="bg-white rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-2 bg-[#3478E5]" />
+              
+              <div className="w-20 h-20 bg-[#EEF4FF] rounded-full flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="w-10 h-10 text-[#3478E5]" />
+              </div>
+              
+              <h2 className="text-2xl font-black text-[#101B3D] mb-3">
+                Are you completely new to Data Structures & Algorithms?
+              </h2>
+              <p className="text-sm text-[#111111]/70 mb-8 font-medium">
+                Don't worry if you are! We have a quick 1-minute intro to help you understand what this is all about.
+              </p>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={handleStartCarousel}
+                  className="w-full py-3.5 bg-[#3478E5] hover:bg-[#2864C6] text-white rounded-xl font-bold transition shadow-md active:scale-[0.98]"
+                >
+                  Yes, show me what it is!
+                </button>
+                <button
+                  onClick={handleDismiss}
+                  className="w-full py-3.5 bg-transparent hover:bg-[#F5F5F0] text-[#8C8C8C] hover:text-[#111111] rounded-xl font-bold transition"
+                >
+                  No, I already know
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           {step === 'prompt' && (
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
