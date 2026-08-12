@@ -99,6 +99,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isTabLoading, setIsTabLoading] = useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
 
   const handleTabChange = (tab: NavTab) => {
     if (tab === activeTab) return;
@@ -304,11 +305,11 @@ export default function App() {
   };
 
   const handleSelectTopic = (topic: DsaTopic) => {
-    setIsTabLoading(true);
+    setIsModalLoading(true);
     setTimeout(() => {
       setSelectedTopic(topic);
       markTaskProgress('read');
-      setIsTabLoading(false);
+      setIsModalLoading(false);
     }, 500);
   };
 
@@ -659,6 +660,9 @@ export default function App() {
           onToggleComplete={handleToggleCompleteTopic}
         />
       )}
+
+      {isModalLoading && <LoadingSpinner fullScreen />}
+
 
       {activeQuizSet && (
         <QuizPlayer
