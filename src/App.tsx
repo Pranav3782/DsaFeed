@@ -449,7 +449,7 @@ export default function App() {
     return topic.difficulty === difficultyFilter;
   });
 
-  if (isInitialLoading) {
+  if (isInitialLoading || isTabLoading) {
     return <LoadingSpinner fullScreen />;
   }
 
@@ -472,12 +472,8 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        {isTabLoading ? (
-          <LoadingSpinner />
-        ) : (
-          <>
-            {/* HOME TAB */}
-            {activeTab === 'home' && (
+        {/* HOME TAB */}
+        {activeTab === 'home' && (
               <div className="space-y-12">
                 
                 {/* Hero Banner */}
@@ -641,8 +637,6 @@ export default function App() {
         )}
         {/* FAQ Section - ONLY RENDERED ON HOME PAGE */}
         {activeTab === 'home' && <FaqSection />}
-        </>
-        )}
       </main>
 
       {/* Footer - RENDERED ON HOME AND LEGAL PAGES */}
