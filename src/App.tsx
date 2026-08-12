@@ -9,6 +9,7 @@ import { CodeOrderingExercise } from './components/CodeOrderingExercise';
 import { ConceptExplainer } from './components/ConceptExplainer';
 import { ProfileDashboard } from './components/ProfileDashboard';
 import { DsaMyths } from './components/DsaMyths';
+import { OnboardingFlow } from './components/OnboardingFlow';
 import { FaqSection } from './components/FaqSection';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
@@ -642,7 +643,11 @@ export default function App() {
       {/* Footer - RENDERED ON HOME AND LEGAL PAGES */}
       {['home', 'privacy', 'terms'].includes(activeTab) && <Footer onNavigate={(tab) => handleTabChange(tab)} />}
 
-      {/* Modals */}
+      {/* Modals & Overlays */}
+      {!user?.isLoggedIn && (
+        <OnboardingFlow onComplete={() => setIsAuthModalOpen(true)} />
+      )}
+      
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
