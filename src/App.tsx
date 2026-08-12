@@ -10,6 +10,7 @@ import { ConceptExplainer } from './components/ConceptExplainer';
 import { ProfileDashboard } from './components/ProfileDashboard';
 import { DsaMyths } from './components/DsaMyths';
 import { OnboardingFlow } from './components/OnboardingFlow';
+import { Chatbot } from './components/Chatbot';
 import { FaqSection } from './components/FaqSection';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
@@ -642,6 +643,9 @@ export default function App() {
 
       {/* Footer - RENDERED ON HOME AND LEGAL PAGES */}
       {['home', 'privacy', 'terms'].includes(activeTab) && <Footer onNavigate={(tab) => handleTabChange(tab)} />}
+
+      {/* Floating Chatbot - RENDERED ON HOME PAGE */}
+      {activeTab === 'home' && <Chatbot />}
 
       {/* Modals & Overlays */}
       {!user?.isLoggedIn && (
