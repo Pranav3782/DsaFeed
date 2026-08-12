@@ -17,6 +17,7 @@ import { LogoutConfirmModal } from './components/LogoutConfirmModal';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsConditions } from './components/TermsConditions';
 import { StreakModal } from './components/StreakModal';
+import { LoadingSpinner } from './components/LoadingSpinner';
 
 import { supabase } from './lib/supabase';
 
@@ -96,6 +97,17 @@ const EMPTY_PROGRESS: UserProgress = {
 export default function App() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isTabLoading, setIsTabLoading] = useState(false);
+
+  const handleTabChange = (tab: NavTab) => {
+    if (tab === activeTab) return;
+    setIsTabLoading(true);
+    setTimeout(() => {
+      setActiveTab(tab);
+      setIsTabLoading(false);
+    }, 600);
+  };
 
   // Auth State
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -120,7 +132,9 @@ export default function App() {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      handleSession(session);
+      handleSession(session).finally(() => {
+        setTimeout(() => setIsInitialLoading(false), 800);
+      });
     });
 
     // Listen for auth changes
@@ -220,7 +234,7 @@ export default function App() {
 
   // Scroll to Master Topics Section
   const scrollToTopicsSection = () => {
-    setActiveTab('home');
+    handleTabChange('home');
     setTimeout(() => {
       const element = document.getElementById('topics-grid');
       element?.scrollIntoView({ behavior: 'smooth' });
@@ -290,8 +304,12 @@ export default function App() {
   };
 
   const handleSelectTopic = (topic: DsaTopic) => {
-    setSelectedTopic(topic);
-    markTaskProgress('read');
+    setIsTabLoading(true);
+    setTimeout(() => {
+      setSelectedTopic(topic);
+      markTaskProgress('read');
+      setIsTabLoading(false);
+    }, 500);
   };
 
   const handleRefillStreak = () => {
@@ -429,6 +447,10 @@ export default function App() {
     return topic.difficulty === difficultyFilter;
   });
 
+  if (isInitialLoading) {
+    return <LoadingSpinner fullScreen />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FFFDF9] text-[#111111] antialiased relative transition-colors duration-200">
       
@@ -436,7 +458,7 @@ export default function App() {
       {user?.isLoggedIn && activeTab !== 'privacy' && activeTab !== 'terms' && (
         <Navbar
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={handleTabChange}
           userProgress={userProgress}
           user={user}
           onOpenAuth={() => setIsAuthModalOpen(true)}
@@ -448,15 +470,19 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        {/* HOME TAB */}
-        {activeTab === 'home' && (
-          <div className="space-y-12">
-            
-            {/* Hero Banner */}
-            <Hero
-              onStartLearning={handleStartLearning}
-              onTakeQuiz={() => setActiveTab('quiz')}
-              onAddXp={handleAddXp}
+        {isTabLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <>
+            {/* HOME TAB */}
+            {activeTab === 'home' && (
+              <div className="space-y-12">
+                
+                {/* Hero Banner */}
+                <Hero
+                  onStartLearning={handleStartLearning}
+                  onTakeQuiz={() => handleTabChange('quiz')}
+                  onAddXp={handleAddXp}
             />
 
             {/* Interactive Demo */}
@@ -599,16 +625,19 @@ export default function App() {
         )}
 
         {/* LEGAL TABS */}
-        {activeTab === 'privacy' && <PrivacyPolicy onBack={() => setActiveTab('home')} />}
-        {activeTab === 'terms' && <TermsConditions onBack={() => setActiveTab('home')} />}
-
+        {activeTab === 'privacy' && <PrivacyPolicy onBack={() => handleTabChange('home')} />}
+        {/* TERMS & CONDITIONS TAB */}
+        {activeTab === 'terms' && (
+          <TermsConditions onBackToHome={() => handleTabChange('home')} />
+        )}
         {/* FAQ Section - ONLY RENDERED ON HOME PAGE */}
         {activeTab === 'home' && <FaqSection />}
-
+        </>
+        )}
       </main>
 
       {/* Footer - RENDERED ON HOME AND LEGAL PAGES */}
-      {['home', 'privacy', 'terms'].includes(activeTab) && <Footer onNavigate={(tab) => setActiveTab(tab)} />}
+      {['home', 'privacy', 'terms'].includes(activeTab) && <Footer onNavigate={(tab) => handleTabChange(tab)} />}
 
       {/* Modals */}
       <AuthModal
@@ -625,7 +654,7 @@ export default function App() {
             const match = QUIZ_SETS.find(q => q.topicId === topicId) || QUIZ_SETS[0];
             setActiveQuizSet(match);
           }}
-          onStartPractice={() => setActiveTab('practice')}
+          onStartPractice={() => handleTabChange('practice')}
           isCompleted={userProgress.completedTopics.includes(selectedTopic.id)}
           onToggleComplete={handleToggleCompleteTopic}
         />
