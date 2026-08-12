@@ -19,22 +19,37 @@ export const FeedbackPage: React.FC<FeedbackPageProps> = ({ onBack }) => {
 
     setIsSubmitting(true);
 
-    // Simulate sending the email
-    // IMPORTANT: To make this real without a backend, 
-    // you can swap this out with Web3Forms (https://web3forms.com/)
-    // or EmailJS.
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setShowToast(true);
-      setName('');
-      setEmail('');
-      setMessage('');
+    fetch("https://formsubmit.co/ajax/surya.nallagonda123@gmail.com", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        message: message,
+        _subject: "New Feedback from DSAFeed!"
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setIsSubmitting(false);
+        setShowToast(true);
+        setName('');
+        setEmail('');
+        setMessage('');
 
-      // Randomly disappear the toast after 4 seconds
-      setTimeout(() => {
-        setShowToast(false);
-      }, 4000);
-    }, 1500);
+        // Randomly disappear the toast after 4 seconds
+        setTimeout(() => {
+          setShowToast(false);
+        }, 4000);
+      })
+      .catch(error => {
+        console.error("Error submitting form", error);
+        setIsSubmitting(false);
+        alert("Failed to send message. Please try again.");
+      });
   };
 
   return (
