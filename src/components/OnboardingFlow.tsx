@@ -70,23 +70,12 @@ const SCREENS = [
 ];
 
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
-  const [step, setStep] = useState<'loading' | 'prompt' | 'carousel' | 'hidden'>('loading');
+  const [step, setStep] = useState<'prompt' | 'carousel' | 'hidden'>('carousel');
   const [currentScreen, setCurrentScreen] = useState(0);
 
-  useEffect(() => {
-    // Check if the user has seen the prompt before
-    const hasSeen = localStorage.getItem('dsafeed_has_seen_onboarding');
-    if (hasSeen) {
-      setStep('hidden');
-    } else {
-      // Small delay before showing prompt for better UX
-      setTimeout(() => setStep('prompt'), 1000);
-    }
-  }, []);
-
   const handleDismiss = () => {
-    localStorage.setItem('dsafeed_has_seen_onboarding', 'true');
     setStep('hidden');
+    onComplete(); // Move to next step (signup) even if dismissed
   };
 
   const handleStartCarousel = () => {
@@ -95,7 +84,6 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
 
   const handleNextScreen = () => {
     if (currentScreen === SCREENS.length - 1) {
-      localStorage.setItem('dsafeed_has_seen_onboarding', 'true');
       setStep('hidden');
       onComplete();
     } else {
@@ -103,7 +91,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
     }
   };
 
-  if (step === 'hidden' || step === 'loading') return null;
+  if (step === 'hidden') return null;
 
   return (
     <AnimatePresence>

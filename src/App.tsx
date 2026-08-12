@@ -126,6 +126,7 @@ export default function App() {
   // Auth State
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'signup'>('login');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   const [isFirstLogin, setIsFirstLogin] = useState(false);
@@ -476,7 +477,10 @@ export default function App() {
           setActiveTab={handleTabChange}
           userProgress={userProgress}
           user={user}
-          onOpenAuth={() => setIsAuthModalOpen(true)}
+          onOpenAuth={() => {
+            setAuthModalMode('login');
+            setIsAuthModalOpen(true);
+          }}
           onSignOut={handleSignOut}
           onOpenStreakModal={() => setIsStreakModalOpen(true)}
         />
@@ -681,6 +685,7 @@ export default function App() {
       {showOnboarding && !user?.isLoggedIn && (
         <OnboardingFlow onComplete={() => {
           setShowOnboarding(false);
+          setAuthModalMode('signup');
           setIsAuthModalOpen(true);
         }} />
       )}
@@ -689,6 +694,7 @@ export default function App() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
+        initialMode={authModalMode}
       />
 
       {selectedTopic && (
