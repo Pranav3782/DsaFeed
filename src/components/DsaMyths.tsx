@@ -59,14 +59,14 @@ export const DsaMyths: React.FC = () => {
       
       {/* Header */}
       <div className="text-center max-w-xl mx-auto px-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFF5F4] border border-[#F26B5B]/40 rounded-full text-xs font-black text-[#F26B5B] mb-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFF5F4] dark:bg-[#F26B5B]/10 border border-[#F26B5B]/40 rounded-full text-xs font-black text-[#F26B5B] mb-2">
           <ShieldAlert className="w-3.5 h-3.5" />
           <span>Busting Illusions</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-black text-[#101B3D]">
+        <h2 className="text-3xl sm:text-4xl font-black text-[#101B3D] dark:text-[#F8FAFC]">
           Top 5 DSA Myths
         </h2>
-        <p className="text-sm sm:text-base text-[#111111]/70 font-medium mt-2">
+        <p className="text-sm sm:text-base text-[#111111]/70 dark:text-gray-400 font-medium mt-2">
           Swipe left or right to uncover the truth behind common misconceptions that hold developers back.
         </p>
       </div>
@@ -87,11 +87,9 @@ export const DsaMyths: React.FC = () => {
             return (
               <motion.div
                 key={card.id}
-                className="absolute w-[300px] sm:w-[340px] h-[360px] rounded-3xl p-8 cursor-grab active:cursor-grabbing flex flex-col justify-between"
+                className="absolute w-[300px] sm:w-[340px] h-[360px] rounded-3xl p-8 cursor-grab active:cursor-grabbing flex flex-col justify-between dark:bg-[#151515] bg-white border border-[#EAEAEA] dark:border-white/10"
                 style={{
-                  backgroundColor: isFront ? '#FFFFFF' : '#FAFAFA',
-                  border: `1px solid ${isFront ? '#EAEAEA' : 'transparent'}`,
-                  boxShadow: isFront ? '0 20px 40px -10px rgba(0,0,0,0.1)' : 'none',
+                  boxShadow: isFront ? '0 20px 40px -10px rgba(0,0,0,0.2)' : 'none',
                   zIndex
                 }}
                 animate={{
@@ -126,24 +124,24 @@ export const DsaMyths: React.FC = () => {
                     >
                       <Lightbulb className="w-5 h-5" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-black text-[#101B3D] leading-tight">
+                    <h3 className="text-xl sm:text-2xl font-black text-[#101B3D] dark:text-[#F8FAFC] leading-tight">
                       "{card.title}"
                     </h3>
                   </div>
                   
-                  <p className="text-sm sm:text-base text-[#111111]/80 font-medium leading-relaxed mt-4">
+                  <p className="text-sm sm:text-base text-[#111111]/80 dark:text-gray-300 font-medium leading-relaxed mt-4">
                     {card.content}
                   </p>
                 </div>
 
                 {isFront && (
-                  <div className="flex justify-between items-center mt-6 pt-6 border-t border-[#EAEAEA]">
+                  <div className="flex justify-between items-center mt-6 pt-6 border-t border-[#EAEAEA] dark:border-white/10">
                     <span className="text-xs font-bold text-[#8C8C8C] uppercase tracking-wider">
                       Swipe to next
                     </span>
                     <button 
                       onClick={moveToEnd}
-                      className="w-10 h-10 bg-[#EEF4FF] rounded-full flex items-center justify-center text-[#3478E5] hover:bg-[#3478E5] hover:text-white transition-colors"
+                      className="w-10 h-10 bg-[#EEF4FF] dark:bg-[#3478E5]/20 rounded-full flex items-center justify-center text-[#3478E5] dark:text-[#60A5FA] hover:bg-[#3478E5] dark:hover:bg-[#3478E5] hover:text-white dark:hover:text-white transition-colors"
                     >
                       <ArrowRight className="w-5 h-5" />
                     </button>

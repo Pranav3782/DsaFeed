@@ -30,9 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'home' as const, label: 'Home', icon: BookOpen },
     { id: 'practice' as const, label: 'Practice', icon: Code2 },
     { id: 'quiz' as const, label: 'Quizzes', icon: HelpCircle },
-    { id: 'flashcards' as const, label: 'Flashcards', icon: Layers },
     { id: 'concepts' as const, label: 'Concepts', icon: Sparkles },
-    { id: 'myths' as const, label: 'Myths', icon: ShieldAlert },
     { id: 'pricing' as const, label: 'Pricing', icon: CreditCard },
     { id: 'profile' as const, label: 'Profile', icon: User },
     { id: 'leaderboard' as const, label: 'Leaderboard', icon: Trophy, isLocked: true },
@@ -49,8 +47,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FFFDF9]/90 backdrop-blur-md border-b border-[#EAEAEA]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 w-full bg-[#FFFDF9]/90 dark:bg-[#0A0A0A]/90 backdrop-blur-md border-b border-[#EAEAEA] dark:border-white/10">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
           {/* Logo */}
@@ -58,11 +56,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('home')}
             className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#3478E5] rounded-xl p-1 transition shrink-0"
           >
-            <DsaFeedLogo className="h-7 sm:h-8 lg:h-9" textColor="#101B3D" accentColor="#3478E5" />
+            <DsaFeedLogo className="h-4 sm:h-5 lg:h-6 w-auto object-contain" textColor="#101B3D" accentColor="#3478E5" />
           </button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-1.5 bg-white px-2 lg:px-3 py-1.5 rounded-full border border-[#EAEAEA] shadow-xs shrink-0">
+          <nav className="hidden md:flex items-center space-x-1 bg-white px-2 py-1.5 rounded-full border border-[#EAEAEA] shadow-xs shrink-0 overflow-x-auto no-scrollbar">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -70,18 +68,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item)}
-                  className={`relative flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
+                  className={`relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs lg:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'bg-[#101B3D] text-white shadow-xs'
                       : 'text-[#111111]/70 hover:text-[#111111] hover:bg-[#F5F5F0]'
                   }`}
+                  title={item.label}
                 >
                   <Icon className={`w-3.5 h-3.5 lg:w-4 lg:h-4 ${isActive ? 'text-[#F5C94A]' : 'text-[#111111]/60'}`} />
-                  <span>{item.label}</span>
+                  <span className={`${isActive ? 'block' : 'hidden xl:block'}`}>{item.label}</span>
                   {item.isLocked && (
-                    <span className="flex items-center gap-0.5 ml-0.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded-full border border-amber-500/30">
+                    <span className={`flex items-center gap-0.5 ml-0.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded-full border border-amber-500/30 ${isActive ? 'block' : 'hidden xl:flex'}`}>
                       <Lock className="w-2.5 h-2.5" />
-                      <span className="hidden lg:inline">Locked</span>
+                      <span className="hidden 2xl:inline">Locked</span>
                     </span>
                   )}
                 </button>
@@ -97,19 +96,23 @@ export const Navbar: React.FC<NavbarProps> = ({
               <>
                 <button 
                   onClick={onOpenStreakModal}
-                  title="Daily Learning Streak - Click to view calendar"
-                  className="flex items-center gap-1 lg:gap-1.5 px-2.5 lg:px-3 py-1.5 bg-[#FFF1F0] hover:bg-[#FFE4E1] text-[#F26B5B] rounded-full text-xs sm:text-sm font-extrabold border border-[#F26B5B]/20 whitespace-nowrap transition active:scale-95 cursor-pointer"
+                  className="group relative flex items-center gap-1 lg:gap-1.5 px-2.5 lg:px-3 py-1.5 bg-[#FFF1F0] hover:bg-[#FFE4E1] text-[#F26B5B] rounded-full text-xs sm:text-sm font-extrabold border border-[#F26B5B]/20 transition active:scale-95 cursor-pointer"
                 >
                   <Flame className="w-3.5 h-3.5 lg:w-4 lg:h-4 fill-[#F26B5B] animate-pulse shrink-0" />
-                  <span>{userProgress.streakDays}d<span className="hidden lg:inline"> Streak</span></span>
+                  <span>{userProgress.streakDays}</span>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-1 bg-[#101B3D] text-white text-[10px] rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-md">
+                    {userProgress.streakDays} Day Streak
+                  </div>
                 </button>
 
                 <div 
-                  title="Total Earned XP"
-                  className="flex items-center gap-1 lg:gap-1.5 px-2.5 lg:px-3 py-1.5 bg-[#FFFBEA] text-[#101B3D] rounded-full text-xs sm:text-sm font-extrabold border border-[#F5C94A]/40 whitespace-nowrap"
+                  className="group relative flex items-center gap-1 lg:gap-1.5 px-2.5 lg:px-3 py-1.5 bg-[#FFFBEA] text-[#101B3D] rounded-full text-xs sm:text-sm font-extrabold border border-[#F5C94A]/40"
                 >
                   <Zap className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#F5C94A] fill-[#F5C94A] shrink-0" />
-                  <span>{userProgress.xp}<span className="hidden lg:inline"> XP</span></span>
+                  <span>{userProgress.xp}</span>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-1 bg-[#101B3D] text-white text-[10px] rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-md">
+                    {userProgress.xp} Total XP
+                  </div>
                 </div>
               </>
             )}
@@ -119,11 +122,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setActiveTab('feedback')}
                 title="Give Feedback or Suggestions"
-                className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition ml-1"
+                className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] dark:hover:bg-[#3478E5]/10 rounded-full transition ml-1"
               >
                 <MessageSquareHeart className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
               </button>
             )}
+
 
             {/* User Profile / Auth State */}
             {user?.isLoggedIn ? (

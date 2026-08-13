@@ -24,12 +24,14 @@ import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsConditions } from './components/TermsConditions';
 import { StreakModal } from './components/StreakModal';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { AchievementPopup, AchievementData } from './components/AchievementPopup';
+import { motion, AnimatePresence } from 'motion/react';
 
 import { supabase } from './lib/supabase';
 
 import { DSA_TOPICS, QUIZ_SETS, CODE_EXERCISES, USER_BADGES } from './data/dsaData';
 import { DsaTopic, QuizSet, UserProgress, DsaCategory, UserProfile, NavTab, DailyTask } from './types';
-import { Filter, BookOpen, Code2, HelpCircle } from 'lucide-react';
+import { Filter, BookOpen, Code2, HelpCircle, Sparkles, Layers } from 'lucide-react';
 
 const generateDailyTasks = (): DailyTask[] => {
   return [
@@ -104,6 +106,8 @@ export default function App() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [previousTab, setPreviousTab] = useState<NavTab>('home');
+  const [practiceView, setPracticeView] = useState<'practice' | 'code'>('practice');
+  const [conceptView, setConceptView] = useState<'concepts' | 'flashcards'>('concepts');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isTabLoading, setIsTabLoading] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
@@ -132,10 +136,18 @@ export default function App() {
   const [isFirstLogin, setIsFirstLogin] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
+  const [achievementPopup, setAchievementPopup] = useState<{isOpen: boolean; data: AchievementData | null}>({isOpen: false, data: null});
 
   // Topic & Quiz Selection State
   const [selectedTopic, setSelectedTopic] = useState<DsaTopic | null>(null);
   const [activeQuizSet, setActiveQuizSet] = useState<QuizSet | null>(null);
+
+  // Removed Dark Mode State per user request
+  useEffect(() => {
+    // Ensure dark mode is completely removed from the HTML element
+    document.documentElement.classList.remove('dark');
+    localStorage.removeItem('dsafeed_theme');
+  }, []);
 
   // Topic Filter State
   const [difficultyFilter, setDifficultyFilter] = useState<'All' | 'Beginner' | 'Intermediate'>('All');
@@ -213,9 +225,6 @@ export default function App() {
           quiz_scores: EMPTY_PROGRESS.quizScores,
           completed_exercises: EMPTY_PROGRESS.completedExercises,
           topic_progress: EMPTY_PROGRESS.topicProgress,
-          daily_tasks: EMPTY_PROGRESS.dailyTasks,
-          monthly_points: EMPTY_PROGRESS.monthlyPoints,
-          last_task_date: EMPTY_PROGRESS.lastTaskDate,
           updated_at: new Date().toISOString()
         });
       }
@@ -231,7 +240,7 @@ export default function App() {
     if (!session?.user) return;
     
     setIsSyncing(true);
-    await supabase.from('user_progress').upsert({
+    const { error } = await supabase.from('user_progress').upsert({
       user_id: session.user.id,
       streak_days: newProgress.streakDays,
       last_active_date: newProgress.lastActiveDate,
@@ -240,11 +249,11 @@ export default function App() {
       quiz_scores: newProgress.quizScores,
       completed_exercises: newProgress.completedExercises,
       topic_progress: newProgress.topicProgress,
-      daily_tasks: newProgress.dailyTasks,
-      monthly_points: newProgress.monthlyPoints,
-      last_task_date: newProgress.lastTaskDate,
       updated_at: new Date().toISOString()
     });
+    if (error) {
+      console.error('Supabase Upsert Error:', error);
+    }
     setIsSyncing(false);
   };
 
@@ -296,7 +305,17 @@ export default function App() {
         monthlyPoints: mPoints,
         lastTaskDate: today
       };
-      syncProgressToSupabase(next);
+
+      // Only sync to supabase under specific conditions for 'time' tasks to prevent spamming
+      const isTimeTask = taskType === 'time';
+      const timeTask = newTasks.find(t => t.type === 'time');
+      const timeCompletedNow = timeTask?.completed && !tasks.find(t => t.type === 'time')?.completed;
+      const hitMinuteMilestone = isTimeTask && (timeTask?.progress || 0) % 60 === 0;
+
+      if (!isTimeTask || timeCompletedNow || hitMinuteMilestone) {
+        syncProgressToSupabase(next);
+      }
+
       return next;
     });
   };
@@ -381,15 +400,21 @@ export default function App() {
   };
 
   const handleToggleCompleteTopic = (topicId: DsaCategory) => {
+    const isCompleted = userProgress.completedTopics.includes(topicId);
+    if (!isCompleted) {
+      setAchievementPopup({ isOpen: true, data: { title: 'Topic Mastered!', subtitle: 'Excellent work finishing this topic!', xp: 50 } });
+      handleAddXp(50);
+    }
+    
     setUserProgress(prev => {
-      const isCompleted = prev.completedTopics.includes(topicId);
-      const updatedTopics = isCompleted
+      const isCurrentlyCompleted = prev.completedTopics.includes(topicId);
+      const updatedTopics = isCurrentlyCompleted
         ? prev.completedTopics.filter(id => id !== topicId)
         : [...prev.completedTopics, topicId];
 
       const updatedTopicProgress = {
         ...prev.topicProgress,
-        [topicId]: isCompleted ? 0 : 100
+        [topicId]: isCurrentlyCompleted ? 0 : 100
       };
 
       const next = {
@@ -405,6 +430,12 @@ export default function App() {
   const handleQuizComplete = (quizId: string, score: number, total: number) => {
     const percentage = Math.round((score / total) * 100);
     
+    // Show popup
+    if (percentage >= 70) {
+      setAchievementPopup({ isOpen: true, data: { title: 'Quiz Mastered!', subtitle: `You scored ${percentage}% on the quiz!`, xp: 30 } });
+      handleAddXp(30);
+    }
+
     // Mark the daily quiz task as completed
     markTaskProgress('quiz');
 
@@ -439,6 +470,11 @@ export default function App() {
   };
 
   const handleExerciseComplete = (exerciseId: string) => {
+    const isCompleted = userProgress.completedExercises.includes(exerciseId);
+    if (!isCompleted) {
+      setAchievementPopup({ isOpen: true, data: { title: 'Exercise Solved!', subtitle: 'You reconstructed the code perfectly!', xp: 20 } });
+    }
+
     setUserProgress(prev => {
       if (prev.completedExercises.includes(exerciseId)) return prev;
       const next = {
@@ -468,7 +504,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FFFDF9] text-[#111111] antialiased relative transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-[#FFFDF9] dark:bg-[#0A0A0A] text-[#111111] dark:text-[#F8FAFC] antialiased relative transition-colors duration-200">
       
       {/* Top Navbar */}
       {user?.isLoggedIn && activeTab !== 'privacy' && activeTab !== 'terms' && (
@@ -487,99 +523,165 @@ export default function App() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
-        {/* HOME TAB */}
-        {activeTab === 'home' && (
-              <div className="space-y-12">
+      <AnimatePresence mode="wait">
+        <motion.main 
+          key={activeTab}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -15 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6"
+        >
+          
+          {/* HOME TAB */}
+          {activeTab === 'home' && (
+                <div className="space-y-12">
                 
-                {/* Hero Banner */}
                 <Hero
                   onStartLearning={handleStartLearning}
-                  onTakeQuiz={() => handleTabChange('quiz')}
+                  onTakeQuiz={() => {
+                    if (!user?.isLoggedIn) {
+                      setAuthModalMode('signup');
+                      setIsAuthModalOpen(true);
+                    } else {
+                      handleTabChange('quiz');
+                    }
+                  }}
                   onAddXp={handleAddXp}
-            />
+                />
 
             {/* Interactive Demo */}
             <InteractiveDemo />
 
-            {/* Learning Topics Grid Section */}
-            <section id="topics-grid" className="pt-4 space-y-6 scroll-mt-24">
-              
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF] border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5] mb-2">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <span>Curriculum Topics</span>
-                  </div>
-                  <h2 className="text-3xl font-black text-[#101B3D]">
-                    Master 10 Core Data Structures
-                  </h2>
-                  <p className="text-sm text-[#111111]/70 font-medium">
-                    Pick a topic to view simple analogies, code snippets, and Big-O complexity guides.
-                  </p>
-                </div>
-
-                {/* Difficulty Filter Pills */}
-                <div className="flex items-center gap-1.5 bg-white border border-[#EAEAEA] p-1.5 rounded-2xl shadow-xs self-start sm:self-center">
-                  <Filter className="w-3.5 h-3.5 text-[#8C8C8C] ml-2 mr-1" />
-                  {(['All', 'Beginner', 'Intermediate'] as const).map((diff) => (
-                    <button
-                      key={diff}
-                      onClick={() => setDifficultyFilter(diff)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                        difficultyFilter === diff
-                          ? 'bg-[#101B3D] text-[#FFFDF9] shadow-xs'
-                          : 'text-[#8C8C8C] hover:text-[#111111]'
-                      }`}
-                    >
-                      {diff}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Topics Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredTopics.map((topic) => {
-                  const progressVal = userProgress.topicProgress[topic.id] || 0;
-                  return (
-                    <TopicCard
-                      key={topic.id}
-                      topic={topic}
-                      progressPercent={progressVal}
-                      onSelectTopic={handleSelectTopic}
-                    />
-                  );
-                })}
-              </div>
-
+            {/* Myths Section moved to Home Page */}
+            <section className="pt-12">
+              <DsaMyths />
             </section>
-
           </div>
         )}
 
-        {/* PRACTICE TAB */}
+
+
+        {/* PRACTICE & CODE TAB */}
         {activeTab === 'practice' && (
           <div className="py-4 space-y-6 animate-in fade-in duration-200">
-            <div className="text-center max-w-xl mx-auto mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF] border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5] mb-2">
-                <Code2 className="w-3.5 h-3.5" />
-                <span>Interactive Logic Game</span>
+            
+            {/* Segmented Control */}
+            <div className="flex justify-center mb-8">
+              <div className="bg-white dark:bg-[#151515] border border-[#EAEAEA] dark:border-white/10 p-1 rounded-2xl shadow-sm inline-flex">
+                <button
+                  onClick={() => setPracticeView('practice')}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    practiceView === 'practice' 
+                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                  }`}
+                >
+                  <BookOpen className="w-4 h-4 inline-block mr-2" />
+                  Practice
+                </button>
+                <button
+                  onClick={() => setPracticeView('code')}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    practiceView === 'code' 
+                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                  }`}
+                >
+                  <Code2 className="w-4 h-4 inline-block mr-2" />
+                  Code
+                </button>
               </div>
-              <h2 className="text-3xl font-black text-[#101B3D]">
-                Code Block Reordering
-              </h2>
-              <p className="text-sm text-[#111111]/70 font-medium mt-1">
-                Reconstruct the control flow of classic algorithm solutions by putting code blocks in order.
-              </p>
             </div>
 
-            <CodeOrderingExercise
-              exercises={CODE_EXERCISES}
-              onCompleteExercise={handleExerciseComplete}
-              onAddXp={handleAddXp}
-            />
+            <AnimatePresence mode="wait">
+              {practiceView === 'practice' ? (
+                <motion.div
+                  key="practice-view"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6"
+                >
+                  <section id="topics-grid" className="space-y-6 scroll-mt-24">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF] dark:bg-[#3478E5]/10 border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5] dark:text-[#60A5FA] mb-2">
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>Curriculum Topics</span>
+                        </div>
+                        <h2 className="text-3xl font-black text-[#101B3D] dark:text-[#F8FAFC]">
+                          Master 10 Core Data Structures
+                        </h2>
+                        <p className="text-sm text-[#111111]/70 dark:text-gray-400 font-medium">
+                          Pick a topic to view simple analogies, code snippets, and Big-O complexity guides.
+                        </p>
+                      </div>
+
+                      {/* Difficulty Filter Pills */}
+                      <div className="flex items-center gap-1.5 bg-white dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-white/10 p-1.5 rounded-2xl shadow-xs self-start sm:self-center">
+                        <Filter className="w-3.5 h-3.5 text-[#8C8C8C] ml-2 mr-1" />
+                        {(['All', 'Beginner', 'Intermediate'] as const).map((diff) => (
+                          <button
+                            key={diff}
+                            onClick={() => setDifficultyFilter(diff)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                              difficultyFilter === diff
+                                ? 'bg-[#101B3D] dark:bg-[#3478E5] text-[#FFFDF9] shadow-xs'
+                                : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                            }`}
+                          >
+                            {diff}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Topics Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredTopics.map((topic) => {
+                        const progressVal = userProgress.topicProgress[topic.id] || 0;
+                        return (
+                          <TopicCard
+                            key={topic.id}
+                            topic={topic}
+                            progressPercent={progressVal}
+                            onSelectTopic={handleSelectTopic}
+                          />
+                        );
+                      })}
+                    </div>
+                  </section>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="code-view"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="space-y-6"
+                >
+                  <div className="text-center max-w-xl mx-auto mb-8">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF] dark:bg-[#3478E5]/10 border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5] dark:text-[#60A5FA] mb-2">
+                      <Code2 className="w-3.5 h-3.5" />
+                      <span>Interactive Logic Game</span>
+                    </div>
+                    <h2 className="text-3xl font-black text-[#101B3D] dark:text-[#F8FAFC]">
+                      Code Block Reordering
+                    </h2>
+                    <p className="text-sm text-[#111111]/70 dark:text-gray-400 font-medium mt-1">
+                      Reconstruct the control flow of classic algorithm solutions by putting code blocks in order.
+                    </p>
+                  </div>
+
+                  <CodeOrderingExercise
+                    exercises={CODE_EXERCISES}
+                    onCompleteExercise={handleExerciseComplete}
+                    onAddXp={handleAddXp}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
@@ -613,13 +715,64 @@ export default function App() {
           </div>
         )}
 
-        {/* CONCEPTS TAB */}
+        {/* CONCEPTS & FLASHCARDS TAB */}
         {activeTab === 'concepts' && (
-          <div className="py-4 animate-in fade-in duration-200">
-            <ConceptExplainer
-              topics={DSA_TOPICS}
-              onSelectTopic={handleSelectTopic}
-            />
+          <div className="py-4 space-y-6 animate-in fade-in duration-200">
+            {/* Segmented Control */}
+            <div className="flex justify-center mb-8">
+              <div className="bg-white dark:bg-[#151515] border border-[#EAEAEA] dark:border-white/10 p-1 rounded-2xl shadow-sm inline-flex">
+                <button
+                  onClick={() => setConceptView('concepts')}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    conceptView === 'concepts' 
+                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 inline-block mr-2" />
+                  Visual Explanations
+                </button>
+                <button
+                  onClick={() => setConceptView('flashcards')}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    conceptView === 'flashcards' 
+                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                  }`}
+                >
+                  <Layers className="w-4 h-4 inline-block mr-2" />
+                  Flashcards
+                </button>
+              </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              {conceptView === 'concepts' ? (
+                <motion.div
+                  key="concepts-view"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                >
+                  <ConceptExplainer
+                    topics={DSA_TOPICS}
+                    onSelectTopic={handleSelectTopic}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="flashcards-view"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  <FlashcardsPage 
+                    userProgress={userProgress} 
+                    onGoToConcepts={() => setConceptView('concepts')} 
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
@@ -639,12 +792,7 @@ export default function App() {
           </div>
         )}
 
-        {/* MYTHS TAB */}
-        {activeTab === 'myths' && (
-          <div className="py-4 animate-in fade-in duration-200">
-            <DsaMyths />
-          </div>
-        )}
+
 
         {/* LEGAL TABS */}
         {activeTab === 'privacy' && <PrivacyPolicy onBack={() => handleTabChange('home')} />}
@@ -662,18 +810,11 @@ export default function App() {
             <PricingPage />
           </div>
         )}
-        {/* FLASHCARDS TAB */}
-        {activeTab === 'flashcards' && (
-          <div className="py-4 animate-in fade-in duration-200">
-            <FlashcardsPage 
-              userProgress={userProgress} 
-              onGoToConcepts={() => handleTabChange('concepts')} 
-            />
-          </div>
-        )}
+
         {/* FAQ Section - ONLY RENDERED ON HOME PAGE */}
         {activeTab === 'home' && <FaqSection />}
-      </main>
+      </motion.main>
+      </AnimatePresence>
 
       {/* Footer - RENDERED ON HOME AND LEGAL PAGES */}
       {['home', 'privacy', 'terms'].includes(activeTab) && <Footer onNavigate={(tab) => handleTabChange(tab)} />}
@@ -743,6 +884,12 @@ export default function App() {
         lastActiveDate={userProgress.lastActiveDate}
         xp={userProgress.xp}
         onRefillStreak={handleRefillStreak}
+      />
+
+      <AchievementPopup
+        isOpen={achievementPopup.isOpen}
+        data={achievementPopup.data}
+        onClose={() => setAchievementPopup({ ...achievementPopup, isOpen: false })}
       />
     </div>
   );

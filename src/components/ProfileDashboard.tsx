@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { AvatarBuilderModal } from './AvatarBuilderModal';
 
 interface ProfileDashboardProps {
   user: UserProfile | null;
@@ -46,8 +47,9 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
   const [showShareModal, setShowShareModal] = useState(false);
   const [copiedCard, setCopiedCard] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || PRESET_AVATARS[0]);
-  const [selectedBgColor, setSelectedBgColor] = useState(user?.customAvatarBg || '#3478E5');
+  const [selectedBgColor, setSelectedBgColor] = useState(user?.customAvatarBg || '#b6e3f4');
   const [showAllBadges, setShowAllBadges] = useState(false);
+  const [isAvatarBuilderOpen, setIsAvatarBuilderOpen] = useState(false);
 
   const completedTopicsCount = userProgress.completedTopics.length;
   const totalTopics = topics.length;
@@ -97,42 +99,56 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-200">
       
       {/* Profile Header Banner */}
-      <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div className="bg-white dark:bg-[#151515] border border-[#EAEAEA] dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           
           <div className="flex items-center gap-5">
             {/* Avatar with Custom Background */}
-            <div className="relative group">
+            <div className="relative group flex flex-col items-center">
               <div 
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl p-1 shadow-md transition-transform group-hover:scale-105 flex items-center justify-center overflow-hidden"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border-4 border-white dark:border-[#1A1A1A] transition-transform group-hover:scale-105 flex items-center justify-center overflow-hidden relative"
                 style={{ backgroundColor: selectedBgColor }}
               >
                 {selectedAvatar ? (
                   <img
                     src={selectedAvatar}
                     alt={user?.name || 'User Avatar'}
-                    className="w-full h-full object-cover rounded-2xl"
+                    className="w-full h-full object-cover rounded-full"
                   />
                 ) : (
-                  <User className="w-10 h-10 text-white" />
+                  <User className="w-10 h-10 text-[#101B3D]/50" />
                 )}
+                
+                {/* Overlay edit button */}
+                <button 
+                  onClick={() => setIsAvatarBuilderOpen(true)}
+                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                >
+                  <Edit3 className="w-6 h-6 text-white" />
+                </button>
               </div>
+              <button 
+                onClick={() => setIsAvatarBuilderOpen(true)}
+                className="mt-3 text-[10px] font-bold text-[#8C8C8C] hover:text-[#3478E5] dark:hover:text-[#60A5FA] uppercase tracking-wider bg-[#FAFAFA] dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-white/10 px-2 py-1 rounded-full transition-colors"
+              >
+                Edit Avatar
+              </button>
             </div>
 
             {/* Name & Bio */}
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl sm:text-3xl font-black text-[#101B3D]">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#101B3D] dark:text-[#F8FAFC]">
                   {user?.name || 'DSA Learner'}
                 </h2>
                 <span className="px-2.5 py-0.5 bg-[#EEF4FF] border border-[#3478E5]/30 text-[#3478E5] font-extrabold text-[11px] rounded-full">
                   Level {Math.floor(userProgress.xp / 100) + 1}
                 </span>
               </div>
-              <p className="text-xs text-[#8C8C8C] font-bold">
+              <p className="text-xs text-[#8C8C8C] dark:text-gray-400 font-bold">
                 {user?.email || 'learner@dsafeed.com'}
               </p>
-              <p className="text-sm text-[#111111]/80 font-medium max-w-lg mt-1">
+              <p className="text-sm text-[#111111]/80 dark:text-gray-300 font-medium max-w-lg mt-1">
                 {user?.bio || 'Building problem-solving skills block by block with DSAfeed.'}
               </p>
             </div>
@@ -142,7 +158,7 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
           <div className="flex flex-wrap items-center gap-2.5 self-stretch sm:self-auto">
             <button
               onClick={() => setIsEditingBio(!isEditingBio)}
-              className="flex-1 sm:flex-initial px-4 py-2.5 bg-[#FFFDF9] border border-[#EAEAEA] hover:border-[#3478E5] text-[#101B3D] text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs"
+              className="flex-1 sm:flex-initial px-4 py-2.5 bg-[#FFFDF9] dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-white/10 hover:border-[#3478E5] dark:hover:border-[#60A5FA] text-[#101B3D] dark:text-[#F8FAFC] text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs"
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span>Edit Profile</span>
@@ -200,48 +216,15 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
                 </div>
               </div>
 
-              {/* Avatar Selector */}
+              {/* Avatar Builder Trigger inside Edit Profile */}
               <div>
-                <label className="block text-[11px] font-black uppercase text-[#8C8C8C] mb-2">
-                  Choose Avatar Preset
-                </label>
-                <div className="flex items-center gap-3 overflow-x-auto pb-1">
-                  {PRESET_AVATARS.map((url, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSelectedAvatar(url)}
-                      className={`relative w-12 h-12 rounded-2xl overflow-hidden border-2 transition ${
-                        selectedAvatar === url ? 'border-[#3478E5] scale-105' : 'border-transparent opacity-70 hover:opacity-100'
-                      }`}
-                    >
-                      <img src={url} alt={`Avatar ${idx}`} className="w-full h-full object-cover" />
-                      {selectedAvatar === url && (
-                        <div className="absolute inset-0 bg-[#3478E5]/30 flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Avatar BG Color Picker */}
-              <div>
-                <label className="block text-[11px] font-black uppercase text-[#8C8C8C] mb-2">
-                  Avatar Background Tint
-                </label>
-                <div className="flex items-center gap-2">
-                  {PRESET_BG_COLORS.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedBgColor(color)}
-                      style={{ backgroundColor: color }}
-                      className={`w-7 h-7 rounded-full border-2 transition ${
-                        selectedBgColor === color ? 'border-white ring-2 ring-[#3478E5] scale-110' : 'border-transparent'
-                      }`}
-                    />
-                  ))}
-                </div>
+                <button
+                  onClick={() => setIsAvatarBuilderOpen(true)}
+                  className="px-4 py-2 bg-[#EEF4FF] dark:bg-[#3478E5]/20 text-[#3478E5] dark:text-[#60A5FA] border border-[#3478E5]/30 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 hover:bg-[#3478E5] hover:text-white"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Open Avatar Builder</span>
+                </button>
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
