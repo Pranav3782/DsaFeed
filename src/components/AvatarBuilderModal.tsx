@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, RefreshCw, Check } from 'lucide-react';
+import { X, Check, Glasses, User, Shirt, Image as ImageIcon, Paintbrush, Smile } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface AvatarBuilderModalProps {
@@ -10,19 +10,23 @@ interface AvatarBuilderModalProps {
   initialBgColor?: string;
 }
 
+// Exactly 10 hair styles as requested
 const HAIR_STYLES = [
-  'shortHairShortFlat', 'shortHairShortRound', 'shortHairShortWaved',
-  'longHairStraight', 'longHairCurly', 'longHairBob',
-  'eyepatch', 'hat', 'hijab', 'turban', 'winterHat1'
+  'shortFlat', 'shortRound', 'shortWaved', 'theCaesar',
+  'straight01', 'curly', 'bob', 'bun',
+  'dreads', 'fro'
 ];
+
+// 6 beard styles (including none)
+const BEARD_STYLES = ['none', 'beardLight', 'beardMajestic', 'beardMedium', 'moustacheFancy', 'moustacheMagnum'];
 
 const HAIR_COLORS = ['2c1b18', '4a3123', 'a55728', 'b58143', '724133', '282828', 'e8e1e1'];
 
-const ACCESSORIES = ['blank', 'kurt', 'prescription01', 'prescription02', 'round', 'sunglasses', 'wayfarers'];
+const ACCESSORIES = ['none', 'kurt', 'prescription01', 'prescription02', 'round', 'sunglasses', 'wayfarers', 'eyepatch'];
 
 const CLOTHING = ['blazerAndShirt', 'blazerAndSweater', 'collarAndSweater', 'graphicShirt', 'hoodie', 'overall', 'shirtCrewNeck', 'shirtVNeck'];
 
-const BACKGROUND_COLORS = ['b6e3f4', 'c0aede', 'd1d4f9', 'ffdfbf', 'ffd5dc', 'd4f7d4', 'f9f9f9'];
+const BACKGROUND_COLORS = ['b6e3f4', 'c0aede', 'd1d4f9', 'ffdfbf', 'ffd5dc', 'd4f7d4', 'f9f9f9', '1A1A1A', '3478E5', '55C990'];
 
 export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
   isOpen,
@@ -32,175 +36,269 @@ export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
   initialBgColor
 }) => {
   const [seed, setSeed] = useState(Math.random().toString(36).substring(7));
-  const [hair, setHair] = useState('shortHairShortFlat');
+  const [hair, setHair] = useState('shortFlat');
+  const [beard, setBeard] = useState('none');
   const [hairColor, setHairColor] = useState('2c1b18');
-  const [accessory, setAccessory] = useState('blank');
+  const [accessory, setAccessory] = useState('none');
   const [clothing, setClothing] = useState('blazerAndShirt');
   const [bgColor, setBgColor] = useState('b6e3f4');
 
-  // Try to parse existing avatar URL to set initial state
+  const [activeTab, setActiveTab] = useState<'hair' | 'beard' | 'hairColor' | 'accessories' | 'clothing' | 'background'>('hair');
+
   useEffect(() => {
-    if (initialAvatarUrl && initialAvatarUrl.includes('dicebear.com/9.x/avataaars/svg')) {
+    if (initialAvatarUrl && initialAvatarUrl.includes('dicebear.com')) {
       try {
         const url = new URL(initialAvatarUrl);
         const params = new URLSearchParams(url.search);
         
         if (params.get('seed')) setSeed(params.get('seed')!);
         if (params.get('top')) setHair(params.get('top')!);
+        if (params.get('facialHair')) setBeard(params.get('facialHair')!);
         if (params.get('hairColor')) setHairColor(params.get('hairColor')!);
         if (params.get('accessories')) setAccessory(params.get('accessories')!);
         if (params.get('clothing')) setClothing(params.get('clothing')!);
-        if (params.get('backgroundColor')) setBgColor(params.get('backgroundColor')!);
       } catch (e) {
         console.error("Error parsing avatar URL");
       }
     }
-  }, [initialAvatarUrl, isOpen]);
+    if (initialBgColor) {
+      setBgColor(initialBgColor.replace('#', ''));
+    }
+  }, [initialAvatarUrl, initialBgColor, isOpen]);
 
   if (!isOpen) return null;
 
-  const currentAvatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&top=${hair}&hairColor=${hairColor}&accessories=${accessory}&clothing=${clothing}&backgroundColor=${bgColor}&skinColor=edb98a,f8d25c,fd9841`;
-
-  const randomize = () => {
-    setSeed(Math.random().toString(36).substring(7));
-    setHair(HAIR_STYLES[Math.floor(Math.random() * HAIR_STYLES.length)]);
-    setHairColor(HAIR_COLORS[Math.floor(Math.random() * HAIR_COLORS.length)]);
-    setAccessory(ACCESSORIES[Math.floor(Math.random() * ACCESSORIES.length)]);
-    setClothing(CLOTHING[Math.floor(Math.random() * CLOTHING.length)]);
-    setBgColor(BACKGROUND_COLORS[Math.floor(Math.random() * BACKGROUND_COLORS.length)]);
+  // Helper to safely build the API URL and avoid broken images
+  const buildAvatarUrl = (options: { seedStr: string, top?: string, beard?: string, acc?: string, cloth?: string, bg?: string, hideBody?: boolean }) => {
+    let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${options.seedStr}&skinColor=edb98a`;
+    if (options.bg && options.bg !== 'transparent') url += `&backgroundColor=${options.bg}`;
+    if (options.top) url += `&top=${options.top}`;
+    if (options.beard && options.beard !== 'none') url += `&facialHair=${options.beard}`;
+    if (options.cloth) url += `&clothing=${options.cloth}`;
+    if (options.acc && options.acc !== 'none') url += `&accessories=${options.acc}`;
+    url += `&hairColor=${hairColor}`;
+    return url;
   };
+
+  const currentAvatarUrl = buildAvatarUrl({ 
+    seedStr: seed, 
+    top: hair, 
+    beard: beard, 
+    acc: accessory, 
+    cloth: clothing, 
+    bg: 'transparent' 
+  });
+
+  const tabs = [
+    { id: 'hair', icon: User, label: 'Hair' },
+    { id: 'beard', icon: Smile, label: 'Beard' },
+    { id: 'hairColor', icon: Paintbrush, label: 'Color' },
+    { id: 'accessories', icon: Glasses, label: 'Glasses' },
+    { id: 'clothing', icon: Shirt, label: 'Clothing' },
+    { id: 'background', icon: ImageIcon, label: 'Background' },
+  ] as const;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        />
-        
+      <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
         <motion.div 
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-md bg-white dark:bg-[#151515] rounded-[32px] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+          className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md bg-white sm:rounded-[32px] overflow-hidden shadow-2xl flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-[#EAEAEA] dark:border-white/10">
-            <h2 className="text-xl font-black text-[#101B3D] dark:text-[#F8FAFC]">Create Avatar</h2>
+          <div className="absolute top-0 inset-x-0 z-10 flex items-center justify-between p-4">
             <button 
               onClick={onClose}
-              className="p-2 bg-[#FAFAFA] dark:bg-[#1A1A1A] text-[#8C8C8C] hover:text-[#101B3D] dark:hover:text-[#F8FAFC] rounded-full transition"
+              className="p-2 bg-black/10 hover:bg-black/20 text-[#101B3D] rounded-full backdrop-blur-md transition"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6" />
+            </button>
+            <button 
+              onClick={() => onSave(currentAvatarUrl, `#${bgColor}`)}
+              className="px-4 py-2 bg-[#55C990] hover:bg-[#46A778] text-white text-sm font-black rounded-full transition shadow-lg active:scale-95 flex items-center gap-1"
+            >
+              <Check className="w-4 h-4" /> Save
             </button>
           </div>
 
-          {/* Avatar Preview */}
-          <div className="bg-[#FAFAFA] dark:bg-[#101010] p-8 flex justify-center items-center relative">
-            <button 
-              onClick={randomize}
-              className="absolute top-4 right-4 p-2 bg-white dark:bg-[#1A1A1A] rounded-full shadow-md text-[#3478E5] hover:rotate-180 transition-all duration-500"
-              title="Randomize"
-            >
-              <RefreshCw className="w-5 h-5" />
-            </button>
-            
-            <div className="w-40 h-40 rounded-full shadow-xl overflow-hidden bg-white">
-              <img src={currentAvatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+          {/* Main Avatar Preview Section */}
+          <div 
+            className="h-[45vh] sm:h-72 w-full flex justify-center items-end transition-colors duration-300 relative pt-12"
+            style={{ backgroundColor: `#${bgColor}` }}
+          >
+            <div className="w-56 h-56 sm:w-64 sm:h-64 translate-y-4">
+              <img 
+                src={currentAvatarUrl} 
+                alt="Avatar" 
+                className="w-full h-full object-contain drop-shadow-xl" 
+              />
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+          {/* Tab Bar - Scrollable horizontally if needed */}
+          <div className="flex items-center px-2 bg-white border-b border-[#EAEAEA] shrink-0 overflow-x-auto hide-scrollbar">
+            {tabs.map(tab => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex-1 min-w-[60px] py-4 flex flex-col items-center justify-center border-b-2 transition-colors ${
+                    isActive 
+                      ? 'border-[#3478E5] text-[#3478E5]' 
+                      : 'border-transparent text-[#8C8C8C] hover:text-[#101B3D]'
+                  }`}
+                >
+                  <Icon className="w-6 h-6" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Options Grid Area */}
+          <div className="flex-1 overflow-y-auto bg-[#FAFAFA] p-6 custom-scrollbar">
             
-            <div className="space-y-6">
-              {/* Background Color */}
-              <div>
-                <label className="text-sm font-bold text-[#101B3D] dark:text-[#F8FAFC] mb-3 block">Background Color</label>
-                <div className="flex flex-wrap gap-3">
+            {activeTab === 'background' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                <h3 className="text-[#101B3D] font-bold text-lg">Background Color</h3>
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-4">
                   {BACKGROUND_COLORS.map(color => (
                     <button
                       key={color}
                       onClick={() => setBgColor(color)}
-                      className={`w-10 h-10 rounded-xl transition-all ${bgColor === color ? 'ring-2 ring-offset-2 ring-[#3478E5] scale-110' : 'hover:scale-105'}`}
+                      className={`aspect-square rounded-2xl transition-all border-4 ${bgColor === color ? 'border-[#3478E5] scale-105 shadow-md' : 'border-[#EAEAEA] hover:border-[#D0D0D0]'}`}
                       style={{ backgroundColor: `#${color}` }}
                     />
                   ))}
                 </div>
               </div>
+            )}
 
-              {/* Hair Style */}
-              <div>
-                <label className="text-sm font-bold text-[#101B3D] dark:text-[#F8FAFC] mb-3 block">Hair & Headwear</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {HAIR_STYLES.map(style => (
-                    <button
-                      key={style}
-                      onClick={() => setHair(style)}
-                      className={`p-2 rounded-xl text-[10px] font-bold transition-all border ${
-                        hair === style 
-                          ? 'bg-[#EEF4FF] dark:bg-[#3478E5]/20 border-[#3478E5] text-[#3478E5] dark:text-[#60A5FA]' 
-                          : 'bg-[#FAFAFA] dark:bg-[#1A1A1A] border-[#EAEAEA] dark:border-white/10 text-[#8C8C8C] hover:border-[#101B3D] dark:hover:border-white/30'
-                      }`}
-                    >
-                      {style.replace(/([A-Z])/g, ' $1').trim().substring(0, 8)}..
-                    </button>
-                  ))}
+            {activeTab === 'hair' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                <h3 className="text-[#101B3D] font-bold text-lg">Hair Styles ({HAIR_STYLES.length})</h3>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {HAIR_STYLES.map(style => {
+                    const iconUrl = buildAvatarUrl({ seedStr: seed, top: style, beard: beard, acc: 'none', cloth: 'shirtCrewNeck' });
+                    return (
+                      <button
+                        key={style}
+                        onClick={() => setHair(style)}
+                        className={`aspect-square rounded-2xl p-2 flex items-center justify-center transition-all border-2 bg-white ${
+                          hair === style 
+                            ? 'bg-[#EEF4FF] border-[#3478E5] shadow-sm' 
+                            : 'border-[#EAEAEA] hover:border-[#D0D0D0]'
+                        }`}
+                      >
+                        <img src={iconUrl} alt={style} className="w-full h-full object-contain" />
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
+            )}
 
-              {/* Hair Color */}
-              <div>
-                <label className="text-sm font-bold text-[#101B3D] dark:text-[#F8FAFC] mb-3 block">Hair Color</label>
-                <div className="flex flex-wrap gap-3">
+            {activeTab === 'beard' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                <h3 className="text-[#101B3D] font-bold text-lg">Facial Hair ({BEARD_STYLES.length})</h3>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {BEARD_STYLES.map(style => {
+                    const iconUrl = buildAvatarUrl({ seedStr: seed, top: hair, beard: style, acc: 'none', cloth: 'shirtCrewNeck' });
+                    return (
+                      <button
+                        key={style}
+                        onClick={() => setBeard(style)}
+                        className={`aspect-square rounded-2xl p-2 flex items-center justify-center transition-all border-2 bg-white ${
+                          beard === style 
+                            ? 'bg-[#EEF4FF] border-[#3478E5] shadow-sm' 
+                            : 'border-[#EAEAEA] hover:border-[#D0D0D0]'
+                        }`}
+                      >
+                        {style === 'none' ? (
+                          <span className="text-xs font-bold text-[#8C8C8C]">None</span>
+                        ) : (
+                          <img src={iconUrl} alt={style} className="w-full h-full object-contain" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'hairColor' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                <h3 className="text-[#101B3D] font-bold text-lg">Hair Color</h3>
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-4">
                   {HAIR_COLORS.map(color => (
                     <button
                       key={color}
                       onClick={() => setHairColor(color)}
-                      className={`w-8 h-8 rounded-full transition-all ${hairColor === color ? 'ring-2 ring-offset-2 ring-[#3478E5] scale-110' : 'hover:scale-105'}`}
+                      className={`aspect-square rounded-full transition-all border-4 ${hairColor === color ? 'border-[#3478E5] scale-105 shadow-md' : 'border-[#EAEAEA] hover:border-[#D0D0D0]'}`}
                       style={{ backgroundColor: `#${color}` }}
                     >
-                      {hairColor === color && <Check className="w-4 h-4 mx-auto text-white" />}
+                      {hairColor === color && <Check className="w-6 h-6 mx-auto text-white drop-shadow-md" />}
                     </button>
                   ))}
                 </div>
               </div>
+            )}
 
-              {/* Accessories */}
-              <div>
-                <label className="text-sm font-bold text-[#101B3D] dark:text-[#F8FAFC] mb-3 block">Accessories</label>
-                <div className="flex flex-wrap gap-2">
-                  {ACCESSORIES.map(acc => (
-                    <button
-                      key={acc}
-                      onClick={() => setAccessory(acc)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                        accessory === acc 
-                          ? 'bg-[#EEF4FF] dark:bg-[#3478E5]/20 border-[#3478E5] text-[#3478E5] dark:text-[#60A5FA]' 
-                          : 'bg-[#FAFAFA] dark:bg-[#1A1A1A] border-[#EAEAEA] dark:border-white/10 text-[#8C8C8C]'
-                      }`}
-                    >
-                      {acc}
-                    </button>
-                  ))}
+            {activeTab === 'accessories' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                <h3 className="text-[#101B3D] font-bold text-lg">Glasses & Specs ({ACCESSORIES.length})</h3>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {ACCESSORIES.map(acc => {
+                    const iconUrl = buildAvatarUrl({ seedStr: seed, top: hair, beard: beard, acc: acc, cloth: 'shirtCrewNeck' });
+                    return (
+                      <button
+                        key={acc}
+                        onClick={() => setAccessory(acc)}
+                        className={`aspect-square rounded-2xl p-2 flex items-center justify-center transition-all border-2 bg-white ${
+                          accessory === acc 
+                            ? 'bg-[#EEF4FF] border-[#3478E5] shadow-sm' 
+                            : 'border-[#EAEAEA] hover:border-[#D0D0D0]'
+                        }`}
+                      >
+                        {acc === 'none' ? (
+                          <span className="text-xs font-bold text-[#8C8C8C]">None</span>
+                        ) : (
+                          <img src={iconUrl} alt={acc} className="w-full h-full object-contain" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
-              
-            </div>
-          </div>
+            )}
 
-          {/* Footer Action */}
-          <div className="p-6 border-t border-[#EAEAEA] dark:border-white/10 bg-white dark:bg-[#151515]">
-            <button
-              onClick={() => onSave(currentAvatarUrl, `#${bgColor}`)}
-              className="w-full py-4 bg-[#101B3D] dark:bg-[#3478E5] hover:bg-[#1A2A5E] dark:hover:bg-[#2563EB] text-white rounded-xl font-bold transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-2"
-            >
-              <Check className="w-5 h-5" />
-              <span>Save Avatar</span>
-            </button>
+            {activeTab === 'clothing' && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                <h3 className="text-[#101B3D] font-bold text-lg">Clothing ({CLOTHING.length})</h3>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {CLOTHING.map(cloth => {
+                    const iconUrl = buildAvatarUrl({ seedStr: seed, top: 'shortFlat', beard: 'none', acc: 'none', cloth: cloth });
+                    return (
+                      <button
+                        key={cloth}
+                        onClick={() => setClothing(cloth)}
+                        className={`aspect-square rounded-2xl p-2 flex items-center justify-center transition-all border-2 bg-white ${
+                          clothing === cloth 
+                            ? 'bg-[#EEF4FF] border-[#3478E5] shadow-sm' 
+                            : 'border-[#EAEAEA] hover:border-[#D0D0D0]'
+                        }`}
+                      >
+                        <img src={iconUrl} alt={cloth} className="w-full h-full object-contain" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            
           </div>
         </motion.div>
       </div>

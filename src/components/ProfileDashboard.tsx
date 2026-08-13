@@ -612,6 +612,26 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
         )}
       </AnimatePresence>
 
+      <AvatarBuilderModal
+        isOpen={isAvatarBuilderOpen}
+        onClose={() => setIsAvatarBuilderOpen(false)}
+        onSave={(url, bg) => {
+          setSelectedAvatar(url);
+          setSelectedBgColor(bg);
+          setIsAvatarBuilderOpen(false);
+          // Auto-save the profile when avatar is updated
+          if (user) {
+            onUpdateUser({
+              ...user,
+              avatar: url,
+              customAvatarBg: bg
+            });
+          }
+        }}
+        initialAvatarUrl={selectedAvatar}
+        initialBgColor={selectedBgColor}
+      />
+
     </div>
   );
 };

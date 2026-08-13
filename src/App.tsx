@@ -175,10 +175,20 @@ export default function App() {
 
   const handleSession = async (session: any, event?: string) => {
     if (session?.user) {
+      
+      // Fetch profile first to get persistent avatar
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+      const defaultAvatar = 'https://api.dicebear.com/9.x/avataaars/svg?seed=Alex&skinColor=edb98a&top=shortFlat&hairColor=2c1b18&clothing=blazerAndShirt';
+
       const profile: UserProfile = {
-        name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Learner',
+        name: existingProfile?.full_name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Learner',
         email: session.user.email || '',
-        avatar: session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+        avatar: existingProfile?.avatar_url || session.user.user_metadata?.avatar_url || defaultAvatar,
         isLoggedIn: true,
       };
       setUser(profile);
@@ -374,9 +384,28 @@ export default function App() {
     setActiveTab('practice');
   };
 
-  const handleUpdateUser = (updatedProfile: UserProfile) => {
-    // To fully support updating name/avatar, we would need to update supabase.auth.updateUser()
+  const handleUpdateUser = async (updatedProfile: UserProfile) => {
     setUser(updatedProfile);
+    
+    // Save profile details to profiles table
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      await supabase.from('profiles').upsert({
+        id: session.user.id,
+        email: updatedProfile.email,
+        full_name: updatedProfile.name,
+        avatar_url: updatedProfile.avatar,
+        updated_at: new Date().toISOString()
+      });
+      
+      // Update auth metadata
+      await supabase.auth.updateUser({
+        data: {
+          full_name: updatedProfile.name,
+          avatar_url: updatedProfile.avatar
+        }
+      });
+    }
   };
 
   const handleSignOut = () => {
