@@ -108,8 +108,9 @@ const EMPTY_PROGRESS: UserProgress = {
 const getPathFromTab = (tab: NavTab): string => {
   switch (tab) {
     case 'home': return '/';
-    case 'topics': return '/learn';
     case 'practice': return '/practice';
+    case 'quiz': return '/quiz';
+    case 'concepts': return '/concepts';
     case 'profile': return '/profile';
     case 'pricing': return '/pricing';
     case 'privacy': return '/privacy';
@@ -120,8 +121,9 @@ const getPathFromTab = (tab: NavTab): string => {
 };
 
 const getTabFromPath = (path: string): NavTab => {
-  if (path.startsWith('/learn')) return 'topics';
   if (path.startsWith('/practice')) return 'practice';
+  if (path.startsWith('/quiz')) return 'quiz';
+  if (path.startsWith('/concepts')) return 'concepts';
   if (path.startsWith('/profile')) return 'profile';
   if (path.startsWith('/pricing')) return 'pricing';
   if (path.startsWith('/privacy')) return 'privacy';

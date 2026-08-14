@@ -60,13 +60,13 @@ export const Footer: React.FC<FooterProps> = ({ user }) => {
               <a href="/" onClick={(e) => handleProtectedLink(e, '/')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 10 Core Topics
               </a>
-              <a href="/practice" onClick={(e) => handleProtectedLink(e, '/practice')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              <a href="/quiz" onClick={(e) => handleProtectedLink(e, '/quiz')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Interactive Quizzes
               </a>
               <a href="/practice" onClick={(e) => handleProtectedLink(e, '/practice')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Code Block Exercises
               </a>
-              <a href="/learn" onClick={(e) => handleProtectedLink(e, '/learn')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              <a href="/concepts" onClick={(e) => handleProtectedLink(e, '/concepts')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Concept Hub
               </a>
             </nav>
