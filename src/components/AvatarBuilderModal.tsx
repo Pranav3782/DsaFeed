@@ -10,11 +10,12 @@ interface AvatarBuilderModalProps {
   initialBgColor?: string;
 }
 
-// Exactly 10 hair styles as requested
+// Diverse hairstyles for both men and women
 const HAIR_STYLES = [
   'shortFlat', 'shortRound', 'shortWaved', 'theCaesar',
-  'straight01', 'curly', 'bob', 'bun',
-  'dreads', 'fro'
+  'straight01', 'straight02', 'straightAndStrand', 'curly', 
+  'bob', 'bun', 'dreads', 'dreads01', 'dreads02',
+  'frizzle', 'shaggy', 'shaggyMullet', 'miaWallace', 'longButNotTooLong'
 ];
 
 // 6 beard styles (including none)
@@ -24,7 +25,7 @@ const HAIR_COLORS = ['2c1b18', '4a3123', 'a55728', 'b58143', '724133', '282828',
 
 const ACCESSORIES = ['none', 'kurt', 'prescription01', 'prescription02', 'round', 'sunglasses', 'wayfarers', 'eyepatch'];
 
-const CLOTHING = ['blazerAndShirt', 'blazerAndSweater', 'collarAndSweater', 'graphicShirt', 'hoodie', 'overall', 'shirtCrewNeck', 'shirtVNeck'];
+const CLOTHING = ['blazerAndShirt', 'blazerAndSweater', 'collarAndSweater', 'graphicShirt', 'hoodie', 'overall', 'shirtCrewNeck', 'shirtVNeck', 'shirtScoopNeck'];
 
 const BACKGROUND_COLORS = ['b6e3f4', 'c0aede', 'd1d4f9', 'ffdfbf', 'ffd5dc', 'd4f7d4', 'f9f9f9', '1A1A1A', '3478E5', '55C990'];
 
@@ -70,7 +71,7 @@ export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
 
   // Helper to safely build the API URL and avoid broken images
   const buildAvatarUrl = (options: { seedStr: string, top?: string, beard?: string, acc?: string, cloth?: string, bg?: string, hideBody?: boolean }) => {
-    let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${options.seedStr}&skinColor=edb98a`;
+    let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${options.seedStr}&skinColor=edb98a&mouth=smile&eyes=default&eyebrows=defaultNatural`;
     if (options.bg && options.bg !== 'transparent') url += `&backgroundColor=${options.bg}`;
     if (options.top) url += `&top=${options.top}`;
     if (options.beard && options.beard !== 'none') url += `&facialHair=${options.beard}`;

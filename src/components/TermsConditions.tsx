@@ -74,6 +74,9 @@ export const TermsConditions: React.FC<TermsConditionsProps> = ({ onBack }) => {
 
         {/* Section 4 */}
         <section className="space-y-4 border-t border-[#EAEAEA] pt-10">
+          <p className="text-base text-[#111111]/80 leading-relaxed font-medium text-center mb-4">
+            If you have any questions about these Terms, please contact us at <a href="mailto:voiein7@gmail.com" className="text-[#3478E5] font-bold hover:underline">voiein7@gmail.com</a>.
+          </p>
           <p className="text-sm text-[#8C8C8C] leading-relaxed font-bold text-center">
             Last updated: August 11, 2026. <br />
             We may update these terms occasionally. We'll let you know about significant changes by placing a notice on our site.

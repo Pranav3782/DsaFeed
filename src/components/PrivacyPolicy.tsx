@@ -89,7 +89,7 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
             <h2 className="text-2xl font-black text-[#101B3D]">Questions?</h2>
           </div>
           <p className="text-base text-[#111111]/80 leading-relaxed font-medium">
-            If you have any questions about how we handle your privacy, please feel free to reach out to us at <a href="mailto:privacy@dsafeed.com" className="text-[#3478E5] font-bold hover:underline">privacy@dsafeed.com</a>. We're here to help!
+            If you have any questions about how we handle your privacy, please feel free to reach out to us at <a href="mailto:voiein7@gmail.com" className="text-[#3478E5] font-bold hover:underline">voiein7@gmail.com</a>. We're here to help!
           </p>
         </section>
 

@@ -2,18 +2,26 @@ import React from 'react';
 import { Github, Twitter, MessageCircle } from 'lucide-react';
 import { NavTab } from '../types';
 
+import { Link, useNavigate } from 'react-router-dom';
+import { UserProfile } from '../types';
+
 interface FooterProps {
-  onNavigate?: (tab: NavTab) => void;
+  user?: UserProfile | null;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const handleTabClick = (tab: NavTab) => {
-    if (onNavigate) {
-      onNavigate(tab);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+export const Footer: React.FC<FooterProps> = ({ user }) => {
+  const navigate = useNavigate();
+
+  const handleProtectedLink = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    if (!user?.isLoggedIn) {
+      navigate('/signin');
+      window.scrollTo({top: 0});
+    } else {
+      navigate(path);
+      window.scrollTo({top: 0});
     }
   };
-
   return (
     <footer className="bg-[#101B3D] text-white pt-16 pb-8 border-t border-white/10 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,36 +57,51 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               Learn & Practice
             </h4>
             <nav className="flex flex-col gap-4">
-              <button onClick={() => handleTabClick('home')} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              <a href="/" onClick={(e) => handleProtectedLink(e, '/')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 10 Core Topics
-              </button>
-              <button onClick={() => handleTabClick('quiz')} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              </a>
+              <a href="/practice" onClick={(e) => handleProtectedLink(e, '/practice')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Interactive Quizzes
-              </button>
-              <button onClick={() => handleTabClick('practice')} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              </a>
+              <a href="/practice" onClick={(e) => handleProtectedLink(e, '/practice')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Code Block Exercises
-              </button>
-              <button onClick={() => handleTabClick('concepts')} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              </a>
+              <a href="/learn" onClick={(e) => handleProtectedLink(e, '/learn')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Concept Hub
-              </button>
+              </a>
+            </nav>
+          </div>
+
+          {/* Legal Column */}
+          <div className="md:col-span-2 space-y-5">
+            <h4 className="text-[11px] font-black tracking-wider text-[#8B5CF6] uppercase">
+              Legal
+            </h4>
+            <nav className="flex flex-col gap-4">
+              <Link to="/privacy" onClick={() => window.scrollTo({top:0})} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+                Privacy Policy
+              </Link>
+              <Link to="/terms" onClick={() => window.scrollTo({top:0})} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+                Terms & Conditions
+              </Link>
             </nav>
           </div>
 
           {/* Your Progression Column */}
-          <div className="md:col-span-4 space-y-5">
+          <div className="md:col-span-2 space-y-5">
             <h4 className="text-[11px] font-black tracking-wider text-[#55C990] uppercase">
               Your Progression
             </h4>
             <nav className="flex flex-col gap-4">
-              <button onClick={() => handleTabClick('profile')} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              <a href="/profile" onClick={(e) => handleProtectedLink(e, '/profile')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Streak & XP Tracker
-              </button>
-              <button onClick={() => handleTabClick('profile')} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              </a>
+              <a href="/profile" onClick={(e) => handleProtectedLink(e, '/profile')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Unlocked Badges
-              </button>
-              <button onClick={() => handleTabClick('home')} className="text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
+              </a>
+              <a href="/" onClick={(e) => handleProtectedLink(e, '/')} className="cursor-pointer text-[#AAB2C5] hover:text-white text-sm font-medium text-left transition-colors">
                 Beginner Roadmaps
-              </button>
+              </a>
             </nav>
           </div>
 
@@ -88,10 +111,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-[#AAB2C5] text-center md:text-left">
           <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-6">
             <p>© 2026 DSAfeed. Built with simplicity for learners worldwide.</p>
-            <div className="flex items-center gap-4 mt-2 lg:mt-0">
-              <button onClick={() => handleTabClick('privacy')} className="hover:text-white transition-colors">Privacy Policy</button>
-              <button onClick={() => handleTabClick('terms')} className="hover:text-white transition-colors">Terms & Conditions</button>
-            </div>
           </div>
           <p className="mt-2 md:mt-0">
             Crafted with <span className="text-[#F26B5B]">❤️</span> for smooth learning

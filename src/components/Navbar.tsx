@@ -47,7 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#FFFDF9]/90 dark:bg-[#0A0A0A]/90 backdrop-blur-md border-b border-[#EAEAEA] dark:border-white/10">
+    <header className="sticky top-0 z-40 w-full bg-[#FFFDF9]/90  backdrop-blur-md border-b border-[#EAEAEA] ">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
@@ -122,7 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setActiveTab('feedback')}
                 title="Give Feedback or Suggestions"
-                className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] dark:hover:bg-[#3478E5]/10 rounded-full transition ml-1"
+                className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF]  rounded-full transition ml-1"
               >
                 <MessageSquareHeart className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
               </button>

@@ -3,6 +3,7 @@ import { CodeBlockExercise, CodeBlock } from '../types';
 import { Code2, Bot, Check, RotateCcw, Lightbulb, X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
+import { useNavigate } from 'react-router-dom';
 
 interface CodeOrderingExerciseProps {
   exercises: CodeBlockExercise[];
@@ -22,6 +23,8 @@ export const CodeOrderingExercise: React.FC<CodeOrderingExerciseProps> = ({
   const [bankBlocks, setBankBlocks] = useState<CodeBlock[]>([]);
   const [showHint, setShowHint] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'incorrect'>('idle');
+  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
+  const navigate = useNavigate();
 
   // Shuffle blocks and initialize empty slots
   useEffect(() => {
@@ -106,11 +109,38 @@ export const CodeOrderingExercise: React.FC<CodeOrderingExerciseProps> = ({
   const progressPercentage = ((currentIdx + 1) / exercises.length) * 100;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-24">
+    <div className="max-w-3xl mx-auto space-y-6 pb-24 relative">
+      
+      {/* Quit Confirmation Modal */}
+      {showQuitConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101B3D]/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <h3 className="text-xl font-black text-[#101B3D] mb-2">Quit Coding?</h3>
+            <p className="text-sm text-[#8C8C8C] font-medium mb-6">Are you sure you want to stop practicing? Your current progress will be lost.</p>
+            <div className="flex flex-col gap-3 justify-center">
+              <button 
+                onClick={() => navigate('/')}
+                className="w-full px-6 py-2.5 bg-[#F26B5B] text-white font-bold rounded-xl shadow-md active:scale-95 transition"
+              >
+                Yes, Quit
+              </button>
+              <button 
+                onClick={() => setShowQuitConfirm(false)}
+                className="w-full px-6 py-2.5 bg-[#F5F5F0] text-[#101B3D] font-bold rounded-xl active:scale-95 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Top Header / Progress Bar */}
       <div className="flex items-center gap-4 px-2">
-        <button className="text-[#8C8C8C] hover:text-[#101B3D] transition p-2">
+        <button 
+          onClick={() => setShowQuitConfirm(true)}
+          className="text-[#8C8C8C] hover:text-[#101B3D] transition p-2"
+        >
           <X className="w-6 h-6" />
         </button>
         <div className="flex-1 h-3.5 bg-[#EAEAEA] rounded-full overflow-hidden">

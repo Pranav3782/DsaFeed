@@ -23,11 +23,15 @@ import { LogoutConfirmModal } from './components/LogoutConfirmModal';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsConditions } from './components/TermsConditions';
 import { StreakModal } from './components/StreakModal';
-import { LoadingSpinner } from './components/LoadingSpinner';
+import { InteractiveLoader } from './components/InteractiveLoader';
+import { InitialLoader } from './components/InitialLoader';
+
 import { AchievementPopup, AchievementData } from './components/AchievementPopup';
 import { motion, AnimatePresence } from 'motion/react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { supabase } from './lib/supabase';
+import { playUISound } from './utils/audio';
 
 import { DSA_TOPICS, QUIZ_SETS, CODE_EXERCISES, USER_BADGES } from './data/dsaData';
 import { DsaTopic, QuizSet, UserProgress, DsaCategory, UserProfile, NavTab, DailyTask } from './types';
@@ -101,30 +105,64 @@ const EMPTY_PROGRESS: UserProgress = {
   lastTaskDate: new Date().toISOString().split('T')[0]
 };
 
+const getPathFromTab = (tab: NavTab): string => {
+  switch (tab) {
+    case 'home': return '/';
+    case 'topics': return '/learn';
+    case 'practice': return '/practice';
+    case 'profile': return '/profile';
+    case 'pricing': return '/pricing';
+    case 'privacy': return '/privacy';
+    case 'terms': return '/terms';
+    case 'feedback': return '/feedback';
+    default: return '/';
+  }
+};
+
+const getTabFromPath = (path: string): NavTab => {
+  if (path.startsWith('/learn')) return 'topics';
+  if (path.startsWith('/practice')) return 'practice';
+  if (path.startsWith('/profile')) return 'profile';
+  if (path.startsWith('/pricing')) return 'pricing';
+  if (path.startsWith('/privacy')) return 'privacy';
+  if (path.startsWith('/terms')) return 'terms';
+  if (path.startsWith('/feedback')) return 'feedback';
+  return 'home';
+};
 
 export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   // Navigation State
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const activeTab = getTabFromPath(location.pathname);
   const [previousTab, setPreviousTab] = useState<NavTab>('home');
   const [practiceView, setPracticeView] = useState<'practice' | 'code'>('practice');
   const [conceptView, setConceptView] = useState<'concepts' | 'flashcards'>('concepts');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
   const [isTabLoading, setIsTabLoading] = useState(false);
+  const [pendingTab, setPendingTab] = useState<NavTab | null>(null);
+  
   const [isModalLoading, setIsModalLoading] = useState(false);
+  const [pendingTopic, setPendingTopic] = useState<DsaTopic | null>(null);
 
   const handleTabChange = (tab: NavTab) => {
     if (tab === activeTab) return;
-    
-    // If navigating to feedback, store where we came from
     if (tab === 'feedback') {
       setPreviousTab(activeTab);
     }
     
+    setPendingTab(tab);
     setIsTabLoading(true);
-    setTimeout(() => {
-      setActiveTab(tab);
-      setIsTabLoading(false);
-    }, 1000);
+  };
+
+  const handleTabLoadingComplete = () => {
+    if (pendingTab) {
+      navigate(getPathFromTab(pendingTab));
+      setPendingTab(null);
+    }
+    setIsTabLoading(false);
   };
 
   // Auth State
@@ -156,12 +194,35 @@ export default function App() {
   const [userProgress, setUserProgress] = useState<UserProgress>(DEMO_PROGRESS);
   const [isSyncing, setIsSyncing] = useState(false);
 
+  // Global UI Sound Effect for clicks and interactions
+  useEffect(() => {
+    const handleInteraction = (e: Event) => {
+      const target = e.target as HTMLElement;
+      // Trigger sound on interactive elements
+      if (
+        target.closest('button') || 
+        target.closest('a') || 
+        target.closest('[role="button"]') ||
+        target.closest('.cursor-pointer') ||
+        target.closest('input[type="submit"]')
+      ) {
+        playUISound();
+      }
+    };
+    
+    // Listen for both clicks and touches (swipes/taps)
+    document.addEventListener('click', handleInteraction, { capture: true });
+    return () => {
+      document.removeEventListener('click', handleInteraction, { capture: true });
+    };
+  }, []);
+
   // Initialize Supabase Auth & Fetch Progress
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       handleSession(session).finally(() => {
-        setTimeout(() => setIsInitialLoading(false), 1000);
+        setAuthReady(true);
       });
     });
 
@@ -349,12 +410,17 @@ export default function App() {
   };
 
   const handleSelectTopic = (topic: DsaTopic) => {
+    setPendingTopic(topic);
     setIsModalLoading(true);
-    setTimeout(() => {
-      setSelectedTopic(topic);
+  };
+
+  const handleTopicLoadingComplete = () => {
+    if (pendingTopic) {
+      setSelectedTopic(pendingTopic);
       markTaskProgress('read');
-      setIsModalLoading(false);
-    }, 1000);
+      setPendingTopic(null);
+    }
+    setIsModalLoading(false);
   };
 
   const handleRefillStreak = () => {
@@ -367,7 +433,7 @@ export default function App() {
 
     const newProgress = {
       ...userProgress,
-      xp: userProgress.xp - 500,
+      xp: userProgress.xp - 200,
       lastActiveDate: yesterdayStr
     };
     
@@ -528,12 +594,46 @@ export default function App() {
     return topic.difficulty === difficultyFilter;
   });
 
-  if (isInitialLoading || isTabLoading) {
-    return <LoadingSpinner fullScreen />;
+  if (isInitialLoading) {
+    return (
+      <InitialLoader 
+        authReady={authReady} 
+        onComplete={() => setIsInitialLoading(false)} 
+      />
+    );
+  }
+
+  if (isTabLoading) {
+    return <InteractiveLoader onComplete={handleTabLoadingComplete} />;
+  }
+
+  // If topic is loading, we render it ABOVE the rest of the app or replace the whole screen?
+  // User requested "while loading the page show any random logo". 
+  // For topics, it should replace the screen until released.
+  if (isModalLoading && pendingTopic) {
+    return <InteractiveLoader topicId={pendingTopic.id} onComplete={handleTopicLoadingComplete} />;
+  }
+
+  // Handle Auth Pages
+  if (location.pathname === '/signin' || location.pathname === '/signup') {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#FFFDF9]">
+        <AuthModal 
+          isOpen={true} 
+          onClose={() => navigate('/')} 
+          onLoginSuccess={(isFirst) => {
+            setIsFirstLogin(isFirst);
+            if (isFirst) setShowOnboarding(true);
+            navigate('/');
+          }}
+          initialMode={location.pathname === '/signup' ? 'signup' : 'login'} 
+        />
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FFFDF9] dark:bg-[#0A0A0A] text-[#111111] dark:text-[#F8FAFC] antialiased relative transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-[#FFFDF9]  text-[#111111]  antialiased relative transition-colors duration-200">
       
       {/* Top Navbar */}
       {user?.isLoggedIn && activeTab !== 'privacy' && activeTab !== 'terms' && (
@@ -543,8 +643,7 @@ export default function App() {
           userProgress={userProgress}
           user={user}
           onOpenAuth={() => {
-            setAuthModalMode('login');
-            setIsAuthModalOpen(true);
+            navigate('/signin');
           }}
           onSignOut={handleSignOut}
           onOpenStreakModal={() => setIsStreakModalOpen(true)}
@@ -567,17 +666,10 @@ export default function App() {
                 <div className="space-y-12">
                 
                 <Hero
-                  onStartLearning={handleStartLearning}
-                  onTakeQuiz={() => {
-                    if (!user?.isLoggedIn) {
-                      setAuthModalMode('signup');
-                      setIsAuthModalOpen(true);
-                    } else {
-                      handleTabChange('quiz');
-                    }
-                  }}
+                  onStartLearning={() => handleTabChange('topics')}
                   onAddXp={handleAddXp}
                 />
+
 
             {/* Interactive Demo */}
             <InteractiveDemo />
@@ -597,13 +689,13 @@ export default function App() {
             
             {/* Segmented Control */}
             <div className="flex justify-center mb-8">
-              <div className="bg-white dark:bg-[#151515] border border-[#EAEAEA] dark:border-white/10 p-1 rounded-2xl shadow-sm inline-flex">
+              <div className="bg-white  border border-[#EAEAEA]  p-1 rounded-2xl shadow-sm inline-flex">
                 <button
                   onClick={() => setPracticeView('practice')}
                   className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
                     practiceView === 'practice' 
-                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
-                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                      ? 'bg-[#101B3D]  text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] '
                   }`}
                 >
                   <BookOpen className="w-4 h-4 inline-block mr-2" />
@@ -613,8 +705,8 @@ export default function App() {
                   onClick={() => setPracticeView('code')}
                   className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
                     practiceView === 'code' 
-                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
-                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                      ? 'bg-[#101B3D]  text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] '
                   }`}
                 >
                   <Code2 className="w-4 h-4 inline-block mr-2" />
@@ -635,20 +727,20 @@ export default function App() {
                   <section id="topics-grid" className="space-y-6 scroll-mt-24">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF] dark:bg-[#3478E5]/10 border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5] dark:text-[#60A5FA] mb-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF]  border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5]  mb-2">
                           <BookOpen className="w-3.5 h-3.5" />
                           <span>Curriculum Topics</span>
                         </div>
-                        <h2 className="text-3xl font-black text-[#101B3D] dark:text-[#F8FAFC]">
+                        <h2 className="text-3xl font-black text-[#101B3D] ">
                           Master 10 Core Data Structures
                         </h2>
-                        <p className="text-sm text-[#111111]/70 dark:text-gray-400 font-medium">
+                        <p className="text-sm text-[#111111]/70  font-medium">
                           Pick a topic to view simple analogies, code snippets, and Big-O complexity guides.
                         </p>
                       </div>
 
                       {/* Difficulty Filter Pills */}
-                      <div className="flex items-center gap-1.5 bg-white dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-white/10 p-1.5 rounded-2xl shadow-xs self-start sm:self-center">
+                      <div className="flex items-center gap-1.5 bg-white  border border-[#EAEAEA]  p-1.5 rounded-2xl shadow-xs self-start sm:self-center">
                         <Filter className="w-3.5 h-3.5 text-[#8C8C8C] ml-2 mr-1" />
                         {(['All', 'Beginner', 'Intermediate'] as const).map((diff) => (
                           <button
@@ -656,8 +748,8 @@ export default function App() {
                             onClick={() => setDifficultyFilter(diff)}
                             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                               difficultyFilter === diff
-                                ? 'bg-[#101B3D] dark:bg-[#3478E5] text-[#FFFDF9] shadow-xs'
-                                : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                                ? 'bg-[#101B3D]  text-[#FFFDF9] shadow-xs'
+                                : 'text-[#8C8C8C] hover:text-[#111111] '
                             }`}
                           >
                             {diff}
@@ -691,14 +783,14 @@ export default function App() {
                   className="space-y-6"
                 >
                   <div className="text-center max-w-xl mx-auto mb-8">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF] dark:bg-[#3478E5]/10 border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5] dark:text-[#60A5FA] mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF]  border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5]  mb-2">
                       <Code2 className="w-3.5 h-3.5" />
                       <span>Interactive Logic Game</span>
                     </div>
-                    <h2 className="text-3xl font-black text-[#101B3D] dark:text-[#F8FAFC]">
+                    <h2 className="text-3xl font-black text-[#101B3D] ">
                       Code Block Reordering
                     </h2>
-                    <p className="text-sm text-[#111111]/70 dark:text-gray-400 font-medium mt-1">
+                    <p className="text-sm text-[#111111]/70  font-medium mt-1">
                       Reconstruct the control flow of classic algorithm solutions by putting code blocks in order.
                     </p>
                   </div>
@@ -749,13 +841,13 @@ export default function App() {
           <div className="py-4 space-y-6 animate-in fade-in duration-200">
             {/* Segmented Control */}
             <div className="flex justify-center mb-8">
-              <div className="bg-white dark:bg-[#151515] border border-[#EAEAEA] dark:border-white/10 p-1 rounded-2xl shadow-sm inline-flex">
+              <div className="bg-white  border border-[#EAEAEA]  p-1 rounded-2xl shadow-sm inline-flex">
                 <button
                   onClick={() => setConceptView('concepts')}
                   className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
                     conceptView === 'concepts' 
-                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
-                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                      ? 'bg-[#101B3D]  text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] '
                   }`}
                 >
                   <Sparkles className="w-4 h-4 inline-block mr-2" />
@@ -765,8 +857,8 @@ export default function App() {
                   onClick={() => setConceptView('flashcards')}
                   className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
                     conceptView === 'flashcards' 
-                      ? 'bg-[#101B3D] dark:bg-[#3478E5] text-white shadow-md' 
-                      : 'text-[#8C8C8C] hover:text-[#111111] dark:hover:text-[#F8FAFC]'
+                      ? 'bg-[#101B3D]  text-white shadow-md' 
+                      : 'text-[#8C8C8C] hover:text-[#111111] '
                   }`}
                 >
                   <Layers className="w-4 h-4 inline-block mr-2" />
@@ -846,7 +938,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Footer - RENDERED ON HOME AND LEGAL PAGES */}
-      {['home', 'privacy', 'terms'].includes(activeTab) && <Footer onNavigate={(tab) => handleTabChange(tab)} />}
+      {['home', 'privacy', 'terms'].includes(activeTab) && <Footer user={user} />}
 
       {/* Floating Chatbot - RENDERED ON HOME PAGE */}
       {activeTab === 'home' && <Chatbot />}

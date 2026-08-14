@@ -4,7 +4,7 @@ import { ChevronDown, HelpCircle, Plus, Minus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const FaqSection: React.FC = () => {
-  const [openId, setOpenId] = useState<string | null>(FAQ_ITEMS[0].id);
+  const [openId, setOpenId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState<boolean>(false);
 
   const toggleItem = (id: string) => {

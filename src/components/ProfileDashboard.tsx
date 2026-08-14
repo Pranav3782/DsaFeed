@@ -6,7 +6,11 @@ import {
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { generateCardImage, downloadCardImage } from '../utils/cardGenerator';
+import { toggleUISound } from '../utils/audio';
 import { AvatarBuilderModal } from './AvatarBuilderModal';
+import { AlgorithmicAgenda } from './AlgorithmicAgenda';
+import { DsaProfileCard } from './DsaProfileCard';
 
 interface ProfileDashboardProps {
   user: UserProfile | null;
@@ -44,6 +48,7 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bioInput, setBioInput] = useState(user?.bio || 'Building problem-solving skills block by block with DSAfeed.');
   const [nameInput, setNameInput] = useState(user?.name || 'DSA Learner');
+  const [isMuted, setIsMuted] = useState(() => localStorage.getItem('dsafeed_muted') === 'true');
   const [showShareModal, setShowShareModal] = useState(false);
   const [copiedCard, setCopiedCard] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || PRESET_AVATARS[0]);
@@ -99,14 +104,14 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-200">
       
       {/* Profile Header Banner */}
-      <div className="bg-white dark:bg-[#151515] border border-[#EAEAEA] dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div className="bg-white  border border-[#EAEAEA]  rounded-3xl p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           
           <div className="flex items-center gap-5">
             {/* Avatar with Custom Background */}
             <div className="relative group flex flex-col items-center">
               <div 
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border-4 border-white dark:border-[#1A1A1A] transition-transform group-hover:scale-105 flex items-center justify-center overflow-hidden relative"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border-4 border-white  transition-transform group-hover:scale-105 flex items-center justify-center overflow-hidden relative"
                 style={{ backgroundColor: selectedBgColor }}
               >
                 {selectedAvatar ? (
@@ -129,7 +134,7 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
               </div>
               <button 
                 onClick={() => setIsAvatarBuilderOpen(true)}
-                className="mt-3 text-[10px] font-bold text-[#8C8C8C] hover:text-[#3478E5] dark:hover:text-[#60A5FA] uppercase tracking-wider bg-[#FAFAFA] dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-white/10 px-2 py-1 rounded-full transition-colors"
+                className="mt-3 text-[10px] font-bold text-[#8C8C8C] hover:text-[#3478E5]  uppercase tracking-wider bg-[#FAFAFA]  border border-[#EAEAEA]  px-2 py-1 rounded-full transition-colors"
               >
                 Edit Avatar
               </button>
@@ -138,17 +143,17 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
             {/* Name & Bio */}
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl sm:text-3xl font-black text-[#101B3D] dark:text-[#F8FAFC]">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#101B3D] ">
                   {user?.name || 'DSA Learner'}
                 </h2>
                 <span className="px-2.5 py-0.5 bg-[#EEF4FF] border border-[#3478E5]/30 text-[#3478E5] font-extrabold text-[11px] rounded-full">
                   Level {Math.floor(userProgress.xp / 100) + 1}
                 </span>
               </div>
-              <p className="text-xs text-[#8C8C8C] dark:text-gray-400 font-bold">
+              <p className="text-xs text-[#8C8C8C]  font-bold">
                 {user?.email || 'learner@dsafeed.com'}
               </p>
-              <p className="text-sm text-[#111111]/80 dark:text-gray-300 font-medium max-w-lg mt-1">
+              <p className="text-sm text-[#111111]/80  font-medium max-w-lg mt-1">
                 {user?.bio || 'Building problem-solving skills block by block with DSAfeed.'}
               </p>
             </div>
@@ -158,7 +163,7 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
           <div className="flex flex-wrap items-center gap-2.5 self-stretch sm:self-auto">
             <button
               onClick={() => setIsEditingBio(!isEditingBio)}
-              className="flex-1 sm:flex-initial px-4 py-2.5 bg-[#FFFDF9] dark:bg-[#1A1A1A] border border-[#EAEAEA] dark:border-white/10 hover:border-[#3478E5] dark:hover:border-[#60A5FA] text-[#101B3D] dark:text-[#F8FAFC] text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs"
+              className="flex-1 sm:flex-initial px-4 py-2.5 bg-[#FFFDF9]  border border-[#EAEAEA]  hover:border-[#3478E5]  text-[#101B3D]  text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs"
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span>Edit Profile</span>
@@ -170,6 +175,22 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
             >
               <Share2 className="w-3.5 h-3.5" />
               <span>DSAfeed Card</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const newMuted = !isMuted;
+                setIsMuted(newMuted);
+                toggleUISound(newMuted);
+              }}
+              className={`flex-1 sm:flex-initial px-4 py-2.5 border text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs ${
+                isMuted 
+                  ? 'bg-red-50 border-red-200 text-red-600 hover:bg-red-100' 
+                  : 'bg-[#FFFDF9] border-[#EAEAEA] text-[#101B3D] hover:border-[#3478E5]'
+              }`}
+            >
+              <span className="w-3.5 h-3.5 font-black text-center">{isMuted ? '🔇' : '🔊'}</span>
+              <span>{isMuted ? 'Sound Off' : 'Sound On'}</span>
             </button>
           </div>
 
@@ -220,7 +241,7 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
               <div>
                 <button
                   onClick={() => setIsAvatarBuilderOpen(true)}
-                  className="px-4 py-2 bg-[#EEF4FF] dark:bg-[#3478E5]/20 text-[#3478E5] dark:text-[#60A5FA] border border-[#3478E5]/30 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 hover:bg-[#3478E5] hover:text-white"
+                  className="px-4 py-2 bg-[#EEF4FF]  text-[#3478E5]  border border-[#3478E5]/30 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 hover:bg-[#3478E5] hover:text-white"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                   <span>Open Avatar Builder</span>
@@ -247,7 +268,17 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
 
       </div>
 
-      {/* GitHub-style Activity Matrix */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Column: DSA Profile Card */}
+        <div className="lg:col-span-1">
+          <DsaProfileCard user={user} userProgress={userProgress} topics={topics} />
+        </div>
+
+        {/* Right Column: Other stats (Activity Matrix, etc) */}
+        <div className="lg:col-span-2 space-y-8">
+          
+          {/* GitHub-style Activity Matrix */}
       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -294,6 +325,9 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Algorithmic Agenda */}
+      <AlgorithmicAgenda />
 
       {/* Daily Tasks Section */}
       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-5">
@@ -474,6 +508,8 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
             );
           })}
         </div>
+      </div>
+      </div>
       </div>
 
       {/* Settings, Reset Data & Logout Bar */}

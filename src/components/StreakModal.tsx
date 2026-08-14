@@ -21,7 +21,7 @@ export const StreakModal: React.FC<StreakModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const REFILL_COST = 500;
+  const REFILL_COST = 200;
   const canAffordRefill = xp >= REFILL_COST;
 
   // Generate 28-day calendar based on streakDays and lastActiveDate
@@ -147,7 +147,7 @@ export const StreakModal: React.FC<StreakModalProps> = ({
               <div>
                 <h4 className="text-sm font-black text-[#101B3D]">Streak Freeze</h4>
                 <p className="text-xs text-[#8C8C8C] font-medium mt-0.5 leading-relaxed">
-                  Lost your streak or need a break tomorrow? Spend 500 XP to refill your streak and keep the fire burning!
+                  Lost your streak or need a break tomorrow? Spend 200 XP to refill your streak and keep the fire burning!
                 </p>
               </div>
             </div>
