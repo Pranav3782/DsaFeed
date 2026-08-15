@@ -4,6 +4,7 @@ import { Code2, Bot, Check, RotateCcw, Lightbulb, X, ArrowRight } from 'lucide-r
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
+import { Chatbot } from './Chatbot';
 
 interface CodeOrderingExerciseProps {
   exercises: CodeBlockExercise[];
@@ -156,6 +157,9 @@ export const CodeOrderingExercise: React.FC<CodeOrderingExerciseProps> = ({
         </div>
       </div>
 
+      {/* Embedded Chatbot with Context */}
+      <Chatbot contextInfo={exercise.title} />
+
       <div className="bg-white border border-[#EAEAEA] rounded-[2rem] p-6 sm:p-8 shadow-xs">
         
         {/* Scenario Prompts */}
@@ -197,7 +201,7 @@ export const CodeOrderingExercise: React.FC<CodeOrderingExerciseProps> = ({
         )}
 
         {/* Code Frame with Slots */}
-        <div className="bg-[#101B3D] text-white p-5 sm:p-6 rounded-3xl font-mono text-xs sm:text-sm shadow-inner space-y-3">
+        <div className="bg-[#101B3D] text-white p-5 sm:p-6 rounded-3xl font-mono text-xs sm:text-sm font-medium shadow-inner space-y-3">
           <pre className="text-[#8C8C8C] overflow-x-auto">{exercise.codeContext.prefix}</pre>
 
           <div className="space-y-2 py-2 border-y border-white/10">
@@ -218,7 +222,7 @@ export const CodeOrderingExercise: React.FC<CodeOrderingExerciseProps> = ({
                     <span className={`w-5 h-5 rounded flex items-center justify-center text-[10px] font-black shrink-0 ${status === 'success' ? 'bg-[#55C990] text-white' : 'bg-white/20 text-white/50'}`}>
                       {idx + 1}
                     </span>
-                    <pre className="text-white whitespace-pre font-mono overflow-x-auto">{slot.code}</pre>
+                    <pre className="text-white whitespace-pre font-mono font-medium overflow-x-auto">{slot.code}</pre>
                   </div>
                 ) : (
                   <span className="text-white/30 text-xs italic">Tap a block below to fill line {idx + 1}...</span>
@@ -227,7 +231,7 @@ export const CodeOrderingExercise: React.FC<CodeOrderingExerciseProps> = ({
             ))}
           </div>
 
-          <pre className="text-[#8C8C8C] overflow-x-auto">{exercise.codeContext.suffix}</pre>
+          <pre className="text-[#8C8C8C] overflow-x-auto font-medium">{exercise.codeContext.suffix}</pre>
         </div>
 
         {/* Inline incorrect message removed */}

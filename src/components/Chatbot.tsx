@@ -15,9 +15,18 @@ const INITIAL_MESSAGE: Message = {
 };
 
 // Friendly heuristic brain
-const getBotResponse = (input: string): string => {
+const getBotResponse = (input: string, contextInfo?: string): string => {
   const lower = input.toLowerCase();
   
+  if (contextInfo) {
+    if (lower.includes('solve') || lower.includes('hint') || lower.includes('help')) {
+      return `For this specific problem ("${contextInfo}"), try focusing on the logical order of operations. What needs to happen first before the loop or recursion starts?`;
+    }
+    if (lower.includes('concept') || lower.includes('explain')) {
+      return `This problem ("${contextInfo}") is testing your understanding of control flow and state management. Think about how variables change at each step!`;
+    }
+  }
+
   if (lower.includes('array')) return "An Array is just a parking lot for your data! Everything is parked in a numbered spot so you can find it instantly.";
   if (lower.includes('linked list')) return "A Linked List is a treasure hunt. Instead of numbered parking spots, each piece of data holds a map pointing to the exact location of the next one!";
   if (lower.includes('stack')) return "Think of a Stack like a pile of heavy plates. The last plate you put on top is the very first one you have to take off (LIFO).";
@@ -32,7 +41,7 @@ const getBotResponse = (input: string): string => {
   return "That's a fantastic question! Since I'm currently running as a lightweight, lightning-fast demonstration AI right in your browser, my knowledge is focused specifically on core DSA concepts. Try asking me to explain Arrays, Linked Lists, Big O, Trees, or Hash Maps!";
 };
 
-export const Chatbot: React.FC = () => {
+export const Chatbot: React.FC<{ contextInfo?: string }> = ({ contextInfo }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [inputValue, setInputValue] = useState('');
@@ -76,7 +85,7 @@ export const Chatbot: React.FC = () => {
 
     // Simulate network/typing delay
     setTimeout(() => {
-      const responseText = getBotResponse(userMsg.text);
+      const responseText = getBotResponse(userMsg.text, contextInfo);
       const botMsg: Message = {
         id: `msg-${Date.now() + 1}`,
         sender: 'bot',
@@ -100,9 +109,9 @@ export const Chatbot: React.FC = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 px-6 py-3.5 rounded-full bg-[#3478E5] text-white shadow-xl font-bold flex items-center justify-center gap-2 transition-opacity ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#3478E5] text-white shadow-lg text-sm sm:text-base font-bold flex items-center justify-center gap-2 transition-opacity ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
       >
-        <MessageSquare className="w-5 h-5" />
+        <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
         Ask AI
       </motion.button>
 
@@ -127,7 +136,7 @@ export const Chatbot: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            className="fixed inset-x-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-[100] w-full sm:w-[420px] h-[85vh] sm:h-[700px] sm:max-h-[85vh] bg-white rounded-t-[32px] sm:rounded-[32px] shadow-2xl flex flex-col overflow-hidden text-[#101B3D] border-t sm:border border-[#EAEAEA]"
+            className="fixed inset-x-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-[100] w-full sm:w-[380px] h-[55vh] sm:h-[600px] sm:max-h-[85vh] bg-white rounded-t-[24px] sm:rounded-[24px] shadow-2xl flex flex-col overflow-hidden text-[#101B3D] border-t sm:border border-[#EAEAEA]"
           >
             {/* Header (Theme colors) */}
             <div className="bg-[#101B3D] px-5 py-4 flex items-center justify-between shrink-0 shadow-sm relative overflow-hidden">

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
-import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles, ShieldAlert, MessageSquareHeart, CreditCard, Layers } from 'lucide-react';
-import { UserProgress, UserProfile, NavTab } from '../types';
+import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles, ShieldAlert, MessageSquareHeart, CreditCard, Layers, Activity, MessageSquare, Bell } from 'lucide-react';
+import { UserProgress, UserProfile, NavTab, AppNotification } from '../types';
 import { DsaFeedLogo } from './DsaFeedLogo';
+import { NotificationsPanel } from './NotificationsPanel';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -12,6 +13,10 @@ interface NavbarProps {
   onOpenAuth?: () => void;
   onSignOut?: () => void;
   onOpenStreakModal?: () => void;
+  notifications?: AppNotification[];
+  onAcceptRequest?: (id: string, senderId?: string) => void;
+  onDeclineRequest?: (id: string) => void;
+  onMarkAsRead?: (id: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,13 +26,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   user,
   onOpenAuth,
   onSignOut,
-  onOpenStreakModal
+  onOpenStreakModal,
+  notifications = [],
+  onAcceptRequest = () => {},
+  onDeclineRequest = () => {},
+  onMarkAsRead = () => {}
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [showLeaderboardToast, setShowLeaderboardToast] = useState(false);
 
   const navItems = [
     { id: 'home' as const, label: 'Home', icon: BookOpen },
+    { id: 'feed' as const, label: 'Feed', icon: Activity },
+    { id: 'chat' as const, label: 'Chat', icon: MessageSquare },
     { id: 'practice' as const, label: 'Practice', icon: Code2 },
     { id: 'quiz' as const, label: 'Quizzes', icon: HelpCircle },
     { id: 'concepts' as const, label: 'Concepts', icon: Sparkles },
@@ -128,6 +140,29 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
+            {/* Notifications Bell */}
+            {user?.isLoggedIn && (
+              <div className="relative ml-1">
+                <button
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition relative"
+                >
+                  <Bell className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#F26B5B] rounded-full border-2 border-white"></span>
+                  )}
+                </button>
+                <NotificationsPanel 
+                  isOpen={notificationsOpen}
+                  onClose={() => setNotificationsOpen(false)}
+                  notifications={notifications}
+                  onAcceptRequest={onAcceptRequest}
+                  onDeclineRequest={onDeclineRequest}
+                  onMarkAsRead={onMarkAsRead}
+                />
+              </div>
+            )}
+
 
             {/* User Profile / Auth State */}
             {user?.isLoggedIn ? (
@@ -176,6 +211,29 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <MessageSquareHeart className="w-5 h-5" />
               </button>
+            )}
+
+            {/* Notifications Bell Mobile */}
+            {user?.isLoggedIn && (
+              <div className="relative">
+                <button
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition relative"
+                >
+                  <Bell className="w-5 h-5" />
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#F26B5B] rounded-full border-2 border-white"></span>
+                  )}
+                </button>
+                <NotificationsPanel 
+                  isOpen={notificationsOpen}
+                  onClose={() => setNotificationsOpen(false)}
+                  notifications={notifications}
+                  onAcceptRequest={onAcceptRequest}
+                  onDeclineRequest={onDeclineRequest}
+                  onMarkAsRead={onMarkAsRead}
+                />
+              </div>
             )}
             {/* Mobile streak pill - ONLY WHEN LOGGED IN */}
             {user?.isLoggedIn && (

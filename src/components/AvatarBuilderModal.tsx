@@ -44,7 +44,7 @@ export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
   const [clothing, setClothing] = useState('blazerAndShirt');
   const [bgColor, setBgColor] = useState('b6e3f4');
 
-  const [activeTab, setActiveTab] = useState<'hair' | 'beard' | 'hairColor' | 'accessories' | 'clothing' | 'background'>('hair');
+  const [activeTab, setActiveTab] = useState<'hair' | 'hairColor' | 'accessories' | 'clothing' | 'background'>('hair');
 
   useEffect(() => {
     if (initialAvatarUrl && initialAvatarUrl.includes('dicebear.com')) {
@@ -92,7 +92,6 @@ export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
 
   const tabs = [
     { id: 'hair', icon: User, label: 'Hair' },
-    { id: 'beard', icon: Smile, label: 'Beard' },
     { id: 'hairColor', icon: Paintbrush, label: 'Color' },
     { id: 'accessories', icon: Glasses, label: 'Glasses' },
     { id: 'clothing', icon: Shirt, label: 'Clothing' },
@@ -202,33 +201,7 @@ export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
               </div>
             )}
 
-            {activeTab === 'beard' && (
-              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                <h3 className="text-[#101B3D] font-bold text-lg">Facial Hair ({BEARD_STYLES.length})</h3>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {BEARD_STYLES.map(style => {
-                    const iconUrl = buildAvatarUrl({ seedStr: seed, top: hair, beard: style, acc: 'none', cloth: 'shirtCrewNeck' });
-                    return (
-                      <button
-                        key={style}
-                        onClick={() => setBeard(style)}
-                        className={`aspect-square rounded-2xl p-2 flex items-center justify-center transition-all border-2 bg-white ${
-                          beard === style 
-                            ? 'bg-[#EEF4FF] border-[#3478E5] shadow-sm' 
-                            : 'border-[#EAEAEA] hover:border-[#D0D0D0]'
-                        }`}
-                      >
-                        {style === 'none' ? (
-                          <span className="text-xs font-bold text-[#8C8C8C]">None</span>
-                        ) : (
-                          <img src={iconUrl} alt={style} className="w-full h-full object-contain" />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+
 
             {activeTab === 'hairColor' && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -253,12 +226,19 @@ export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
                 <h3 className="text-[#101B3D] font-bold text-lg">Glasses & Specs ({ACCESSORIES.length})</h3>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                   {ACCESSORIES.map(acc => {
-                    const iconUrl = buildAvatarUrl({ seedStr: seed, top: hair, beard: beard, acc: acc, cloth: 'shirtCrewNeck' });
+                    // Helper to format names like prescription01 to Prescription 01
+                    const formatAccName = (name: string) => {
+                      if (name === 'none') return 'None';
+                      return name.replace(/([A-Z0-9])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+                    };
+                    
+                    // For the preview grid, use a blank face so the glasses stand out
+                    const iconUrl = buildAvatarUrl({ seedStr: 'blank', top: 'noHair', beard: 'none', acc: acc, cloth: 'shirtCrewNeck' });
                     return (
                       <button
                         key={acc}
                         onClick={() => setAccessory(acc)}
-                        className={`aspect-square rounded-2xl p-2 flex items-center justify-center transition-all border-2 bg-white ${
+                        className={`aspect-square rounded-2xl p-2 flex items-center justify-center transition-all border-2 bg-white overflow-hidden relative ${
                           accessory === acc 
                             ? 'bg-[#EEF4FF] border-[#3478E5] shadow-sm' 
                             : 'border-[#EAEAEA] hover:border-[#D0D0D0]'
@@ -267,7 +247,16 @@ export const AvatarBuilderModal: React.FC<AvatarBuilderModalProps> = ({
                         {acc === 'none' ? (
                           <span className="text-xs font-bold text-[#8C8C8C]">None</span>
                         ) : (
-                          <img src={iconUrl} alt={acc} className="w-full h-full object-contain" />
+                          <>
+                            <div className="w-[150%] h-[150%] absolute flex items-center justify-center -translate-y-2">
+                              <img src={iconUrl} alt={acc} className="w-full h-full object-contain" />
+                            </div>
+                            <div className="absolute bottom-1 inset-x-1 flex justify-center">
+                              <span className="text-[10px] font-bold text-[#101B3D] bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-full shadow-sm">
+                                {formatAccName(acc)}
+                              </span>
+                            </div>
+                          </>
                         )}
                       </button>
                     );

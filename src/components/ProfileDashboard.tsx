@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { UserProgress, DsaTopic, UserBadge, UserProfile } from '../types';
 import { 
   Flame, Zap, Trophy, CheckCircle2, RotateCcw, Award, 
-  User, Edit3, Share2, Github, Settings, LogOut, Check, Sparkles, Copy, Calendar
+  User, Edit3, Share2, Github, Settings, LogOut, Check, Sparkles, Copy, Calendar, CheckCheck
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useSessionState } from '../hooks/useSessionState';
 import { generateCardImage, downloadCardImage } from '../utils/cardGenerator';
 import { toggleUISound } from '../utils/audio';
 import { AvatarBuilderModal } from './AvatarBuilderModal';
@@ -50,14 +51,29 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
   const [nameInput, setNameInput] = useState(user?.name || 'DSA Learner');
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem('dsafeed_muted') === 'true');
   const [showShareModal, setShowShareModal] = useState(false);
-  const [copiedCard, setCopiedCard] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useSessionState('soundEnabled', true);
+  const [copiedId, setCopiedId] = useState(false);
+
+  const copyConnectionId = () => {
+    if (user?.connectionId) {
+      navigator.clipboard.writeText(user.connectionId);
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2000);
+    }
+  };
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || PRESET_AVATARS[0]);
   const [selectedBgColor, setSelectedBgColor] = useState(user?.customAvatarBg || '#b6e3f4');
   const [showAllBadges, setShowAllBadges] = useState(false);
-  const [isAvatarBuilderOpen, setIsAvatarBuilderOpen] = useState(false);
+  const [selectedBadge, setSelectedBadge] = useState<UserBadge | null>(null);
+  const [isAvatarBuilderOpen, setIsAvatarBuilderOpen] = useSessionState('isAvatarBuilderOpen', false);
 
   const completedTopicsCount = userProgress.completedTopics.length;
   const totalTopics = topics.length;
+
+  const unlockedBadgeIds = userProgress.unlockedBadges || [];
+  const unlockedBadgesList = badges.filter(b => unlockedBadgeIds.includes(b.id));
+  const lockedBadgesList = badges.filter(b => !unlockedBadgeIds.includes(b.id));
+  const combinedBadges = [...unlockedBadgesList, ...lockedBadgesList];
   const overallPercentage = Math.round((completedTopicsCount / totalTopics) * 100);
 
   // Generate simulated GitHub activity grid (past 16 weeks, 7 days per week)
@@ -156,6 +172,18 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
               <p className="text-sm text-[#111111]/80  font-medium max-w-lg mt-1">
                 {user?.bio || 'Building problem-solving skills block by block with DSAfeed.'}
               </p>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-sm font-black text-[#101B3D] bg-[#F8F9FA] px-3 py-1 rounded-full border border-[#EAEAEA]">
+                  {user?.connectionId || '#DSA-0000'}
+                </span>
+                <button 
+                  onClick={copyConnectionId}
+                  className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition-colors"
+                  title="Copy Connection ID"
+                >
+                  {copiedId ? <CheckCheck className="w-4 h-4 text-[#55C990]" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -268,15 +296,7 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
 
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Left Column: DSA Profile Card */}
-        <div className="lg:col-span-1">
-          <DsaProfileCard user={user} userProgress={userProgress} topics={topics} />
-        </div>
-
-        {/* Right Column: Other stats (Activity Matrix, etc) */}
-        <div className="lg:col-span-2 space-y-8">
+      <div className="max-w-4xl mx-auto w-full space-y-8">
           
           {/* GitHub-style Activity Matrix */}
       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
@@ -432,43 +452,101 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
         <div className="flex items-center gap-2">
           <Trophy className="w-5 h-5 text-[#F5C94A]" />
-          <h3 className="text-xl font-black text-[#101B3D]">Unlocked Badges</h3>
+          <h3 className="text-xl font-black text-[#101B3D]">Your Badges</h3>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {(showAllBadges ? badges : badges.slice(0, 5)).map((b) => {
-            const isUnlocked = userProgress.xp >= 50; // In a real app, logic would map to specific conditions
-            const IconComp = (LucideIcons as any)[b.icon] || Award;
-            
-            return (
-              <div
-                key={b.id}
-                className={`p-4 rounded-2xl border transition flex items-center gap-3.5 ${
-                  isUnlocked
-                    ? 'bg-[#FFFDF9] border-[#EAEAEA] shadow-xs'
-                    : 'bg-[#F7F5F0]/50 border-dashed border-[#EAEAEA] opacity-60'
-                }`}
-              >
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-xl ${
-                  isUnlocked ? 'bg-[#FFFBEA] text-[#101B3D] border border-[#F5C94A]/40' : 'bg-gray-100 text-gray-400'
-                }`}>
-                  <IconComp className={`w-6 h-6 ${isUnlocked ? 'text-[#F5C94A]' : 'text-gray-400'}`} />
+        {!showAllBadges ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {combinedBadges.slice(0, 3).map((b) => {
+              const isUnlocked = unlockedBadgeIds.includes(b.id);
+              const IconComp = (LucideIcons as any)[b.icon] || Award;
+              return (
+                <div
+                  key={b.id}
+                  onClick={() => setSelectedBadge(b)}
+                  className={`p-4 rounded-2xl border transition flex items-center gap-3.5 cursor-pointer hover:-translate-y-1 ${
+                    isUnlocked
+                      ? 'bg-[#FFFDF9] border-[#EAEAEA] shadow-xs hover:border-[#F5C94A]'
+                      : 'bg-[#F7F5F0]/50 border-dashed border-[#EAEAEA] opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <div className={`w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center font-extrabold text-xl ${
+                    isUnlocked ? 'bg-[#FFFBEA] text-[#101B3D] border border-[#F5C94A]/40' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    <IconComp className={`w-6 h-6 ${isUnlocked ? 'text-[#F5C94A]' : 'text-gray-400'}`} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-[#101B3D]">{b.title}</h4>
+                    <p className="text-xs text-[#8C8C8C] font-medium leading-snug line-clamp-1">{b.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-extrabold text-[#101B3D]">{b.title}</h4>
-                  <p className="text-xs text-[#8C8C8C] font-medium leading-snug">{b.description}</p>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Unlocked Section */}
+            {unlockedBadgesList.length > 0 && (
+              <div>
+                <h4 className="text-sm font-black text-[#101B3D] mb-3 uppercase tracking-wider">Unlocked</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {unlockedBadgesList.map((b) => {
+                    const IconComp = (LucideIcons as any)[b.icon] || Award;
+                    return (
+                      <div
+                        key={b.id}
+                        onClick={() => setSelectedBadge(b)}
+                        className="p-4 rounded-2xl border bg-[#FFFDF9] border-[#EAEAEA] shadow-xs hover:border-[#F5C94A] transition flex items-center gap-3.5 cursor-pointer hover:-translate-y-1"
+                      >
+                        <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center font-extrabold text-xl bg-[#FFFBEA] text-[#101B3D] border border-[#F5C94A]/40">
+                          <IconComp className="w-6 h-6 text-[#F5C94A]" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-extrabold text-[#101B3D]">{b.title}</h4>
+                          <p className="text-xs text-[#8C8C8C] font-medium leading-snug line-clamp-1">{b.description}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            );
-          })}
-        </div>
+            )}
+            
+            {/* Locked Section */}
+            {lockedBadgesList.length > 0 && (
+              <div>
+                <h4 className="text-sm font-black text-[#8C8C8C] mb-3 uppercase tracking-wider">Locked</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {lockedBadgesList.map((b) => {
+                    const IconComp = (LucideIcons as any)[b.icon] || Award;
+                    return (
+                      <div
+                        key={b.id}
+                        onClick={() => setSelectedBadge(b)}
+                        className="p-4 rounded-2xl border bg-[#F7F5F0]/50 border-dashed border-[#EAEAEA] opacity-60 hover:opacity-100 transition flex items-center gap-3.5 cursor-pointer hover:-translate-y-1"
+                      >
+                        <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center font-extrabold text-xl bg-gray-100 text-gray-400">
+                          <IconComp className="w-6 h-6 text-gray-400" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-extrabold text-[#101B3D]">{b.title}</h4>
+                          <p className="text-xs text-[#8C8C8C] font-medium leading-snug line-clamp-1">{b.description}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         
-        {badges.length > 5 && (
+        {badges.length > 3 && (
           <button 
             onClick={() => setShowAllBadges(!showAllBadges)}
             className="text-xs font-black text-[#3478E5] hover:text-[#2864C6] w-full text-center mt-2 p-2"
           >
-            {showAllBadges ? 'Show Less' : `Show ${badges.length - 5} More Badges`}
+            {showAllBadges ? 'Show Less' : `Show ${badges.length - 3} More Badges`}
           </button>
         )}
       </div>
@@ -508,7 +586,6 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
             );
           })}
         </div>
-      </div>
       </div>
       </div>
 
@@ -574,48 +651,8 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
                 </div>
 
                 {/* Card Content Preview */}
-                <div className="p-6 bg-gradient-to-br from-[#131F45] to-[#0D1530] border border-white/15 rounded-2xl space-y-5 shadow-xl">
-                  
-                  <div className="flex items-center gap-4">
-                    <div 
-                      className="w-16 h-16 rounded-2xl p-0.5 flex items-center justify-center shadow-md overflow-hidden"
-                      style={{ backgroundColor: selectedBgColor }}
-                    >
-                      <img src={selectedAvatar} alt="User" className="w-full h-full object-cover rounded-xl" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-black text-white">{user?.name || 'DSA Learner'}</h3>
-                      <p className="text-xs text-[#55C990] font-extrabold">{user?.bio || 'Problem solver in training'}</p>
-                      <p className="text-[11px] text-slate-400 font-medium">dsafeed.com/learner/{user?.name?.toLowerCase().replace(/\s+/g, '') || 'alex'}</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 p-3 bg-white/5 border border-white/10 rounded-xl text-center">
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase font-black">Streak</p>
-                      <p className="text-lg font-black text-[#F26B5B] flex items-center justify-center gap-1">
-                        <Flame className="w-4 h-4 fill-[#F26B5B]" /> {userProgress.streakDays}d
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase font-black">Earned XP</p>
-                      <p className="text-lg font-black text-[#F5C94A] flex items-center justify-center gap-1">
-                        <Zap className="w-4 h-4 fill-[#F5C94A]" /> {userProgress.xp}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase font-black">Topics</p>
-                      <p className="text-lg font-black text-[#55C990]">
-                        {completedTopicsCount}/10
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-slate-300 font-medium pt-1">
-                    <span>Verified Learner Badge ⚡</span>
-                    <span className="text-[#3478E5] font-extrabold">2026 DSAfeed Certified</span>
-                  </div>
-
+                <div className="flex justify-center items-center py-4">
+                  <DsaProfileCard user={user} userProgress={userProgress} topics={topics} />
                 </div>
 
                 {/* Modal Action Footer */}
@@ -641,7 +678,65 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
                     )}
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
+      {/* Badge Detail Modal */}
+      <AnimatePresence>
+        {selectedBadge && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-6 text-center relative border border-[#EAEAEA]"
+            >
+              <button 
+                onClick={() => setSelectedBadge(null)}
+                className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="mx-auto w-20 h-20 bg-[#FFFBEA] border-2 border-[#F5C94A]/40 rounded-3xl flex items-center justify-center mb-4">
+                {(() => {
+                  const IconComp = (LucideIcons as any)[selectedBadge.icon] || Award;
+                  return <IconComp className="w-10 h-10 text-[#F5C94A]" />;
+                })()}
+              </div>
+              
+              <h3 className="text-2xl font-black text-[#101B3D] mb-1">{selectedBadge.title}</h3>
+              
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 rounded-full mb-4">
+                <span className={`w-2 h-2 rounded-full ${
+                  selectedBadge.difficulty === 'Simple' ? 'bg-[#55C990]' : 
+                  selectedBadge.difficulty === 'Medium' ? 'bg-[#3478E5]' : 'bg-[#F26B5B]'
+                }`}></span>
+                <span className="text-xs font-bold text-[#8C8C8C]">{selectedBadge.difficulty} Level</span>
+              </div>
+
+              <div className="bg-[#FAFAFA] border border-[#EAEAEA] rounded-2xl p-4 text-left">
+                <p className="text-sm text-[#101B3D] font-bold mb-1">What is this?</p>
+                <p className="text-sm text-[#111111]/70 font-medium mb-3">
+                  {selectedBadge.description}
+                </p>
+                
+                <p className="text-sm text-[#101B3D] font-bold mb-1">How to achieve it:</p>
+                <p className="text-sm text-[#3478E5] font-semibold leading-relaxed">
+                  {selectedBadge.howToAchieve}
+                </p>
+              </div>
+
+              <div className="mt-6">
+                <button
+                  onClick={() => setSelectedBadge(null)}
+                  className="w-full py-3 bg-[#101B3D] hover:bg-[#1a2b5e] text-white rounded-xl font-bold transition"
+                >
+                  Got it!
+                </button>
               </div>
             </motion.div>
           </div>

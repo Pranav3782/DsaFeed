@@ -10,11 +10,14 @@ import { ConceptExplainer } from './components/ConceptExplainer';
 import { ProfileDashboard } from './components/ProfileDashboard';
 import { DsaMyths } from './components/DsaMyths';
 import { OnboardingFlow } from './components/OnboardingFlow';
+import { LoadingSpinner } from './components/LoadingSpinner';
 import { Chatbot } from './components/Chatbot';
 import { FeedbackPage } from './components/FeedbackPage';
 import { PricingPage } from './components/PricingPage';
 import { FlashcardsPage } from './components/FlashcardsPage';
 import { FaqSection } from './components/FaqSection';
+import { FeedPage } from './components/FeedPage';
+import { ChatPage } from './components/ChatPage';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
 import { InteractiveDemo } from './components/InteractiveDemo';
@@ -27,6 +30,7 @@ import { InteractiveLoader } from './components/InteractiveLoader';
 import { InitialLoader } from './components/InitialLoader';
 
 import { AchievementPopup, AchievementData } from './components/AchievementPopup';
+import { QuizLevelSelectorModal } from './components/QuizLevelSelectorModal';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -34,8 +38,9 @@ import { supabase } from './lib/supabase';
 import { playUISound } from './utils/audio';
 
 import { DSA_TOPICS, QUIZ_SETS, CODE_EXERCISES, USER_BADGES } from './data/dsaData';
-import { DsaTopic, QuizSet, UserProgress, DsaCategory, UserProfile, NavTab, DailyTask } from './types';
+import { DsaTopic, QuizSet, UserProgress, DsaCategory, UserProfile, NavTab, DailyTask, AppNotification } from './types';
 import { Filter, BookOpen, Code2, HelpCircle, Sparkles, Layers } from 'lucide-react';
+import { useSessionState } from './hooks/useSessionState';
 
 const generateDailyTasks = (): DailyTask[] => {
   return [
@@ -87,6 +92,13 @@ const DEMO_PROGRESS: UserProgress = {
     sorting: 0,
     searching: 0
   },
+  unlockedBadges: [
+    'badge-first-step',
+    'badge-perfect-score',
+    'badge-streak-3',
+    'badge-code-architect',
+    'badge-array-master'
+  ],
   dailyTasks: generateDailyTasks(),
   monthlyPoints: 12,
   lastTaskDate: new Date().toISOString().split('T')[0]
@@ -99,6 +111,7 @@ const EMPTY_PROGRESS: UserProgress = {
   completedTopics: [],
   quizScores: {},
   completedExercises: [],
+  unlockedBadges: [],
   topicProgress: {},
   dailyTasks: generateDailyTasks(),
   monthlyPoints: 0,
@@ -116,6 +129,8 @@ const getPathFromTab = (tab: NavTab): string => {
     case 'privacy': return '/privacy';
     case 'terms': return '/terms';
     case 'feedback': return '/feedback';
+    case 'feed': return '/feed';
+    case 'chat': return '/chat';
     default: return '/';
   }
 };
@@ -129,6 +144,8 @@ const getTabFromPath = (path: string): NavTab => {
   if (path.startsWith('/privacy')) return 'privacy';
   if (path.startsWith('/terms')) return 'terms';
   if (path.startsWith('/feedback')) return 'feedback';
+  if (path.startsWith('/feed')) return 'feed';
+  if (path.startsWith('/chat')) return 'chat';
   return 'home';
 };
 
@@ -138,9 +155,9 @@ export default function App() {
 
   // Navigation State
   const activeTab = getTabFromPath(location.pathname);
-  const [previousTab, setPreviousTab] = useState<NavTab>('home');
-  const [practiceView, setPracticeView] = useState<'practice' | 'code'>('practice');
-  const [conceptView, setConceptView] = useState<'concepts' | 'flashcards'>('concepts');
+  const [previousTab, setPreviousTab] = useSessionState<NavTab>('previousTab', 'home');
+  const [practiceView, setPracticeView] = useSessionState<'practice' | 'code'>('practiceView', 'practice');
+  const [conceptView, setConceptView] = useSessionState<'concepts' | 'flashcards'>('conceptView', 'concepts');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [authReady, setAuthReady] = useState(false);
   const [isTabLoading, setIsTabLoading] = useState(false);
@@ -148,6 +165,7 @@ export default function App() {
   
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [pendingTopic, setPendingTopic] = useState<DsaTopic | null>(null);
+  const [quizTopicLevels, setQuizTopicLevels] = useSessionState<string | null>('quizTopicLevels', null);
 
   const handleTabChange = (tab: NavTab) => {
     if (tab === activeTab) return;
@@ -178,9 +196,47 @@ export default function App() {
   const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
   const [achievementPopup, setAchievementPopup] = useState<{isOpen: boolean; data: AchievementData | null}>({isOpen: false, data: null});
 
+  // Notifications State
+  const [notifications, setNotifications] = useState<AppNotification[]>([
+    {
+      id: 'notif-1',
+      type: 'connection_request',
+      title: 'New Connection Request',
+      message: 'Rakesh Nakrani wants to connect with you.',
+      timestamp: 'Just now',
+      read: false,
+      senderId: 'user-101',
+      senderName: 'Rakesh Nakrani',
+      senderAvatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=200'
+    }
+  ]);
+
+  const handleAcceptRequest = (notificationId: string, senderId?: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    // We would typically update ChatContacts state here to mark 'accepted'
+    // But since it's mocked, we'll just show an achievement or another notification
+    const newNotif: AppNotification = {
+      id: `notif-${Date.now()}`,
+      type: 'connection_accepted',
+      title: 'Connection Accepted',
+      message: `You are now connected. You can start a socket!`,
+      timestamp: 'Just now',
+      read: false
+    };
+    setNotifications(prev => [newNotif, ...prev]);
+  };
+
+  const handleDeclineRequest = (notificationId: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  };
+
+  const handleMarkAsRead = (notificationId: string) => {
+    setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
+  };
+
   // Topic & Quiz Selection State
-  const [selectedTopic, setSelectedTopic] = useState<DsaTopic | null>(null);
-  const [activeQuizSet, setActiveQuizSet] = useState<QuizSet | null>(null);
+  const [selectedTopic, setSelectedTopic] = useSessionState<DsaTopic | null>('selectedTopic', null);
+  const [activeQuizSet, setActiveQuizSet] = useSessionState<QuizSet | null>('activeQuizSet', null);
 
   // Removed Dark Mode State per user request
   useEffect(() => {
@@ -253,6 +309,7 @@ export default function App() {
         email: session.user.email || '',
         avatar: existingProfile?.avatar_url || session.user.user_metadata?.avatar_url || defaultAvatar,
         isLoggedIn: true,
+        connectionId: existingProfile?.connection_id || session.user.user_metadata?.connection_id || `#DSA-${session.user.id.substring(0, 6).toUpperCase()}`
       };
       setUser(profile);
       setIsAuthModalOpen(false);
@@ -404,10 +461,10 @@ export default function App() {
 
   // Handlers for Start Learning CTA
   const handleStartLearning = () => {
-    if (!user?.isLoggedIn) {
-      setShowOnboarding(true);
+    if (user?.isLoggedIn) {
+      navigate('/practice');
     } else {
-      scrollToTopicsSection();
+      setShowOnboarding(true);
     }
   };
 
@@ -449,7 +506,7 @@ export default function App() {
     setIsAuthModalOpen(false);
     setIsFirstLogin(firstLogin);
     setShowWelcomePopup(true);
-    setActiveTab('practice');
+    navigate('/practice');
   };
 
   const handleUpdateUser = async (updatedProfile: UserProfile) => {
@@ -482,7 +539,7 @@ export default function App() {
 
   const confirmSignOut = async () => {
     await supabase.auth.signOut();
-    setActiveTab('home');
+    navigate('/');
     setSelectedTopic(null);
     setActiveQuizSet(null);
   };
@@ -590,6 +647,77 @@ export default function App() {
     }
   };
 
+  // Badge unlock monitor
+  useEffect(() => {
+    const prevUnlocked = userProgress.unlockedBadges || [];
+    const newUnlocked = new Set(prevUnlocked);
+    
+    // Check conditions
+    if (Object.keys(userProgress.quizScores).length >= 1 || userProgress.completedExercises.length >= 1) {
+      newUnlocked.add('badge-first-step');
+    }
+    if (Object.values(userProgress.quizScores).some(q => q.percentage === 100)) {
+      newUnlocked.add('badge-perfect-score');
+    }
+    if (userProgress.streakDays >= 3) {
+      newUnlocked.add('badge-streak-3');
+    }
+    if (userProgress.streakDays >= 7) {
+      newUnlocked.add('badge-weekly-active');
+    }
+    if (userProgress.monthlyPoints >= 30) {
+      newUnlocked.add('badge-monthly-scholar');
+    }
+    if (userProgress.completedExercises.length >= 1) {
+      newUnlocked.add('badge-code-architect');
+    }
+    if (userProgress.xp >= 300) {
+      newUnlocked.add('badge-dsa-champion');
+    }
+    if (userProgress.dailyTasks.length > 0 && userProgress.dailyTasks.every(t => t.completed)) {
+      newUnlocked.add('badge-dedicated');
+    }
+
+    const arrayQuizzes = Object.keys(userProgress.quizScores).filter(k => k.includes('arrays'));
+    if (arrayQuizzes.length > 0 && arrayQuizzes.every(k => userProgress.quizScores[k].percentage === 100)) {
+      newUnlocked.add('badge-array-master');
+    }
+
+    if (newUnlocked.size > prevUnlocked.length) {
+      const newlyUnlocked = Array.from(newUnlocked).filter(id => !prevUnlocked.includes(id));
+      const newlyUnlockedBadges = newlyUnlocked.map(id => USER_BADGES.find(b => b.id === id)).filter(Boolean);
+      
+      // Prevent popups on initial data loads or retroactive batch unlocks
+      const isRetroactiveBatch = newlyUnlocked.length > 2;
+      
+      if (newlyUnlockedBadges.length > 0 && !isInitialLoading && !isRetroactiveBatch) {
+        // Show popup for the first newly unlocked badge
+        setAchievementPopup({ 
+          isOpen: true, 
+          data: { 
+            title: 'Badge Unlocked!', 
+            subtitle: newlyUnlockedBadges[0]!.title, 
+            xp: 50 // Bonus XP for unlocking
+          } 
+        });
+        handleAddXp(50);
+      }
+
+      setUserProgress(prev => {
+        const next = { ...prev, unlockedBadges: Array.from(newUnlocked) };
+        syncProgressToSupabase(next);
+        return next;
+      });
+    }
+  }, [
+    userProgress.quizScores, 
+    userProgress.completedExercises, 
+    userProgress.streakDays, 
+    userProgress.monthlyPoints, 
+    userProgress.xp, 
+    userProgress.dailyTasks
+  ]);
+
   // Topic filter logic
   const filteredTopics = DSA_TOPICS.filter(topic => {
     if (difficultyFilter === 'All') return true;
@@ -639,16 +767,21 @@ export default function App() {
       
       {/* Top Navbar */}
       {user?.isLoggedIn && activeTab !== 'privacy' && activeTab !== 'terms' && (
-        <Navbar
-          activeTab={activeTab}
-          setActiveTab={handleTabChange}
+        <Navbar 
+          activeTab={activeTab} 
+          setActiveTab={handleTabChange} 
           userProgress={userProgress}
           user={user}
           onOpenAuth={() => {
-            navigate('/signin');
+            setAuthModalMode('login');
+            setIsAuthModalOpen(true);
           }}
           onSignOut={handleSignOut}
           onOpenStreakModal={() => setIsStreakModalOpen(true)}
+          notifications={notifications}
+          onAcceptRequest={handleAcceptRequest}
+          onDeclineRequest={handleDeclineRequest}
+          onMarkAsRead={handleMarkAsRead}
         />
       )}
 
@@ -668,7 +801,7 @@ export default function App() {
                 <div className="space-y-12">
                 
                 <Hero
-                  onStartLearning={() => handleTabChange('topics')}
+                  onStartLearning={handleStartLearning}
                   onAddXp={handleAddXp}
                 />
 
@@ -824,16 +957,22 @@ export default function App() {
               </p>
             </div>
 
-            {/* Quiz Queue Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {QUIZ_SETS.map((quiz) => (
-                <QuizCard
-                  key={quiz.id}
-                  quizSet={quiz}
-                  userScore={userProgress.quizScores[quiz.id]}
-                  onStartQuiz={(qs) => setActiveQuizSet(qs)}
-                />
-              ))}
+            {/* Topic Cards for Quizzes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {DSA_TOPICS.map((topic) => {
+                const topicQuizzes = QUIZ_SETS.filter(q => q.topicId === topic.id);
+                const completedQuizzes = topicQuizzes.filter(q => userProgress.quizScores[q.id]?.percentage === 100).length;
+                const totalQuizzes = topicQuizzes.length;
+                
+                return (
+                  <TopicCard
+                    key={topic.id}
+                    topic={topic}
+                    onSelectTopic={(t) => setQuizTopicLevels(t.id)}
+                    progressPercent={totalQuizzes > 0 ? Math.round((completedQuizzes / totalQuizzes) * 100) : 0}
+                  />
+                );
+              })}
             </div>
           </div>
         )}
@@ -915,6 +1054,20 @@ export default function App() {
           </div>
         )}
 
+        {/* FEED TAB */}
+        {activeTab === 'feed' && (
+          <div className="py-4 animate-in fade-in duration-200">
+            <FeedPage user={user} />
+          </div>
+        )}
+
+        {/* CHAT TAB */}
+        {activeTab === 'chat' && (
+          <div className="animate-in fade-in duration-200">
+            <ChatPage user={user} />
+          </div>
+        )}
+
 
 
         {/* LEGAL TABS */}
@@ -966,8 +1119,8 @@ export default function App() {
           topic={selectedTopic}
           onClose={() => setSelectedTopic(null)}
           onStartQuiz={(topicId) => {
-            const match = QUIZ_SETS.find(q => q.topicId === topicId) || QUIZ_SETS[0];
-            setActiveQuizSet(match);
+            setSelectedTopic(null);
+            setQuizTopicLevels(topicId);
           }}
           onStartPractice={() => handleTabChange('practice')}
           isCompleted={userProgress.completedTopics.includes(selectedTopic.id)}
@@ -977,6 +1130,19 @@ export default function App() {
 
       {isModalLoading && <LoadingSpinner fullScreen />}
 
+
+      {quizTopicLevels && (
+        <QuizLevelSelectorModal
+          topic={DSA_TOPICS.find(t => t.id === quizTopicLevels)!}
+          quizSets={QUIZ_SETS.filter(q => q.topicId === quizTopicLevels)}
+          userProgress={userProgress}
+          onClose={() => setQuizTopicLevels(null)}
+          onSelectLevel={(quizSet) => {
+            setQuizTopicLevels(null);
+            setActiveQuizSet(quizSet);
+          }}
+        />
+      )}
 
       {activeQuizSet && (
         <QuizPlayer

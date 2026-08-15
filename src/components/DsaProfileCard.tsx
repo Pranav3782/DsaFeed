@@ -44,10 +44,10 @@ export const DsaProfileCard: React.FC<DsaProfileCardProps> = ({ user, userProgre
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-sm mx-auto w-full bg-white rounded-[2rem] p-3 shadow-xl border-[6px]"
+      className="max-w-[90vw] sm:max-w-sm mx-auto w-full bg-white rounded-3xl sm:rounded-[2rem] p-2.5 sm:p-3 shadow-xl border-4 sm:border-[6px]"
       style={{ borderColor: bgColor }}
     >
-      <div className="bg-[#FFFDF9] rounded-2xl p-4 h-full relative overflow-hidden flex flex-col items-center border border-[#EAEAEA]">
+      <div className="bg-[#FFFDF9] rounded-[1.25rem] sm:rounded-2xl p-4 sm:p-5 h-full relative overflow-hidden flex flex-col items-center border border-[#EAEAEA]">
         
         {/* Background glow / effect */}
         <div 
@@ -61,8 +61,8 @@ export const DsaProfileCard: React.FC<DsaProfileCardProps> = ({ user, userProgre
         </div>
 
         {/* Character / Avatar */}
-        <div className="relative z-10 mb-8 mt-2">
-          <div className="w-44 h-44 rounded-3xl border-[6px] border-white shadow-md overflow-hidden transform rotate-[-2deg] transition-transform hover:rotate-0" style={{ backgroundColor: bgColor }}>
+        <div className="relative z-10 mb-6 sm:mb-8 mt-2">
+          <div className="w-32 h-32 sm:w-44 sm:h-44 rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white shadow-md overflow-hidden transform rotate-[-2deg] transition-transform hover:rotate-0" style={{ backgroundColor: bgColor }}>
             <img 
               src={avatarUrl} 
               alt={name} 
@@ -75,8 +75,8 @@ export const DsaProfileCard: React.FC<DsaProfileCardProps> = ({ user, userProgre
         </div>
 
         {/* Name Plate */}
-        <div className="bg-[#101B3D] text-white px-8 py-2.5 rounded-2xl shadow-lg z-10 -mt-14 mb-8 border-4 border-white transform rotate-[3deg]">
-          <h2 className="text-xl font-black tracking-widest uppercase">{name}</h2>
+        <div className="bg-[#101B3D] text-white px-6 sm:px-8 py-2 sm:py-2.5 rounded-2xl shadow-lg z-10 -mt-10 sm:-mt-14 mb-6 sm:mb-8 border-4 border-white transform rotate-[3deg]">
+          <h2 className="text-lg sm:text-xl font-black tracking-widest uppercase truncate max-w-[200px]">{name}</h2>
         </div>
 
         {/* Stats Container */}

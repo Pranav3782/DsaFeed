@@ -5,11 +5,11 @@ import { RazorpayModal } from './RazorpayModal';
 
 const PRICING_PLANS = [
   {
-    id: 'basic',
-    name: 'Basic Plan',
-    price: 300,
-    tagline: 'Skip one Biryani this week 🍛',
-    description: 'Instead of just eating a biryani, you can invest this in building your foundational logic and problem-solving ability.',
+    id: 'free',
+    name: 'Free Plan',
+    price: 0,
+    tagline: 'Start your journey 🌱',
+    description: 'Perfect for beginners who want to explore basic Data Structures and Algorithms at zero cost.',
     features: [
       'Access to core DSA concepts',
       'Basic practice problems',
@@ -21,38 +21,21 @@ const PRICING_PLANS = [
     textColor: 'text-[#101B3D]'
   },
   {
-    id: 'plus',
-    name: 'Plus Plan',
-    price: 500,
-    tagline: 'Skip the weekend movie 🍿',
-    description: 'Instead of spending on a movie ticket and popcorn, dramatically improve your logic building with advanced patterns.',
+    id: 'pro',
+    name: 'Pro Plan',
+    price: 399,
+    tagline: 'Skip one weekend movie 🍿',
+    description: 'Why pay ₹399? It\'s less than a movie ticket. Invest this small amount once to master advanced patterns and build logic that gets you hired.',
     features: [
-      'Everything in Basic',
+      'Everything in Free',
       'Advanced DSA patterns',
-      'Weekly coding contests',
-      'Priority support'
+      'Interactive coding contests',
+      'Priority support & Mentorship'
     ],
     highlight: true,
     color: 'bg-gradient-to-b from-[#101B3D] to-[#2B4B99]',
     buttonColor: 'bg-[#3478E5]',
     textColor: 'text-white'
-  },
-  {
-    id: 'pro',
-    name: 'Pro Plus',
-    price: 1000,
-    tagline: 'Skip the expensive birthday party 🎂',
-    description: 'Instead of doing an expensive birthday party outside, master DSA and land your dream job with our complete package.',
-    features: [
-      'Everything in Plus',
-      '1-on-1 Mentorship',
-      'Mock Interviews',
-      'Resume reviews'
-    ],
-    highlight: false,
-    color: 'bg-white',
-    buttonColor: 'bg-[#101B3D]',
-    textColor: 'text-[#101B3D]'
   }
 ];
 
@@ -96,16 +79,16 @@ export const PricingPage: React.FC = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
           {PRICING_PLANS.map((plan, index) => (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * (index + 1), type: "spring", stiffness: 100 }}
-              className={`relative rounded-3xl p-8 sm:p-10 transition-transform hover:-translate-y-2 ${
+              className={`relative rounded-3xl p-8 sm:p-10 transition-transform hover:-translate-y-2 flex flex-col h-full ${
                 plan.highlight 
-                  ? 'bg-gradient-to-b from-[#101B3D] to-[#2B4B99] text-white shadow-2xl scale-105 md:scale-110 z-20 border-2 border-[#3478E5]/50' 
+                  ? 'bg-gradient-to-b from-[#101B3D] to-[#2B4B99] text-white shadow-2xl z-20 border-2 border-[#3478E5]/50' 
                   : 'bg-white  text-[#101B3D]  shadow-xl border border-[#EAEAEA]  z-10'
               }`}
             >
@@ -153,14 +136,20 @@ export const PricingPage: React.FC = () => {
               </ul>
 
               <button
-                onClick={() => setSelectedPlan({ name: plan.name, price: plan.price })}
-                className={`w-full py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 ${
+                onClick={() => {
+                  if (plan.price === 0) {
+                    alert('You are already on the Free Plan! Jump into the concepts to get started.');
+                  } else {
+                    setSelectedPlan({ name: plan.name, price: plan.price });
+                  }
+                }}
+                className={`w-full py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 mt-auto ${
                   plan.highlight
                     ? 'bg-[#3478E5] hover:bg-[#2864C6] text-white shadow-lg shadow-[#3478E5]/30'
                     : 'bg-[#FAFAFA]  border border-[#EAEAEA]  hover:border-[#101B3D]  text-[#101B3D] '
                 }`}
               >
-                <span>Get Started</span>
+                <span>{plan.price === 0 ? 'Start for Free' : 'Get Started'}</span>
                 <Zap className={`w-4 h-4 ${plan.highlight ? 'fill-white' : ''}`} />
               </button>
             </motion.div>

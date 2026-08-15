@@ -55,7 +55,7 @@ export const DsaMyths: React.FC = () => {
   };
 
   return (
-    <div className="py-8 space-y-12 animate-in fade-in duration-200 flex flex-col items-center">
+    <div id="dsa-myths" className="py-8 space-y-12 animate-in fade-in duration-200 flex flex-col items-center">
       
       {/* Header */}
       <div className="text-center max-w-xl mx-auto px-4">

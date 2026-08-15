@@ -16,42 +16,29 @@ interface AchievementPopupProps {
 }
 
 export const AchievementPopup: React.FC<AchievementPopupProps> = ({ isOpen, data, onClose }) => {
+  const onCloseRef = React.useRef(onClose);
+  
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (isOpen) {
-      // Fire confetti when popup opens
-      const duration = 2500;
-      const end = Date.now() + duration;
+      // Fire a single small burst of confetti when popup opens
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#F5C94A', '#3478E5', '#55C990', '#F26B5B']
+      });
 
-      const frame = () => {
-        confetti({
-          particleCount: 5,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 },
-          colors: ['#F5C94A', '#3478E5', '#55C990', '#F26B5B']
-        });
-        confetti({
-          particleCount: 5,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 },
-          colors: ['#F5C94A', '#3478E5', '#55C990', '#F26B5B']
-        });
-
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      };
-      
-      frame();
-
-      // Auto close after 4 seconds
+      // Auto close after 2.5 seconds
       const timer = setTimeout(() => {
-        onClose();
-      }, 4000);
+        onCloseRef.current();
+      }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   return (
     <AnimatePresence>

@@ -22,6 +22,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
 
   if (!quizSet) return null;
 
@@ -95,7 +96,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
             </div>
 
             <button
-              onClick={onClose}
+              onClick={() => !quizFinished ? setShowQuitConfirm(true) : onClose()}
               className="p-2 rounded-full bg-white hover:bg-[#EAEAEA]/50 text-[#101B3D] border border-[#EAEAEA] transition"
             >
               <X className="w-5 h-5" />
@@ -275,6 +276,36 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
               </div>
             )}
           </div>
+
+          {/* Confirm Quit Modal */}
+          {showQuitConfirm && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#101B3D]/80 backdrop-blur-sm">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4"
+              >
+                <h3 className="text-xl font-black text-[#101B3D] mb-2">Quit Quiz?</h3>
+                <p className="text-[#8C8C8C] font-medium text-sm mb-6">
+                  Are you sure you want to quit? Your progress in this quiz will be lost.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowQuitConfirm(false)}
+                    className="flex-1 py-3 px-4 bg-[#F5C94A] hover:bg-[#F26B5B] hover:text-white text-[#101B3D] rounded-xl font-bold transition text-sm"
+                  >
+                    Continue
+                  </button>
+                  <button
+                    onClick={onClose}
+                    className="flex-1 py-3 px-4 bg-[#FAFAFA] border border-[#EAEAEA] hover:border-[#101B3D] text-[#101B3D] rounded-xl font-bold transition text-sm"
+                  >
+                    Quit
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
         </motion.div>
       </div>
     </AnimatePresence>

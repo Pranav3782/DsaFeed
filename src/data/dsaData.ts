@@ -1,4 +1,5 @@
 import { DsaTopic, QuizSet, CodeBlockExercise, FaqItem, UserBadge } from '../types';
+import { EXPANDED_QUIZ_SETS } from './expandedQuizData';
 
 export const DSA_TOPICS: DsaTopic[] = [
   {
@@ -24,7 +25,8 @@ export const DSA_TOPICS: DsaTopic[] = [
         'When you need fast lookups by index.',
         'When you know the list size in advance or iteration is frequent.',
         'As the base for other structures like Stacks and Queues.'
-      ]
+      ],
+      mediaUrl: '/images/array.jpg'
     },
     interviewTips: {
       timeComplexity: {
@@ -207,7 +209,7 @@ head = Node(10, Node(20))`
     difficulty: 'Beginner',
     estimatedMinutes: 8,
     simpleExplanation: {
-      analogy: 'Think of a stack of plates or your browser history. Hitting "Back" opens the last visited page.',
+      analogy: 'Think of arranging plates in a stack. The last plate you put on top is the first one you take off.',
       summary: 'A Stack follows the LIFO rule (Last-In, First-Out). Elements are added (pushed) to the top and removed (popped) from the top.',
       keyPoints: [
         'Push: Add item to top.',
@@ -217,7 +219,8 @@ head = Node(10, Node(20))`
       ],
       whenToUse: [
         'Undo/Redo history, browser navigation, call stack execution, matching parentheses () [] {}.'
-      ]
+      ],
+      mediaUrl: '/images/stack.jpg'
     },
     interviewTips: {
       timeComplexity: {
@@ -268,7 +271,7 @@ top_item = stack.pop() # returns 2`
     difficulty: 'Beginner',
     estimatedMinutes: 8,
     simpleExplanation: {
-      analogy: 'Standing in line for coffee. The first person in line is served first!',
+      analogy: 'Standing in a queue line. The first person to join the line is the first one to be served!',
       summary: 'A Queue follows FIFO (First-In, First-Out). Items are added at the back (Enqueue) and removed from the front (Dequeue).',
       keyPoints: [
         'Enqueue: Join back of queue.',
@@ -277,7 +280,8 @@ top_item = stack.pop() # returns 2`
       ],
       whenToUse: [
         'Print jobs, task scheduling, Breadth-First Search (BFS) in trees and graphs.'
-      ]
+      ],
+      mediaUrl: '/images/queue.jpg'
     },
     interviewTips: {
       timeComplexity: {
@@ -633,196 +637,7 @@ nums.sort()
   }
 ];
 
-export const QUIZ_SETS: QuizSet[] = [
-  {
-    id: 'quiz-arrays',
-    topicId: 'arrays',
-    title: 'Arrays Basics',
-    subtitle: 'Test your understanding of array indexing, memory, and bounds.',
-    questionCount: 4,
-    difficulty: 'Beginner',
-    questions: [
-      {
-        id: 'arr-1',
-        question: 'What is the time complexity of accessing an element in an array by its index (e.g., arr[4])?',
-        options: ['O(N)', 'O(1)', 'O(log N)', 'O(N²)'],
-        correctIndex: 1,
-        explanation: 'Array elements occupy adjacent memory locations. The address is calculated instantly as BaseAddress + (Index * ElementSize), taking O(1) constant time.'
-      },
-      {
-        id: 'arr-2',
-        question: 'Why is inserting an element at index 0 of an array usually an O(N) operation?',
-        options: [
-          'Because the computer must allocate new memory for every item.',
-          'Because every existing element must shift one position to the right.',
-          'Because arrays can only hold numbers.',
-          'Because arrays do not support insertion.'
-        ],
-        correctIndex: 1,
-        explanation: 'To free up position 0, all N existing items must be shifted right one by one, taking O(N) operations.'
-      },
-      {
-        id: 'arr-3',
-        codeSnippet: 'const nums = [10, 20, 30];\nconsole.log(nums[3]);',
-        question: 'What does the code above output in JavaScript?',
-        options: ['30', '0', 'undefined', 'Throws syntax error'],
-        correctIndex: 2,
-        explanation: 'Arrays are 0-indexed, so valid indices are 0, 1, and 2. Accessing index 3 returns `undefined` in JavaScript without throwing a immediate crash.'
-      },
-      {
-        id: 'arr-4',
-        question: 'Which technique is ideal for finding two numbers in a sorted array that sum to a target?',
-        options: ['Depth-First Search', 'Two Pointers (Left and Right)', 'Stack Push/Pop', 'Recursion'],
-        correctIndex: 1,
-        explanation: 'Two Pointers starting at index 0 and index N-1 can adjust towards the middle in O(N) time without extra memory.'
-      }
-    ]
-  },
-  {
-    id: 'quiz-linked-lists',
-    topicId: 'linked-lists',
-    title: 'Linked Lists Connections',
-    subtitle: 'Can you connect the nodes and manage head pointers?',
-    questionCount: 4,
-    difficulty: 'Intermediate',
-    questions: [
-      {
-        id: 'll-1',
-        question: 'What does each node in a singly linked list contain?',
-        options: [
-          'Only a numeric value.',
-          'Data value and a pointer reference to the next node.',
-          'Data value and references to both previous and next nodes.',
-          'An index number and an array.'
-        ],
-        correctIndex: 1,
-        explanation: 'A node in a singly linked list holds its data value and a `next` pointer pointing to the next node in the sequence.'
-      },
-      {
-        id: 'll-2',
-        question: 'What is the time complexity to insert a new node at the HEAD of a linked list?',
-        options: ['O(N)', 'O(1)', 'O(log N)', 'O(N²)'],
-        correctIndex: 1,
-        explanation: 'Inserting at the head takes O(1) time: set `newNode.next = head`, then update `head = newNode`.'
-      },
-      {
-        id: 'll-3',
-        question: 'How do you detect a cycle (loop) in a linked list with O(1) extra space?',
-        options: [
-          'Store all node addresses in an Array.',
-          'Floyds Fast and Slow Pointer technique (Tortoise & Hare).',
-          'Sort the linked list first.',
-          'Count the nodes using a while loop.'
-        ],
-        correctIndex: 1,
-        explanation: 'If a cycle exists, the fast pointer (2 steps) will eventually catch up and meet the slow pointer (1 step).'
-      },
-      {
-        id: 'll-4',
-        question: 'What happens if you lose the pointer reference to the HEAD of a linked list?',
-        options: [
-          'The list automatically backs itself up.',
-          'The entire list becomes unreachable in memory (Garbage collected).',
-          'The list turns into an Array.',
-          'The last element becomes the new Head.'
-        ],
-        correctIndex: 1,
-        explanation: 'Without a reference to the head or any node, the list cannot be traversed and will be garbage-collected.'
-      }
-    ]
-  },
-  {
-    id: 'quiz-hash-maps',
-    topicId: 'hash-maps',
-    title: 'Hash Maps Mastery',
-    subtitle: 'Test your knowledge of key-value lookups and hash functions.',
-    questionCount: 4,
-    difficulty: 'Beginner',
-    questions: [
-      {
-        id: 'hm-1',
-        question: 'What is the average time complexity to fetch a value by key from a Hash Map?',
-        options: ['O(N)', 'O(log N)', 'O(1)', 'O(N²)'],
-        correctIndex: 2,
-        explanation: 'Hash maps use a hash function to jump directly to the memory bucket for a given key, providing average O(1) access time.'
-      },
-      {
-        id: 'hm-2',
-        question: 'What is a "Hash Collision"?',
-        options: [
-          'When two different keys produce the exact same hash code.',
-          'When a key is deleted from the map.',
-          'When the computer runs out of memory.',
-          'When values are strings instead of numbers.'
-        ],
-        correctIndex: 0,
-        explanation: 'A collision occurs when two distinct keys map to the same internal array index. Techniques like Chaining (Linked Lists) resolve collisions.'
-      },
-      {
-        id: 'hm-3',
-        question: 'Why are Hash Map keys required to be unique?',
-        options: [
-          'Because duplicate keys would overwrite or make lookup ambiguous.',
-          'Because computers cannot store duplicate words.',
-          'To save RAM.',
-          'Keys do not need to be unique.'
-        ],
-        correctIndex: 0,
-        explanation: 'Keys act as distinct identifiers. Mapping a key to a new value overwrites the existing value for that key.'
-      },
-      {
-        id: 'hm-4',
-        question: 'Which problem is classic for Hash Maps?',
-        options: [
-          'Sorting 1,000 numbers.',
-          'Two Sum (finding two indices that sum to target in O(N)).',
-          'Finding the height of a binary tree.',
-          'Navigating a maze with BFS.'
-        ],
-        correctIndex: 1,
-        explanation: 'By storing numbers in a hash map as you iterate, you can check if `target - num` exists in O(1) time.'
-      }
-    ]
-  },
-  {
-    id: 'quiz-stacks-queues',
-    topicId: 'stacks',
-    title: 'Stacks & Queues Challenge',
-    subtitle: 'LIFO vs FIFO logic test.',
-    questionCount: 4,
-    difficulty: 'Beginner',
-    questions: [
-      {
-        id: 'sq-1',
-        question: 'Which order principle does a STACK follow?',
-        options: ['FIFO (First-In, First-Out)', 'LIFO (Last-In, First-Out)', 'Random Order', 'Sorted Order'],
-        correctIndex: 1,
-        explanation: 'Stacks follow Last-In, First-Out (LIFO). The last element pushed is the first element popped.'
-      },
-      {
-        id: 'sq-2',
-        question: 'Which data structure is used by the browser Back/Forward navigation buttons?',
-        options: ['Queue', 'Stack', 'Graph', 'Hash Map'],
-        correctIndex: 1,
-        explanation: 'Two stacks (Back stack and Forward stack) track page history in LIFO order.'
-      },
-      {
-        id: 'sq-3',
-        question: 'Which principle does a QUEUE follow?',
-        options: ['LIFO', 'FIFO (First-In, First-Out)', 'Priority Order', 'None of the above'],
-        correctIndex: 1,
-        explanation: 'Queues follow First-In, First-Out (FIFO), just like a real-life line for buying coffee.'
-      },
-      {
-        id: 'sq-4',
-        question: 'Which tree traversal algorithm natively relies on a Queue?',
-        options: ['Depth-First Search (DFS)', 'Breadth-First Search (BFS / Level Order)', 'In-Order Traversal', 'Quick Sort'],
-        correctIndex: 1,
-        explanation: 'BFS uses a Queue to explore all child nodes level by level in FIFO order.'
-      }
-    ]
-  }
-];
+export const QUIZ_SETS: QuizSet[] = EXPANDED_QUIZ_SETS;
 
 export const CODE_EXERCISES: CodeBlockExercise[] = [
   {
@@ -892,54 +707,72 @@ export const USER_BADGES: UserBadge[] = [
     id: 'badge-first-step',
     title: 'First Step',
     description: 'Complete your first DSA topic or quiz.',
+    howToAchieve: 'Navigate to any topic or quiz and complete it to earn this foundational badge.',
+    difficulty: 'Simple',
     icon: 'Footprints'
   },
   {
     id: 'badge-array-master',
     title: 'Array Apprentice',
     description: 'Complete the Array topic & quiz with 100% score.',
+    howToAchieve: 'Go to the Arrays topic and answer every question correctly in the quiz.',
+    difficulty: 'Medium',
     icon: 'LayoutGrid'
   },
   {
     id: 'badge-streak-3',
     title: '3-Day Streak',
     description: 'Practice 3 days in a row.',
+    howToAchieve: 'Log in and complete at least one daily task for 3 consecutive days.',
+    difficulty: 'Medium',
     icon: 'Flame'
   },
   {
     id: 'badge-weekly-active',
     title: 'Weekly Active',
     description: 'Maintain a 7-day learning streak.',
+    howToAchieve: 'Keep your momentum going! Complete a daily task for 7 consecutive days.',
+    difficulty: 'Hard',
     icon: 'CalendarDays'
   },
   {
     id: 'badge-monthly-scholar',
     title: 'Monthly Scholar',
     description: 'Earn 30 monthly points by completing daily tasks.',
+    howToAchieve: 'Consistently complete your daily tasks over the course of a month to reach 30 points.',
+    difficulty: 'Hard',
     icon: 'Star'
   },
   {
     id: 'badge-code-architect',
     title: 'Code Architect',
-    description: 'Complete 3 interactive code ordering exercises.',
+    description: 'Complete an interactive code ordering exercise.',
+    howToAchieve: 'Go to the Practice tab and successfully complete a code ordering exercise.',
+    difficulty: 'Medium',
     icon: 'Code'
   },
   {
     id: 'badge-dsa-champion',
     title: 'DSA Champion',
     description: 'Earn 300+ total XP on DSAfeed.',
+    howToAchieve: 'Earn XP by completing topics, quizzes, and tasks until you hit 300 XP.',
+    difficulty: 'Hard',
     icon: 'Trophy'
   },
   {
     id: 'badge-perfect-score',
     title: 'Flawless Victory',
     description: 'Get a perfect score on any quiz.',
+    howToAchieve: 'Answer all questions correctly in any 7-question quiz set.',
+    difficulty: 'Medium',
     icon: 'CheckCircle2'
   },
   {
     id: 'badge-dedicated',
     title: 'Dedicated Learner',
     description: 'Complete all 3 daily tasks in a single day.',
+    howToAchieve: 'Check your daily tasks on the Home tab and complete all three before midnight.',
+    difficulty: 'Medium',
     icon: 'Zap'
   }
 ];

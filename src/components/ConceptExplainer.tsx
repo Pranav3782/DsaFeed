@@ -127,9 +127,14 @@ export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({ topics, onSe
                 <Lightbulb className="w-5 h-5 text-[#F5C94A] shrink-0 mt-0.5" />
                 <div>
                   <h5 className="text-xs font-black text-[#101B3D] uppercase">Mental Model Analogy</h5>
-                  <p className="text-sm font-semibold text-[#101B3D]/90 mt-0.5">
+                  <p className="text-sm font-semibold text-[#101B3D]/90 mt-0.5 mb-3">
                     "{currentTopic.simpleExplanation.analogy}"
                   </p>
+                  {currentTopic.simpleExplanation.mediaUrl && (
+                    <div className="rounded-xl overflow-hidden border border-[#EAEAEA] shadow-sm max-w-sm">
+                      <img src={currentTopic.simpleExplanation.mediaUrl} alt={`${currentTopic.name} visualization`} className="w-full h-auto object-cover" />
+                    </div>
+                  )}
                 </div>
               </div>
 
