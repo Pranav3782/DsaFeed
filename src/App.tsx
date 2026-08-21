@@ -986,14 +986,21 @@ export default function App() {
         />
       )}
 
-      {activeQuizSet && (
-        <QuizPlayer
-          quizSet={activeQuizSet}
-          onClose={() => setActiveQuizSet(null)}
-          onCompleteQuiz={handleQuizComplete}
-          onAddXp={handleAddXp}
-        />
-      )}
+      {activeQuizSet && (() => {
+        const topicQuizzes = QUIZ_SETS.filter(q => q.topicId === activeQuizSet.topicId);
+        const currentIndex = topicQuizzes.findIndex(q => q.id === activeQuizSet.id);
+        const nextQuizSet = currentIndex >= 0 && currentIndex < topicQuizzes.length - 1 ? topicQuizzes[currentIndex + 1] : undefined;
+        return (
+          <QuizPlayer
+            quizSet={activeQuizSet}
+            nextQuizSet={nextQuizSet}
+            onClose={() => setActiveQuizSet(null)}
+            onCompleteQuiz={handleQuizComplete}
+            onAddXp={handleAddXp}
+            onNextQuiz={(quizSet) => setActiveQuizSet(quizSet)}
+          />
+        );
+      })()}
 
       <WelcomePopup 
         isOpen={showWelcomePopup}

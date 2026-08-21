@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { QuizSet, UserProgress, DsaTopic } from '../types';
-import { X, Play, CheckCircle2, Star } from 'lucide-react';
+import { X, Play, CheckCircle2, Star, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface QuizLevelSelectorModalProps {
@@ -18,6 +18,8 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
   onClose,
   onSelectLevel
 }) => {
+  const [lockedAttempt, setLockedAttempt] = useState<QuizSet | null>(null);
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#101B3D]/70 backdrop-blur-md overflow-y-auto">
@@ -81,7 +83,14 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
                   <motion.button
                     whileHover={{ scale: 1.03, y: -4 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => onSelectLevel(quiz)}
+                    onClick={() => {
+                      const isUnlocked = index === 0 || (userProgress.quizScores[quizSets[index - 1].id]?.percentage === 100);
+                      if (!isUnlocked) {
+                        setLockedAttempt(quiz);
+                      } else {
+                        onSelectLevel(quiz);
+                      }
+                    }}
                     key={quiz.id}
                     className={`group relative p-5 rounded-[1.5rem] flex flex-col items-center justify-center text-center transition-all border-2 shadow-sm ${
                       isCompleted 
@@ -137,6 +146,48 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
           </div>
 
         </motion.div>
+
+        {/* Locked Level Modal */}
+        <AnimatePresence>
+          {lockedAttempt && (() => {
+            const unlockedQuiz = quizSets.find((q, i) => {
+              const isUnlocked = i === 0 || (userProgress.quizScores[quizSets[i - 1].id]?.percentage === 100);
+              const isCompleted = userProgress.quizScores[q.id]?.percentage === 100;
+              return isUnlocked && !isCompleted;
+            }) || quizSets[0];
+
+            return (
+              <div className="absolute inset-0 z-50 bg-[#101B3D]/80 backdrop-blur-sm flex items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl relative"
+                >
+                  <button onClick={() => setLockedAttempt(null)} className="absolute top-4 right-4 text-[#8C8C8C] hover:text-[#101B3D]">
+                    <X className="w-5 h-5" />
+                  </button>
+                  <div className="w-16 h-16 bg-[#FFF1F0] rounded-full flex items-center justify-center mx-auto mb-4 text-[#F26B5B]">
+                    <Lock className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-black text-[#101B3D] mb-2">Level Locked!</h3>
+                  <p className="text-sm font-semibold text-[#8C8C8C] mb-6">
+                    You need to score 100% on the previous level to unlock {lockedAttempt.title}.
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setLockedAttempt(null);
+                      onSelectLevel(unlockedQuiz);
+                    }}
+                    className="w-full py-3.5 bg-[#3478E5] hover:bg-[#2864C6] text-white rounded-xl font-bold shadow-md transition"
+                  >
+                    Continue to {unlockedQuiz.title}
+                  </button>
+                </motion.div>
+              </div>
+            );
+          })()}
+        </AnimatePresence>
       </div>
     </AnimatePresence>
   );

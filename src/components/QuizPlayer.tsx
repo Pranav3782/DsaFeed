@@ -9,13 +9,17 @@ interface QuizPlayerProps {
   onClose: () => void;
   onCompleteQuiz: (quizId: string, score: number, total: number) => void;
   onAddXp: (amount: number) => void;
+  nextQuizSet?: QuizSet;
+  onNextQuiz?: (quiz: QuizSet) => void;
 }
 
 export const QuizPlayer: React.FC<QuizPlayerProps> = ({
   quizSet,
   onClose,
   onCompleteQuiz,
-  onAddXp
+  onAddXp,
+  nextQuizSet,
+  onNextQuiz
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -284,13 +288,22 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
                   <RotateCcw className="w-4 h-4" />
                   <span>Try Again</span>
                 </button>
-
-                <button
-                  onClick={onClose}
-                  className="px-6 py-3 bg-[#3478E5] hover:bg-[#2864C6] text-white rounded-2xl text-xs font-black shadow-xs transition"
-                >
-                  Back to Learning
-                </button>
+                {nextQuizSet && onNextQuiz ? (
+                  <button
+                    onClick={() => onNextQuiz(nextQuizSet)}
+                    className="flex-1 px-5 py-3 bg-[#3478E5] hover:bg-[#2864C6] text-white rounded-2xl text-xs sm:text-sm font-extrabold shadow-md transition active:scale-95 flex items-center justify-center gap-2"
+                  >
+                    <span>Move to {nextQuizSet.title.split(' - ')[0]}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={onClose}
+                    className="flex-1 px-5 py-3 bg-[#3478E5] hover:bg-[#2864C6] text-white rounded-2xl text-xs sm:text-sm font-extrabold shadow-md transition active:scale-95"
+                  >
+                    Return to Levels
+                  </button>
+                )}
               </div>
             )}
           </div>
