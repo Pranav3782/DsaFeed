@@ -23,6 +23,12 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   useEffect(() => {
+    if (!isOpen) {
+      setShowClearConfirm(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleOutsideInteraction = (event: Event) => {
       const target = event.target as Element;
       if (
