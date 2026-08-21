@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AppNotification } from '../types';
 import { Bell, Award, Info, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -19,6 +19,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   onClearAll
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   useEffect(() => {
     const handleOutsideInteraction = (event: Event) => {
@@ -74,7 +75,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             </span>
             {notifications.length > 0 && (
               <button 
-                onClick={(e) => { e.stopPropagation(); onClearAll(); }}
+                onClick={(e) => { e.stopPropagation(); setShowClearConfirm(true); }}
                 className="text-xs font-bold text-[#F26B5B] hover:text-[#D94F3F] hover:bg-[#FFF1F0] px-2 py-1 rounded-full transition"
               >
                 Clear All
@@ -89,7 +90,43 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div className="flex-1 overflow-y-auto p-2 space-y-1 relative">
+          <AnimatePresence>
+            {showClearConfirm && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-20 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center"
+              >
+                <div className="w-12 h-12 bg-[#FFF1F0] text-[#F26B5B] rounded-full flex items-center justify-center mb-3">
+                  <X className="w-6 h-6" />
+                </div>
+                <h4 className="text-[#101B3D] font-black text-base sm:text-lg mb-2">Clear all messages?</h4>
+                <p className="text-sm font-medium text-[#8C8C8C] mb-6">
+                  Are you sure you want to clear all messages in the notifications section? This cannot be undone.
+                </p>
+                <div className="flex items-center gap-3 w-full">
+                  <button
+                    onClick={() => setShowClearConfirm(false)}
+                    className="flex-1 py-2.5 rounded-xl font-bold text-[#101B3D] bg-[#F8F9FA] hover:bg-[#EAEAEA] transition"
+                  >
+                    No, keep
+                  </button>
+                  <button
+                    onClick={() => {
+                      onClearAll();
+                      setShowClearConfirm(false);
+                    }}
+                    className="flex-1 py-2.5 rounded-xl font-bold text-white bg-[#F26B5B] hover:bg-[#D94F3F] shadow-sm transition"
+                  >
+                    Yes, clear
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <AnimatePresence>
             {notifications.length === 0 ? (
               <div className="text-center p-8 text-[#8C8C8C]">
