@@ -187,7 +187,7 @@ export default function App() {
   const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
   
   // Notifications State
-  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [notifications, setNotifications] = useSessionState<AppNotification[]>('app_notifications', []);
 
   const addNotification = (title: string, message: string, type: 'info' | 'badge_earned' = 'badge_earned') => {
     const newNotif: AppNotification = {
@@ -220,7 +220,7 @@ export default function App() {
   const [difficultyFilter, setDifficultyFilter] = useState<'All' | 'Beginner' | 'Intermediate'>('All');
 
   // User Local Progress State
-  const [userProgress, setUserProgress] = useState<UserProgress>(DEMO_PROGRESS);
+  const [userProgress, setUserProgress] = useSessionState<UserProgress>('app_userProgress', DEMO_PROGRESS);
   const [isSyncing, setIsSyncing] = useState(false);
 
   // Global UI Sound Effect for clicks and interactions
@@ -599,19 +599,32 @@ export default function App() {
       const quizSet = QUIZ_SETS.find(q => q.id === quizId);
       const topicId = quizSet?.topicId;
 
+      const prevScoreData = prev.quizScores[quizId];
+      const bestScore = prevScoreData ? Math.max(prevScoreData.score, score) : score;
+      const bestPercentage = prevScoreData ? Math.max(prevScoreData.percentage, percentage) : percentage;
+
       const newQuizScores = {
         ...prev.quizScores,
-        [quizId]: { score, total, percentage }
+        [quizId]: { score: bestScore, total, percentage: bestPercentage }
       };
 
       let updatedTopics = prev.completedTopics;
       let updatedProgress = { ...prev.topicProgress };
 
-      if (percentage >= 70 && topicId) {
-        if (!updatedTopics.includes(topicId)) {
+      if (topicId) {
+        // Calculate the overall topic progress based on all quizzes for this topic
+        const topicQuizzes = QUIZ_SETS.filter(q => q.topicId === topicId);
+        let totalTopicPercentage = 0;
+        topicQuizzes.forEach(q => {
+          totalTopicPercentage += (newQuizScores[q.id]?.percentage || 0);
+        });
+        
+        const averageProgress = Math.round(totalTopicPercentage / topicQuizzes.length);
+        updatedProgress[topicId] = averageProgress;
+
+        if (averageProgress === 100 && !updatedTopics.includes(topicId)) {
           updatedTopics = [...updatedTopics, topicId];
         }
-        updatedProgress[topicId] = 100;
       }
 
       const next = {
