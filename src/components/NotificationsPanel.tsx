@@ -96,7 +96,15 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                   className={`w-full text-left p-3 rounded-2xl flex gap-3 transition-colors ${
                     notification.read ? 'bg-transparent cursor-default' : 'bg-[#EEF4FF]/50 cursor-pointer hover:bg-[#EEF4FF]/80'
                   }`}
-                  onClick={() => !notification.read && onMarkAsRead(notification.id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!notification.read) onMarkAsRead(notification.id);
+                  }}
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    if (!notification.read) onMarkAsRead(notification.id);
+                  }}
                 >
                   
                   {/* Icon / Avatar */}
