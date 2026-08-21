@@ -94,7 +94,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   className={`p-3 rounded-2xl flex gap-3 transition-colors ${
-                    notification.read ? 'bg-transparent' : 'bg-[#EEF4FF]/50'
+                    notification.read ? 'bg-transparent' : 'bg-[#EEF4FF]/50 cursor-pointer hover:bg-[#EEF4FF]/80'
                   }`}
                   onClick={() => !notification.read && onMarkAsRead(notification.id)}
                 >
