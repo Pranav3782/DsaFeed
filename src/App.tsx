@@ -1019,6 +1019,7 @@ export default function App() {
         const nextQuizSet = currentIndex >= 0 && currentIndex < topicQuizzes.length - 1 ? topicQuizzes[currentIndex + 1] : undefined;
         return (
           <QuizPlayer
+            key={activeQuizSet.id}
             quizSet={activeQuizSet}
             nextQuizSet={nextQuizSet}
             onClose={() => setActiveQuizSet(null)}
