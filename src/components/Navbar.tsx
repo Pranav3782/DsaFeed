@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
-import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Lock, Trophy, Sparkles, ShieldAlert, MessageSquareHeart, CreditCard, Layers, Activity, MessageSquare, Bell } from 'lucide-react';
+import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Sparkles, ShieldAlert, MessageSquareHeart, CreditCard, Layers, Bell } from 'lucide-react';
 import { UserProgress, UserProfile, NavTab, AppNotification } from '../types';
 import { DsaFeedLogo } from './DsaFeedLogo';
 import { NotificationsPanel } from './NotificationsPanel';
+import { ComingSoonPopup } from './ComingSoonPopup';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -14,8 +15,6 @@ interface NavbarProps {
   onSignOut?: () => void;
   onOpenStreakModal?: () => void;
   notifications?: AppNotification[];
-  onAcceptRequest?: (id: string, senderId?: string) => void;
-  onDeclineRequest?: (id: string) => void;
   onMarkAsRead?: (id: string) => void;
 }
 
@@ -28,32 +27,21 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSignOut,
   onOpenStreakModal,
   notifications = [],
-  onAcceptRequest = () => {},
-  onDeclineRequest = () => {},
   onMarkAsRead = () => {}
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [showLeaderboardToast, setShowLeaderboardToast] = useState(false);
+  const [comingSoonPopup, setComingSoonPopup] = useState({ isOpen: false, title: '', message: '' });
 
   const navItems = [
     { id: 'home' as const, label: 'Home', icon: BookOpen },
-    { id: 'feed' as const, label: 'Feed', icon: Activity },
-    { id: 'chat' as const, label: 'Chat', icon: MessageSquare },
-    { id: 'practice' as const, label: 'Practice', icon: Code2 },
     { id: 'quiz' as const, label: 'Quizzes', icon: HelpCircle },
     { id: 'concepts' as const, label: 'Concepts', icon: Sparkles },
-    { id: 'pricing' as const, label: 'Pricing', icon: CreditCard },
+
     { id: 'profile' as const, label: 'Profile', icon: User },
-    { id: 'leaderboard' as const, label: 'Leaderboard', icon: Trophy, isLocked: true },
   ];
 
-  const handleNavClick = (item: typeof navItems[number]) => {
-    if (item.isLocked) {
-      setShowLeaderboardToast(true);
-      setTimeout(() => setShowLeaderboardToast(false), 3000);
-      return;
-    }
+  const handleNavClick = (item: any) => {
     setActiveTab(item.id);
     setMobileMenuOpen(false);
   };
@@ -89,12 +77,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <Icon className={`w-3.5 h-3.5 lg:w-4 lg:h-4 ${isActive ? 'text-[#F5C94A]' : 'text-[#111111]/60'}`} />
                   <span className={`${isActive ? 'block' : 'hidden xl:block'}`}>{item.label}</span>
-                  {item.isLocked && (
-                    <span className={`flex items-center gap-0.5 ml-0.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded-full border border-amber-500/30 ${isActive ? 'block' : 'hidden xl:flex'}`}>
-                      <Lock className="w-2.5 h-2.5" />
-                      <span className="hidden 2xl:inline">Locked</span>
-                    </span>
-                  )}
                 </button>
               );
             })}
@@ -152,12 +134,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#F26B5B] rounded-full border-2 border-white"></span>
                   )}
                 </button>
-                <NotificationsPanel 
+                <NotificationsPanel
                   isOpen={notificationsOpen}
                   onClose={() => setNotificationsOpen(false)}
                   notifications={notifications}
-                  onAcceptRequest={onAcceptRequest}
-                  onDeclineRequest={onDeclineRequest}
                   onMarkAsRead={onMarkAsRead}
                 />
               </div>
@@ -225,12 +205,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#F26B5B] rounded-full border-2 border-white"></span>
                   )}
                 </button>
-                <NotificationsPanel 
+                <NotificationsPanel
                   isOpen={notificationsOpen}
                   onClose={() => setNotificationsOpen(false)}
                   notifications={notifications}
-                  onAcceptRequest={onAcceptRequest}
-                  onDeclineRequest={onDeclineRequest}
                   onMarkAsRead={onMarkAsRead}
                 />
               </div>
@@ -267,18 +245,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Locked Toast Notification */}
-      {showLeaderboardToast && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-[#101B3D] text-white px-5 py-3 rounded-2xl shadow-xl border border-amber-400/40 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-200">
-          <div className="p-1.5 bg-amber-400/20 text-amber-300 rounded-xl">
-            <Lock className="w-4 h-4" />
-          </div>
-          <div>
-            <p className="text-xs font-extrabold text-amber-300">Leaderboard Locked 🔒</p>
-            <p className="text-[11px] text-slate-300">Complete 3 quizzes and reach 200 XP to unlock global rankings!</p>
-          </div>
-        </div>
-      )}
+      {/* Coming Soon Popup */}
+      <ComingSoonPopup
+        isOpen={comingSoonPopup.isOpen}
+        onClose={() => setComingSoonPopup({ ...comingSoonPopup, isOpen: false })}
+        title={comingSoonPopup.title}
+        message={comingSoonPopup.message}
+      />
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
@@ -300,11 +273,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <Icon className={`w-5 h-5 ${isActive ? 'text-[#F5C94A]' : 'text-[#8C8C8C]'}`} />
                   <span>{item.label}</span>
                 </div>
-                {item.isLocked ? (
-                  <span className="flex items-center gap-1 text-xs font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                    <Lock className="w-3 h-3" /> Locked
-                  </span>
-                ) : isActive ? (
+                {isActive ? (
                   <div className="w-2 h-2 rounded-full bg-[#55C990]" />
                 ) : null}
               </button>

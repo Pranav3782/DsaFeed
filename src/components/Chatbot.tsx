@@ -136,7 +136,7 @@ export const Chatbot: React.FC<{ contextInfo?: string }> = ({ contextInfo }) => 
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            className="fixed inset-x-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-[100] w-full sm:w-[380px] h-[55vh] sm:h-[600px] sm:max-h-[85vh] bg-white rounded-t-[24px] sm:rounded-[24px] shadow-2xl flex flex-col overflow-hidden text-[#101B3D] border-t sm:border border-[#EAEAEA]"
+            className="fixed inset-x-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-[100] w-full sm:w-[500px] h-[55vh] sm:h-[600px] sm:max-h-[85vh] bg-white rounded-t-[24px] sm:rounded-[24px] shadow-2xl flex flex-col overflow-hidden text-[#101B3D] border-t sm:border border-[#EAEAEA]"
           >
             {/* Header (Theme colors) */}
             <div className="bg-[#101B3D] px-5 py-4 flex items-center justify-between shrink-0 shadow-sm relative overflow-hidden">

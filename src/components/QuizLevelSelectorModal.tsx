@@ -25,7 +25,7 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="relative w-full max-w-5xl bg-[#F8FAFC] rounded-[2.5rem] shadow-2xl border border-white my-auto overflow-hidden flex flex-col max-h-[90vh]"
+          className="relative w-full max-w-5xl bg-[#F8FAFC] rounded-[1.5rem] sm:rounded-[2.5rem] shadow-2xl border border-white my-auto overflow-hidden flex flex-col max-h-[90vh]"
         >
           {/* Header */}
           <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between border-b border-[#EAEAEA] gap-4 bg-white sticky top-0 z-10">
@@ -55,8 +55,8 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
           </div>
 
           {/* Grid Container */}
-          <div className="p-6 sm:p-8 overflow-y-auto flex-1">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="p-4 sm:p-6 lg:p-8 overflow-y-auto flex-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6">
               {quizSets.map((quiz, index) => {
                 const scoreData = userProgress.quizScores[quiz.id];
                 const isCompleted = scoreData?.percentage === 100;

@@ -64,7 +64,20 @@ export const DsaMyths: React.FC = () => {
           <span>Busting Illusions</span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-black text-[#101B3D] ">
-          Top 5 DSA Myths
+          <motion.span 
+            initial={{ backgroundSize: "0% 100%" }}
+            whileInView={{ backgroundSize: "100% 100%" }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+            className="inline leading-relaxed"
+            style={{
+              backgroundImage: "linear-gradient(transparent 65%, rgba(245,201,74,0.5) 65%)",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "left top"
+            }}
+          >
+            Top 5 DSA Myths
+          </motion.span>
         </h2>
         <p className="text-sm sm:text-base text-[#111111]/70  font-medium mt-2">
           Swipe left or right to uncover the truth behind common misconceptions that hold developers back.

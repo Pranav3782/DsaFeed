@@ -8,7 +8,12 @@ export type DsaCategory =
   | 'trees'
   | 'graphs'
   | 'sorting'
-  | 'searching';
+  | 'searching'
+  | 'dp'
+  | 'backtracking'
+  | 'greedy'
+  | 'tries'
+  | 'disjoint-sets';
 
 export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced';
 
@@ -98,10 +103,9 @@ export interface UserProfile {
   isLoggedIn: boolean;
   activityHistory?: Record<string, number>; // date string YYYY-MM-DD -> level 1 to 4
   verified?: boolean; // Verified badge/tick
-  connectionId?: string; // e.g. #DSA-1234
 }
 
-export type NavTab = 'home' | 'practice' | 'quiz' | 'concepts' | 'profile' | 'leaderboard' | 'privacy' | 'terms' | 'feedback' | 'pricing' | 'feed' | 'chat';
+export type NavTab = 'home' | 'practice' | 'quiz' | 'concepts' | 'profile' | 'privacy' | 'terms' | 'feedback' | '404';
 
 export interface UserBadge {
   id: string;
@@ -143,57 +147,11 @@ export interface FaqItem {
   category: string;
 }
 
-// ----------------------------------------------------
-// Networking & Feed Types
-// ----------------------------------------------------
-
-export interface FeedAuthor {
-  id: string;
-  name: string;
-  handle: string;
-  avatar: string;
-  verified: boolean;
-}
-
-export interface FeedPostType {
-  id: string;
-  author: FeedAuthor;
-  content: string;
-  mediaUrl?: string;
-  mediaType?: 'image' | 'video';
-  timestamp: string;
-  likes: number; // Boosts
-  replies: number; // Threads
-  reposts: number; // Forks
-  bookmarks: number; // Caches
-  isLikedByMe?: boolean;
-  isBookmarkedByMe?: boolean;
-}
-
-export interface ChatMessage {
-  id: string;
-  senderId: string;
-  receiverId: string;
-  content: string;
-  timestamp: string;
-}
-
-export type ConnectionStatus = 'pending' | 'accepted' | 'declined';
-
 export interface AppNotification {
   id: string;
-  type: 'connection_request' | 'connection_accepted' | 'badge_earned' | 'system';
+  type: 'badge_earned' | 'system';
   title: string;
   message: string;
   timestamp: string;
   read: boolean;
-  senderId?: string; // If it's from another user (e.g. request)
-  senderName?: string;
-  senderAvatar?: string;
-}
-
-export interface ChatContact extends FeedAuthor {
-  status: ConnectionStatus;
-  lastMessage?: string;
-  lastMessageTime?: string;
 }

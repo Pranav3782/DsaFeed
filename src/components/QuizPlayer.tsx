@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { QuizSet } from '../types';
 import { X, CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy, Sparkles, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -26,8 +26,26 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
 
   if (!quizSet) return null;
 
-  const currentQuestion = quizSet.questions[currentIndex];
-  const totalQuestions = quizSet.questions.length;
+  // Shuffle options for all questions once when the quiz loads
+  const shuffledQuestions = useMemo(() => {
+    return quizSet.questions.map(q => {
+      const correctAnswer = q.options[q.correctIndex];
+      // Fisher-Yates shuffle
+      const shuffled = [...q.options];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return {
+        ...q,
+        options: shuffled,
+        correctIndex: shuffled.indexOf(correctAnswer)
+      };
+    });
+  }, [quizSet.id]);
+
+  const currentQuestion = shuffledQuestions[currentIndex];
+  const totalQuestions = shuffledQuestions.length;
   const progressPercent = Math.round(((currentIndex + 1) / totalQuestions) * 100);
 
   const handleSelectOption = (index: number) => {
@@ -73,12 +91,12 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101B3D]/60 backdrop-blur-xs overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-[#101B3D]/60 backdrop-blur-xs overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-[#EAEAEA] my-8 overflow-hidden flex flex-col"
+          className="relative w-full h-full sm:h-auto sm:max-h-[90vh] max-w-2xl bg-white sm:rounded-3xl shadow-2xl sm:border border-[#EAEAEA] overflow-hidden flex flex-col"
         >
           {/* Header Bar */}
           <div className="p-6 border-b border-[#EAEAEA] bg-[#FFFDF9] flex items-center justify-between">
@@ -116,7 +134,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({
           )}
 
           {/* Quiz Body */}
-          <div className="p-6 sm:p-8 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
             {!quizFinished ? (
               <div className="space-y-6 animate-in fade-in duration-200">
                 {/* Question Statement */}

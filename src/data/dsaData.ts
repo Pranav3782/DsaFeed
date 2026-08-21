@@ -1,7 +1,8 @@
-import { DsaTopic, QuizSet, CodeBlockExercise, FaqItem, UserBadge } from '../types';
+import { DsaTopic, QuizSet, CodeBlockExercise, FaqItem, UserBadge, DsaCategory } from '../types';
+import { CONCEPT_CONTENT } from './conceptContent';
 import { EXPANDED_QUIZ_SETS } from './expandedQuizData';
 
-export const DSA_TOPICS: DsaTopic[] = [
+const BASE_TOPICS: Omit<DsaTopic, 'simpleExplanation'>[] = [
   {
     id: 'arrays',
     name: 'Arrays',
@@ -12,63 +13,15 @@ export const DSA_TOPICS: DsaTopic[] = [
     bgTint: '#EEF4FF',
     difficulty: 'Beginner',
     estimatedMinutes: 8,
-    simpleExplanation: {
-      analogy: 'Imagine an egg carton or a row of numbered mailboxes (0, 1, 2, 3...). Every item has a fixed position number called an index.',
-      summary: 'Arrays store elements in sequential order in memory. Because elements sit right next to each other, accessing any element by its index is instant (O(1)).',
-      keyPoints: [
-        '0-indexed: The first element is at index 0.',
-        'Instant Access: Reading `arr[3]` is lightning fast.',
-        'Fixed size or dynamic resizing behind the scenes.',
-        'Inserting/deleting at the beginning requires shifting all other items.'
-      ],
-      whenToUse: [
-        'When you need fast lookups by index.',
-        'When you know the list size in advance or iteration is frequent.',
-        'As the base for other structures like Stacks and Queues.'
-      ],
-      mediaUrl: '/images/array.jpg'
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(1)',
-        search: 'O(N)',
-        insertion: 'O(N) [O(1) at end]',
-        deletion: 'O(N) [O(1) at end]'
-      },
+      timeComplexity: { access: 'O(1)', search: 'O(N)', insertion: 'O(N) [O(1) at end]', deletion: 'O(N) [O(1) at end]' },
       spaceComplexity: 'O(N) to store N elements.',
-      commonPatterns: [
-        'Two Pointers (Left and Right converging)',
-        'Sliding Window for sub-array problems',
-        'Prefix Sum for range queries'
-      ],
-      proTips: [
-        'Watch out for out-of-bounds errors when looping.',
-        'Consider if sorting the array first simplifies the solution.'
-      ]
+      commonPatterns: ['Two Pointers', 'Sliding Window', 'Prefix Sum'],
+      proTips: ['Watch out for out-of-bounds errors.', 'Consider if sorting simplifies the solution.']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `// Array lookup and insertion
-const fruits = ["Apple", "Banana", "Cherry"];
-
-// Instant lookup O(1)
-console.log(fruits[0]); // "Apple"
-
-// Append to end O(1)
-fruits.push("Date");`
-      },
-      {
-        language: 'Python',
-        code: `# Array (List in Python)
-fruits = ["Apple", "Banana", "Cherry"]
-
-# Instant lookup O(1)
-print(fruits[0]) # "Apple"
-
-# Append to end O(1)
-fruits.append("Date")`
-      }
+      { language: 'JavaScript', code: 'const arr = [10, 20, 30];\nconsole.log(arr[1]); // 20' },
+      { language: 'Python', code: 'arr = [10, 20, 30]\nprint(arr[1]) # 20' }
     ]
   },
   {
@@ -76,126 +29,41 @@ fruits.append("Date")`
     name: 'Strings',
     iconName: 'Type',
     shortDescription: 'Sequences of characters used to store text and words.',
-    beginnerNote: 'Strings are essentially arrays of characters with special helpers.',
+    beginnerNote: 'Strings are essentially arrays of characters.',
     accentColor: '#F5A9D5',
     bgTint: '#FDF2F8',
     difficulty: 'Beginner',
     estimatedMinutes: 10,
-    simpleExplanation: {
-      analogy: 'Think of a beaded necklace where each bead has a single letter printed on it.',
-      summary: 'In computer science, strings are sequences of text. In many languages like Java or Python, strings are immutable (cannot be changed in-place).',
-      keyPoints: [
-        'Characters can be accessed by index just like arrays.',
-        'String manipulation often creates new strings.',
-        'Common operations include substring, concatenation, and character frequency counting.'
-      ],
-      whenToUse: [
-        'Text processing, parsing, palindrome checks, anagram validation.',
-        'Pattern searching and regex matching.'
-      ]
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(1)',
-        search: 'O(N)',
-        insertion: 'O(N)',
-        deletion: 'O(N)'
-      },
+      timeComplexity: { access: 'O(1)', search: 'O(N)', insertion: 'O(N)', deletion: 'O(N)' },
       spaceComplexity: 'O(N) for string copies.',
-      commonPatterns: [
-        'Frequency Map / ASCII array for anagrams',
-        'Two Pointers for Palindromes',
-        'StringBuilder / Array join to avoid O(N²) string concatenation'
-      ],
-      proTips: [
-        'Remember case sensitivity and whitespace handling.',
-        'Building strings in a loop with + can lead to O(N²) time. Use an array join instead!'
-      ]
+      commonPatterns: ['Frequency Map for anagrams', 'Two Pointers for Palindromes'],
+      proTips: ['Building strings in a loop with + can lead to O(N²) time.']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `// Check if string is Palindrome
-function isPalindrome(str) {
-  const clean = str.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return clean === clean.split('').reverse().join('');
-}`
-      },
-      {
-        language: 'Python',
-        code: `# Check if string is Palindrome
-def is_palindrome(s: str) -> bool:
-    clean = ''.join(c.lower() for c in s if c.isalnum())
-    return clean == clean[::-1]`
-      }
+      { language: 'JavaScript', code: 'const isPal = (s) => s === s.split(\'\').reverse().join(\'\');' },
+      { language: 'Python', code: 'is_pal = lambda s: s == s[::-1]' }
     ]
   },
   {
     id: 'linked-lists',
     name: 'Linked Lists',
     iconName: 'Link',
-    shortDescription: 'Chain of nodes connected by pointers pointing to the next node.',
-    beginnerNote: 'Think of a treasure hunt where each clue gives the location of the next clue.',
+    shortDescription: 'Chain of nodes connected by pointers.',
+    beginnerNote: 'Think of a treasure hunt where each clue points to the next.',
     accentColor: '#55C990',
     bgTint: '#EFFCF6',
     difficulty: 'Intermediate',
     estimatedMinutes: 12,
-    simpleExplanation: {
-      analogy: 'A train where each car is hooked to the car behind it. You start at the engine (Head) and follow the hitches to the last caboose (Tail).',
-      summary: 'Unlike arrays, linked list nodes do not sit next to each other in memory. Each node holds its data and a memory address (next pointer) pointing to the next item.',
-      keyPoints: [
-        'Head: The starting node.',
-        'Next pointer: Reference to the subsequent node.',
-        'Inserting at the beginning or middle is O(1) if you already have the pointer!',
-        'No random access: To get the 5th item, you must walk through items 1 to 4.'
-      ],
-      whenToUse: [
-        'When frequent insertions and deletions at the head/tail are needed.',
-        'When memory is fragmented or exact list size is unpredictable.'
-      ]
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(N)',
-        search: 'O(N)',
-        insertion: 'O(1) [with node pointer]',
-        deletion: 'O(1) [with node pointer]'
-      },
+      timeComplexity: { access: 'O(N)', search: 'O(N)', insertion: 'O(1)', deletion: 'O(1)' },
       spaceComplexity: 'O(N) + pointer overhead.',
-      commonPatterns: [
-        'Fast and Slow Pointers (Floyds Cycle Detection / Middle Node)',
-        'Dummy Head Node to simplify boundary edge cases',
-        'Reversing a Linked List'
-      ],
-      proTips: [
-        'Always check for null pointers (e.g., node == null or node.next == null).',
-        'Draw the pointers on paper first!'
-      ]
+      commonPatterns: ['Fast and Slow Pointers (Cycle Detection)', 'Dummy Head Node', 'Reversing'],
+      proTips: ['Always check for null pointers (node == null).']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `class Node {
-  constructor(val) {
-    this.val = val;
-    this.next = null;
-  }
-}
-
-// Creating a 2-node list: 10 -> 20
-const head = new Node(10);
-head.next = new Node(20);`
-      },
-      {
-        language: 'Python',
-        code: `class Node:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
-
-# Creating 10 -> 20
-head = Node(10, Node(20))`
-      }
+      { language: 'JavaScript', code: 'class Node { constructor(v) { this.val = v; this.next = null; } }' },
+      { language: 'Python', code: 'class Node:\n    def __init__(self, val=0): self.val = val; self.next = None' }
     ]
   },
   {
@@ -203,61 +71,20 @@ head = Node(10, Node(20))`
     name: 'Stacks',
     iconName: 'Layers',
     shortDescription: 'Last-In, First-Out (LIFO) stack of elements.',
-    beginnerNote: 'Like a stack of cafeteria trays: the last tray put on top is the first one taken off.',
+    beginnerNote: 'Like a stack of cafeteria trays.',
     accentColor: '#F26B5B',
     bgTint: '#FFF1F0',
     difficulty: 'Beginner',
     estimatedMinutes: 8,
-    simpleExplanation: {
-      analogy: 'Think of arranging plates in a stack. The last plate you put on top is the first one you take off.',
-      summary: 'A Stack follows the LIFO rule (Last-In, First-Out). Elements are added (pushed) to the top and removed (popped) from the top.',
-      keyPoints: [
-        'Push: Add item to top.',
-        'Pop: Remove item from top.',
-        'Peek: Look at top item without removing.',
-        'All core operations take O(1) constant time.'
-      ],
-      whenToUse: [
-        'Undo/Redo history, browser navigation, call stack execution, matching parentheses () [] {}.'
-      ],
-      mediaUrl: '/images/stack.jpg'
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(N)',
-        search: 'O(N)',
-        insertion: 'O(1)',
-        deletion: 'O(1)'
-      },
+      timeComplexity: { access: 'O(N)', search: 'O(N)', insertion: 'O(1)', deletion: 'O(1)' },
       spaceComplexity: 'O(N)',
-      commonPatterns: [
-        'Monotonic Stack for next greater element',
-        'Valid Parentheses string evaluation',
-        'DFS implementation using stack'
-      ],
-      proTips: [
-        'Always handle the stack underflow case (popping from empty stack).'
-      ]
+      commonPatterns: ['Monotonic Stack', 'Valid Parentheses', 'DFS'],
+      proTips: ['Always handle stack underflow.']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `const stack = [];
-
-stack.push(1); // [1]
-stack.push(2); // [1, 2]
-
-const topItem = stack.pop(); // returns 2`
-      },
-      {
-        language: 'Python',
-        code: `stack = []
-
-stack.append(1) # [1]
-stack.append(2) # [1, 2]
-
-top_item = stack.pop() # returns 2`
-      }
+      { language: 'JavaScript', code: 'const stack = [];\nstack.push(1);\nstack.pop();' },
+      { language: 'Python', code: 'stack = []\nstack.append(1)\nstack.pop()' }
     ]
   },
   {
@@ -265,60 +92,20 @@ top_item = stack.pop() # returns 2`
     name: 'Queues',
     iconName: 'ListOrdered',
     shortDescription: 'First-In, First-Out (FIFO) line of items.',
-    beginnerNote: 'Just like standing in line at a movie theater ticket counter.',
+    beginnerNote: 'Like standing in line at a theater.',
     accentColor: '#F5C94A',
     bgTint: '#FFFBEA',
     difficulty: 'Beginner',
     estimatedMinutes: 8,
-    simpleExplanation: {
-      analogy: 'Standing in a queue line. The first person to join the line is the first one to be served!',
-      summary: 'A Queue follows FIFO (First-In, First-Out). Items are added at the back (Enqueue) and removed from the front (Dequeue).',
-      keyPoints: [
-        'Enqueue: Join back of queue.',
-        'Dequeue: Leave front of queue.',
-        'Fair ordering based on arrival time.'
-      ],
-      whenToUse: [
-        'Print jobs, task scheduling, Breadth-First Search (BFS) in trees and graphs.'
-      ],
-      mediaUrl: '/images/queue.jpg'
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(N)',
-        search: 'O(N)',
-        insertion: 'O(1)',
-        deletion: 'O(1)'
-      },
+      timeComplexity: { access: 'O(N)', search: 'O(N)', insertion: 'O(1)', deletion: 'O(1)' },
       spaceComplexity: 'O(N)',
-      commonPatterns: [
-        'Breadth-First Search (BFS) level-order traversal',
-        'Sliding Window Maximum (Monotonic Queue)'
-      ],
-      proTips: [
-        'In JavaScript, `array.shift()` is O(N). Use a dedicated Queue pointer or linked list for O(1) dequeue!'
-      ]
+      commonPatterns: ['BFS level-order traversal', 'Sliding Window Maximum'],
+      proTips: ['In JS, array.shift() is O(N). Use a real Queue for O(1).']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `// Simple Queue conceptual demo
-const queue = [];
-queue.push("Alice"); // Enqueue
-queue.push("Bob");
-
-const firstOut = queue.shift(); // "Alice"`
-      },
-      {
-        language: 'Python',
-        code: `from collections import deque
-
-queue = deque()
-queue.append("Alice") # Enqueue
-queue.append("Bob")
-
-first_out = queue.popleft() # "Alice"`
-      }
+      { language: 'JavaScript', code: 'const queue = [];\nqueue.push(1);\nqueue.shift();' },
+      { language: 'Python', code: 'from collections import deque\nq = deque()\nq.append(1)\nq.popleft()' }
     ]
   },
   {
@@ -326,61 +113,20 @@ first_out = queue.popleft() # "Alice"`
     name: 'Hash Maps',
     iconName: 'Database',
     shortDescription: 'Key-value pairs enabling lightning-fast O(1) lookups.',
-    beginnerNote: 'Like a dictionary where you look up a word to instantly get its definition.',
+    beginnerNote: 'Like a dictionary.',
     accentColor: '#101B3D',
     bgTint: '#F0F3FA',
     difficulty: 'Beginner',
     estimatedMinutes: 10,
-    simpleExplanation: {
-      analogy: 'Coat check at a club: You hand over your coat, get a ticket number (Key), and later present the ticket to instantly get your coat (Value).',
-      summary: 'Hash Maps (also called objects, dicts, or hash tables) convert a Key into an array index using a Hash Function. This lets you store and fetch values in average O(1) time!',
-      keyPoints: [
-        'Keys must be unique.',
-        'Instant O(1) lookup, insert, and delete on average.',
-        'Hash Collisions happen when two keys hash to the same spot (handled internally).'
-      ],
-      whenToUse: [
-        'Frequency counting, Two Sum problem, caching (memoization), instant lookups.'
-      ]
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(1) avg',
-        search: 'O(1) avg',
-        insertion: 'O(1) avg',
-        deletion: 'O(1) avg'
-      },
+      timeComplexity: { access: 'O(1) avg', search: 'O(1) avg', insertion: 'O(1) avg', deletion: 'O(1) avg' },
       spaceComplexity: 'O(N)',
-      commonPatterns: [
-        'Count frequencies of characters or numbers',
-        'Complement lookup (Target - CurrentValue) in Two Sum',
-        'Group Anagrams by sorted key'
-      ],
-      proTips: [
-        'Remember that worst-case time complexity is O(N) if many collisions occur, though rare in modern runtimes.'
-      ]
+      commonPatterns: ['Frequency Map', 'Complement lookup (Two Sum)'],
+      proTips: ['Worst-case is O(N) if there are many collisions.']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `const userAges = new Map();
-
-userAges.set("Alex", 25);
-userAges.set("Sam", 30);
-
-// Instant lookup
-console.log(userAges.get("Alex")); // 25`
-      },
-      {
-        language: 'Python',
-        code: `user_ages = {}
-
-user_ages["Alex"] = 25
-user_ages["Sam"] = 30
-
-# Instant lookup
-print(user_ages["Alex"]) # 25`
-      }
+      { language: 'JavaScript', code: 'const map = new Map();\nmap.set(\'a\', 1);\nmap.get(\'a\');' },
+      { language: 'Python', code: 'd = {\'a\': 1}\nprint(d[\'a\'])' }
     ]
   },
   {
@@ -388,184 +134,62 @@ print(user_ages["Alex"]) # 25`
     name: 'Trees',
     iconName: 'GitBranch',
     shortDescription: 'Hierarchical structure with root, parent, child, and leaf nodes.',
-    beginnerNote: 'Think of a family tree or folder directories on your computer.',
+    beginnerNote: 'Like a family tree.',
     accentColor: '#55C990',
     bgTint: '#EFFCF6',
     difficulty: 'Intermediate',
     estimatedMinutes: 15,
-    simpleExplanation: {
-      analogy: 'A real tree turned upside down: the Root is at the top, branching out into children, down to the Leaves at the bottom.',
-      summary: 'Trees are non-linear data structures. A Binary Tree has at most 2 children per node (Left and Right). A Binary Search Tree (BST) keeps left children smaller and right children larger.',
-      keyPoints: [
-        'Root: Top node with no parent.',
-        'Leaf: Bottom node with no children.',
-        'Height: Longest path from root to leaf.',
-        'BST property: Left < Root < Right.'
-      ],
-      whenToUse: [
-        'File systems, DOM trees in web browsers, database indexing, auto-complete.'
-      ]
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(log N) for BST',
-        search: 'O(log N) for BST',
-        insertion: 'O(log N)',
-        deletion: 'O(log N)'
-      },
-      spaceComplexity: 'O(H) recursion stack height.',
-      commonPatterns: [
-        'DFS Traversals: In-Order (Left, Root, Right), Pre-Order, Post-Order',
-        'BFS / Level-Order Traversal using Queue',
-        'Lowest Common Ancestor (LCA)'
-      ],
-      proTips: [
-        'In-order traversal on a BST produces sorted numbers!'
-      ]
+      timeComplexity: { access: 'O(log N) BST', search: 'O(log N) BST', insertion: 'O(log N)', deletion: 'O(log N)' },
+      spaceComplexity: 'O(H) recursion stack.',
+      commonPatterns: ['DFS Traversals (In/Pre/Post)', 'BFS Level-Order', 'LCA'],
+      proTips: ['In-order traversal on a BST produces sorted numbers!']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `class TreeNode {
-  constructor(val) {
-    this.val = val;
-    this.left = null;
-    this.right = null;
-  }
-}
-
-const root = new TreeNode(10);
-root.left = new TreeNode(5);
-root.right = new TreeNode(15);`
-      },
-      {
-        language: 'Python',
-        code: `class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
-
-root = TreeNode(10, TreeNode(5), TreeNode(15))`
-      }
+      { language: 'JavaScript', code: 'class TreeNode { constructor(v) { this.val = v; this.left = this.right = null; } }' },
+      { language: 'Python', code: 'class TreeNode:\n    def __init__(self, val=0): self.val = val; self.left = self.right = None' }
     ]
   },
   {
     id: 'graphs',
     name: 'Graphs',
     iconName: 'Network',
-    shortDescription: 'Networks of vertices (nodes) connected by edges (links).',
-    beginnerNote: 'Like social networks (friends) or flight maps between cities.',
+    shortDescription: 'Networks of vertices (nodes) connected by edges.',
+    beginnerNote: 'Like social networks or maps.',
     accentColor: '#3478E5',
     bgTint: '#EEF4FF',
     difficulty: 'Intermediate',
     estimatedMinutes: 15,
-    simpleExplanation: {
-      analogy: 'Google Maps showing cities (Vertices) and highways connecting them (Edges).',
-      summary: 'Graphs consist of Vertices (V) and Edges (E). They can be Directed (one-way street) or Undirected (two-way street), Weighted or Unweighted.',
-      keyPoints: [
-        'Represented via Adjacency List or Matrix.',
-        'DFS uses Stack / Recursion to go deep.',
-        'BFS uses Queue to explore level by level (shortest path in unweighted graph).'
-      ],
-      whenToUse: [
-        'Social network friends, road navigation, network routing, dependency resolution.'
-      ]
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(V + E)',
-        search: 'O(V + E)',
-        insertion: 'O(1)',
-        deletion: 'O(V + E)'
-      },
-      spaceComplexity: 'O(V + E)',
-      commonPatterns: [
-        'BFS for Shortest Path',
-        'DFS for Island Counting / Connected Components',
-        'Topological Sort for Task Dependencies'
-      ],
-      proTips: [
-        'Always keep a `visited` set to avoid infinite loops in cyclic graphs!'
-      ]
+      timeComplexity: { access: 'O(V+E)', search: 'O(V+E)', insertion: 'O(1)', deletion: 'O(V+E)' },
+      spaceComplexity: 'O(V+E)',
+      commonPatterns: ['BFS for Shortest Path', 'DFS for Connected Components', 'Topological Sort'],
+      proTips: ['Always keep a `visited` set to avoid infinite loops!']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `// Adjacency List representation
-const graph = {
-  'A': ['B', 'C'],
-  'B': ['A', 'D'],
-  'C': ['A'],
-  'D': ['B']
-};`
-      },
-      {
-        language: 'Python',
-        code: `# Adjacency List representation
-graph = {
-    'A': ['B', 'C'],
-    'B': ['A', 'D'],
-    'C': ['A'],
-    'D': ['B']
-}`
-      }
+      { language: 'JavaScript', code: 'const adjList = { \'A\': [\'B\'] };' },
+      { language: 'Python', code: 'adj_list = {\'A\': [\'B\']}' }
     ]
   },
   {
     id: 'sorting',
     name: 'Sorting',
     iconName: 'ArrowUpDown',
-    shortDescription: 'Algorithms to arrange data in numerical or alphabetical order.',
-    beginnerNote: 'Like organizing a hand of playing cards from lowest to highest.',
+    shortDescription: 'Algorithms to arrange data in order.',
+    beginnerNote: 'Organizing a messy hand of playing cards.',
     accentColor: '#F5A9D5',
     bgTint: '#FDF2F8',
     difficulty: 'Intermediate',
     estimatedMinutes: 12,
-    simpleExplanation: {
-      analogy: 'Sorting books on a shelf by publication year or organizing coins by size.',
-      summary: 'Sorting puts items in ascending or descending order. Simple algorithms like Bubble/Insertion Sort are O(N²), while Merge Sort and Quick Sort achieve O(N log N).',
-      keyPoints: [
-        'Merge Sort: Divide and conquer (O(N log N) time, O(N) space).',
-        'Quick Sort: Partition around pivot (O(N log N) avg time, in-place).',
-        'Bubble Sort: Repeatedly swap adjacent pairs if out of order (O(N²)).'
-      ],
-      whenToUse: [
-        'When data must be displayed in order or to enable Binary Search.'
-      ]
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'N/A',
-        search: 'N/A',
-        insertion: 'O(N log N)',
-        deletion: 'O(N log N)'
-      },
-      spaceComplexity: 'O(1) to O(N) depending on algorithm.',
-      commonPatterns: [
-        'Merge Sort recursion',
-        'Custom Comparators for sorting objects',
-        'Counting Sort / Bucket Sort for bounded integer ranges'
-      ],
-      proTips: [
-        'Most built-in language `.sort()` functions use Timsort or IntroSort (O(N log N)).'
-      ]
+      timeComplexity: { access: 'N/A', search: 'N/A', insertion: 'O(N log N)', deletion: 'O(N log N)' },
+      spaceComplexity: 'O(1) to O(N)',
+      commonPatterns: ['Merge Sort', 'Custom Comparators', 'Bucket Sort'],
+      proTips: ['Most built-in sorts are O(N log N).']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `// JavaScript built-in sort (numeric)
-const nums = [40, 100, 1, 5, 25];
-nums.sort((a, b) => a - b);
-// [1, 5, 25, 40, 100]`
-      },
-      {
-        language: 'Python',
-        code: `# Python built-in sort
-nums = [40, 100, 1, 5, 25]
-nums.sort()
-# [1, 5, 25, 40, 100]`
-      }
+      { language: 'JavaScript', code: '[3, 1, 2].sort((a, b) => a - b);' },
+      { language: 'Python', code: 'sorted([3, 1, 2])' }
     ]
   },
   {
@@ -573,69 +197,91 @@ nums.sort()
     name: 'Searching',
     iconName: 'Search',
     shortDescription: 'Finding an item inside a collection efficiently.',
-    beginnerNote: 'Linear search checks item-by-item; Binary search cuts the search area in half!',
+    beginnerNote: 'Binary search cuts the search area in half!',
     accentColor: '#F26B5B',
     bgTint: '#FFF1F0',
     difficulty: 'Beginner',
     estimatedMinutes: 10,
-    simpleExplanation: {
-      analogy: 'Finding a name in a telephone directory: you open halfway, see if your name comes before or after, and discard half the pages!',
-      summary: 'Linear search scans element by element (O(N)). Binary search works on SORTED arrays and repeatedly divides the search interval in half (O(log N)).',
-      keyPoints: [
-        'Binary Search REQUIREMENT: Array MUST be sorted!',
-        'Speed difference: In 1,000,000 items, Linear search takes up to 1,000,000 steps; Binary search takes at most 20 steps!'
-      ],
-      whenToUse: [
-        'Finding target values, range limits, or finding square roots / threshold values.'
-      ]
-    },
     interviewTips: {
-      timeComplexity: {
-        access: 'O(log N) for Binary Search',
-        search: 'O(log N)',
-        insertion: 'N/A',
-        deletion: 'N/A'
-      },
-      spaceComplexity: 'O(1) iterative, O(log N) recursive.',
-      commonPatterns: [
-        'Standard Binary Search (Low, High, Mid)',
-        'Binary Search on Answer / Solution Space'
-      ],
-      proTips: [
-        'Calculate `mid = low + Math.floor((high - low) / 2)` to avoid integer overflow!'
-      ]
+      timeComplexity: { access: 'O(log N)', search: 'O(log N)', insertion: 'N/A', deletion: 'N/A' },
+      spaceComplexity: 'O(1)',
+      commonPatterns: ['Binary Search on Answer Space'],
+      proTips: ['mid = low + Math.floor((high - low) / 2)']
     },
     codeExamples: [
-      {
-        language: 'JavaScript',
-        code: `function binarySearch(arr, target) {
-  let low = 0, high = arr.length - 1;
-  while (low <= high) {
-    const mid = Math.floor((low + high) / 2);
-    if (arr[mid] === target) return mid;
-    if (arr[mid] < target) low = mid + 1;
-    else high = mid - 1;
-  }
-  return -1;
-}`
-      },
-      {
-        language: 'Python',
-        code: `def binary_search(arr, target):
-    low, high = 0, len(arr) - 1
-    while low <= high:
-        mid = (low + high) // 2
-        if arr[mid] == target:
-            return mid
-        elif arr[mid] < target:
-            low = mid + 1
-        else:
-            high = mid - 1
-    return -1`
-      }
+      { language: 'JavaScript', code: '// Binary Search requires sorted array' },
+      { language: 'Python', code: '# Binary Search requires sorted array' }
+    ]
+  },
+  {
+    id: 'dp',
+    name: 'Dynamic Programming',
+    iconName: 'Brain',
+    shortDescription: 'Optimizing recursive problems by storing previous results.',
+    beginnerNote: 'Remembering past answers instead of recalculating.',
+    accentColor: '#3478E5',
+    bgTint: '#EEF4FF',
+    difficulty: 'Advanced',
+    estimatedMinutes: 25,
+    interviewTips: {
+      timeComplexity: { access: 'O(1)', search: 'O(1)', insertion: 'N/A', deletion: 'N/A' },
+      spaceComplexity: 'O(N) or O(N^2) for memo tables.',
+      commonPatterns: ['0/1 Knapsack', 'Fibonacci Sequence', 'Longest Common Subsequence'],
+      proTips: ['If you can solve it recursively with overlapping subproblems, you can DP it.']
+    },
+    codeExamples: [
+      { language: 'JavaScript', code: 'const memo = {};\nif (n in memo) return memo[n];' },
+      { language: 'Python', code: '@cache\ndef dp(n): ...' }
+    ]
+  },
+  {
+    id: 'backtracking',
+    name: 'Backtracking',
+    iconName: 'Undo2',
+    shortDescription: 'Building a solution incrementally and undoing dead ends.',
+    beginnerNote: 'Navigating a maze and reversing when you hit a wall.',
+    accentColor: '#F5C94A',
+    bgTint: '#FFFBEA',
+    difficulty: 'Advanced',
+    estimatedMinutes: 20,
+    interviewTips: {
+      timeComplexity: { access: 'O(N!)', search: 'O(2^N)', insertion: 'N/A', deletion: 'N/A' },
+      spaceComplexity: 'O(N) recursion stack.',
+      commonPatterns: ['Permutations', 'Combinations', 'Sudoku Solver'],
+      proTips: ['Always undo your state (e.g. pop from list) after the recursive call returns!']
+    },
+    codeExamples: [
+      { language: 'JavaScript', code: 'path.push(choice);\nbacktrack();\npath.pop(); // undo' },
+      { language: 'Python', code: 'path.append(choice)\nbacktrack()\npath.pop()' }
+    ]
+  },
+  {
+    id: 'greedy',
+    name: 'Greedy Algorithms',
+    iconName: 'TrendingUp',
+    shortDescription: 'Making the locally optimal choice at each step.',
+    beginnerNote: 'Taking the biggest coin possible when making change.',
+    accentColor: '#55C990',
+    bgTint: '#EFFCF6',
+    difficulty: 'Intermediate',
+    estimatedMinutes: 15,
+    interviewTips: {
+      timeComplexity: { access: 'O(1)', search: 'O(N log N) usually', insertion: 'N/A', deletion: 'N/A' },
+      spaceComplexity: 'O(1) to O(N)',
+      commonPatterns: ['Activity Selection', 'Fractional Knapsack', 'Huffman Coding'],
+      proTips: ['Sorting the input is almost always the first step in a greedy solution.']
+    },
+    codeExamples: [
+      { language: 'JavaScript', code: 'items.sort((a, b) => b.value - a.value);' },
+      { language: 'Python', code: 'items.sort(key=lambda x: x.value, reverse=True)' }
     ]
   }
 ];
+
+export const DSA_TOPICS: DsaTopic[] = BASE_TOPICS.map(topic => ({
+  ...topic,
+  simpleExplanation: CONCEPT_CONTENT[topic.id]
+}));
 
 export const QUIZ_SETS: QuizSet[] = EXPANDED_QUIZ_SETS;
 

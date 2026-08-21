@@ -5,7 +5,6 @@ import { TopicCard } from './components/TopicCard';
 import { TopicDetailModal } from './components/TopicDetailModal';
 import { QuizCard } from './components/QuizCard';
 import { QuizPlayer } from './components/QuizPlayer';
-import { CodeOrderingExercise } from './components/CodeOrderingExercise';
 import { ConceptExplainer } from './components/ConceptExplainer';
 import { ProfileDashboard } from './components/ProfileDashboard';
 import { DsaMyths } from './components/DsaMyths';
@@ -13,11 +12,9 @@ import { OnboardingFlow } from './components/OnboardingFlow';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { Chatbot } from './components/Chatbot';
 import { FeedbackPage } from './components/FeedbackPage';
-import { PricingPage } from './components/PricingPage';
 import { FlashcardsPage } from './components/FlashcardsPage';
 import { FaqSection } from './components/FaqSection';
-import { FeedPage } from './components/FeedPage';
-import { ChatPage } from './components/ChatPage';
+import { PricingPage } from './components/PricingPage';
 import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
 import { InteractiveDemo } from './components/InteractiveDemo';
@@ -28,6 +25,7 @@ import { TermsConditions } from './components/TermsConditions';
 import { StreakModal } from './components/StreakModal';
 import { InteractiveLoader } from './components/InteractiveLoader';
 import { InitialLoader } from './components/InitialLoader';
+import { ErrorScreen } from './components/ErrorScreen';
 
 import { AchievementPopup, AchievementData } from './components/AchievementPopup';
 import { QuizLevelSelectorModal } from './components/QuizLevelSelectorModal';
@@ -121,32 +119,25 @@ const EMPTY_PROGRESS: UserProgress = {
 const getPathFromTab = (tab: NavTab): string => {
   switch (tab) {
     case 'home': return '/';
-    case 'practice': return '/practice';
     case 'quiz': return '/quiz';
     case 'concepts': return '/concepts';
     case 'profile': return '/profile';
-    case 'pricing': return '/pricing';
     case 'privacy': return '/privacy';
     case 'terms': return '/terms';
     case 'feedback': return '/feedback';
-    case 'feed': return '/feed';
-    case 'chat': return '/chat';
     default: return '/';
   }
 };
 
 const getTabFromPath = (path: string): NavTab => {
-  if (path.startsWith('/practice')) return 'practice';
+  if (path === '/' || path === '') return 'home';
   if (path.startsWith('/quiz')) return 'quiz';
   if (path.startsWith('/concepts')) return 'concepts';
   if (path.startsWith('/profile')) return 'profile';
-  if (path.startsWith('/pricing')) return 'pricing';
   if (path.startsWith('/privacy')) return 'privacy';
   if (path.startsWith('/terms')) return 'terms';
   if (path.startsWith('/feedback')) return 'feedback';
-  if (path.startsWith('/feed')) return 'feed';
-  if (path.startsWith('/chat')) return 'chat';
-  return 'home';
+  return '404';
 };
 
 export default function App() {
@@ -197,38 +188,7 @@ export default function App() {
   const [achievementPopup, setAchievementPopup] = useState<{isOpen: boolean; data: AchievementData | null}>({isOpen: false, data: null});
 
   // Notifications State
-  const [notifications, setNotifications] = useState<AppNotification[]>([
-    {
-      id: 'notif-1',
-      type: 'connection_request',
-      title: 'New Connection Request',
-      message: 'Rakesh Nakrani wants to connect with you.',
-      timestamp: 'Just now',
-      read: false,
-      senderId: 'user-101',
-      senderName: 'Rakesh Nakrani',
-      senderAvatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=200'
-    }
-  ]);
-
-  const handleAcceptRequest = (notificationId: string, senderId?: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    // We would typically update ChatContacts state here to mark 'accepted'
-    // But since it's mocked, we'll just show an achievement or another notification
-    const newNotif: AppNotification = {
-      id: `notif-${Date.now()}`,
-      type: 'connection_accepted',
-      title: 'Connection Accepted',
-      message: `You are now connected. You can start a socket!`,
-      timestamp: 'Just now',
-      read: false
-    };
-    setNotifications(prev => [newNotif, ...prev]);
-  };
-
-  const handleDeclineRequest = (notificationId: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
-  };
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
   const handleMarkAsRead = (notificationId: string) => {
     setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
@@ -308,8 +268,7 @@ export default function App() {
         name: existingProfile?.full_name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Learner',
         email: session.user.email || '',
         avatar: existingProfile?.avatar_url || session.user.user_metadata?.avatar_url || defaultAvatar,
-        isLoggedIn: true,
-        connectionId: existingProfile?.connection_id || session.user.user_metadata?.connection_id || `#DSA-${session.user.id.substring(0, 6).toUpperCase()}`
+        isLoggedIn: true
       };
       setUser(profile);
       setIsAuthModalOpen(false);
@@ -331,6 +290,15 @@ export default function App() {
         .single();
         
       if (progress && !error) {
+        // Load unlocked badges from localStorage as a fallback since it's not in Supabase schema
+        let savedBadges: string[] = [];
+        try {
+          const stored = localStorage.getItem(`dsafeed_badges_${session.user.id}`);
+          if (stored) savedBadges = JSON.parse(stored);
+        } catch (e) {
+          console.error(e);
+        }
+        
         setUserProgress({
           streakDays: progress.streak_days || 0,
           lastActiveDate: progress.last_active_date || new Date().toISOString().split('T')[0],
@@ -339,13 +307,14 @@ export default function App() {
           quizScores: progress.quiz_scores || {},
           completedExercises: progress.completed_exercises || [],
           topicProgress: progress.topic_progress || {},
+          unlockedBadges: savedBadges,
           dailyTasks: progress.daily_tasks || generateDailyTasks(),
           monthlyPoints: progress.monthly_points || 0,
           lastTaskDate: progress.last_task_date || new Date().toISOString().split('T')[0]
         });
       } else {
         // Initialize for new user
-        setUserProgress(EMPTY_PROGRESS);
+        setUserProgress({ ...EMPTY_PROGRESS, unlockedBadges: [] });
         await supabase.from('user_progress').insert({
           user_id: session.user.id,
           streak_days: EMPTY_PROGRESS.streakDays,
@@ -370,6 +339,14 @@ export default function App() {
     if (!session?.user) return;
     
     setIsSyncing(true);
+    
+    // Save badges to localStorage as fallback
+    try {
+      localStorage.setItem(`dsafeed_badges_${session.user.id}`, JSON.stringify(newProgress.unlockedBadges || []));
+    } catch (e) {
+      console.error(e);
+    }
+
     const { error } = await supabase.from('user_progress').upsert({
       user_id: session.user.id,
       streak_days: newProgress.streakDays,
@@ -506,7 +483,7 @@ export default function App() {
     setIsAuthModalOpen(false);
     setIsFirstLogin(firstLogin);
     setShowWelcomePopup(true);
-    navigate('/practice');
+    navigate('/');
   };
 
   const handleUpdateUser = async (updatedProfile: UserProfile) => {
@@ -656,7 +633,7 @@ export default function App() {
     if (Object.keys(userProgress.quizScores).length >= 1 || userProgress.completedExercises.length >= 1) {
       newUnlocked.add('badge-first-step');
     }
-    if (Object.values(userProgress.quizScores).some(q => q.percentage === 100)) {
+    if (Object.values(userProgress.quizScores).some((q: any) => q.percentage === 100)) {
       newUnlocked.add('badge-perfect-score');
     }
     if (userProgress.streakDays >= 3) {
@@ -715,7 +692,8 @@ export default function App() {
     userProgress.streakDays, 
     userProgress.monthlyPoints, 
     userProgress.xp, 
-    userProgress.dailyTasks
+    userProgress.dailyTasks,
+    userProgress.unlockedBadges
   ]);
 
   // Topic filter logic
@@ -779,8 +757,6 @@ export default function App() {
           onSignOut={handleSignOut}
           onOpenStreakModal={() => setIsStreakModalOpen(true)}
           notifications={notifications}
-          onAcceptRequest={handleAcceptRequest}
-          onDeclineRequest={handleDeclineRequest}
           onMarkAsRead={handleMarkAsRead}
         />
       )}
@@ -803,6 +779,7 @@ export default function App() {
                 <Hero
                   onStartLearning={handleStartLearning}
                   onAddXp={handleAddXp}
+                  isLoggedIn={!!user?.isLoggedIn}
                 />
 
 
@@ -818,128 +795,7 @@ export default function App() {
 
 
 
-        {/* PRACTICE & CODE TAB */}
-        {activeTab === 'practice' && (
-          <div className="py-4 space-y-6 animate-in fade-in duration-200">
-            
-            {/* Segmented Control */}
-            <div className="flex justify-center mb-8">
-              <div className="bg-white  border border-[#EAEAEA]  p-1 rounded-2xl shadow-sm inline-flex">
-                <button
-                  onClick={() => setPracticeView('practice')}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                    practiceView === 'practice' 
-                      ? 'bg-[#101B3D]  text-white shadow-md' 
-                      : 'text-[#8C8C8C] hover:text-[#111111] '
-                  }`}
-                >
-                  <BookOpen className="w-4 h-4 inline-block mr-2" />
-                  Practice
-                </button>
-                <button
-                  onClick={() => setPracticeView('code')}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                    practiceView === 'code' 
-                      ? 'bg-[#101B3D]  text-white shadow-md' 
-                      : 'text-[#8C8C8C] hover:text-[#111111] '
-                  }`}
-                >
-                  <Code2 className="w-4 h-4 inline-block mr-2" />
-                  Code
-                </button>
-              </div>
-            </div>
 
-            <AnimatePresence mode="wait">
-              {practiceView === 'practice' ? (
-                <motion.div
-                  key="practice-view"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <section id="topics-grid" className="space-y-6 scroll-mt-24">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF]  border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5]  mb-2">
-                          <BookOpen className="w-3.5 h-3.5" />
-                          <span>Curriculum Topics</span>
-                        </div>
-                        <h2 className="text-3xl font-black text-[#101B3D] ">
-                          Master 10 Core Data Structures
-                        </h2>
-                        <p className="text-sm text-[#111111]/70  font-medium">
-                          Pick a topic to view simple analogies, code snippets, and Big-O complexity guides.
-                        </p>
-                      </div>
-
-                      {/* Difficulty Filter Pills */}
-                      <div className="flex items-center gap-1.5 bg-white  border border-[#EAEAEA]  p-1.5 rounded-2xl shadow-xs self-start sm:self-center">
-                        <Filter className="w-3.5 h-3.5 text-[#8C8C8C] ml-2 mr-1" />
-                        {(['All', 'Beginner', 'Intermediate'] as const).map((diff) => (
-                          <button
-                            key={diff}
-                            onClick={() => setDifficultyFilter(diff)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                              difficultyFilter === diff
-                                ? 'bg-[#101B3D]  text-[#FFFDF9] shadow-xs'
-                                : 'text-[#8C8C8C] hover:text-[#111111] '
-                            }`}
-                          >
-                            {diff}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Topics Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredTopics.map((topic) => {
-                        const progressVal = userProgress.topicProgress[topic.id] || 0;
-                        return (
-                          <TopicCard
-                            key={topic.id}
-                            topic={topic}
-                            progressPercent={progressVal}
-                            onSelectTopic={handleSelectTopic}
-                          />
-                        );
-                      })}
-                    </div>
-                  </section>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="code-view"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="space-y-6"
-                >
-                  <div className="text-center max-w-xl mx-auto mb-8">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EEF4FF]  border border-[#3478E5]/20 rounded-full text-xs font-black text-[#3478E5]  mb-2">
-                      <Code2 className="w-3.5 h-3.5" />
-                      <span>Interactive Logic Game</span>
-                    </div>
-                    <h2 className="text-3xl font-black text-[#101B3D] ">
-                      Code Block Reordering
-                    </h2>
-                    <p className="text-sm text-[#111111]/70  font-medium mt-1">
-                      Reconstruct the control flow of classic algorithm solutions by putting code blocks in order.
-                    </p>
-                  </div>
-
-                  <CodeOrderingExercise
-                    exercises={CODE_EXERCISES}
-                    onCompleteExercise={handleExerciseComplete}
-                    onAddXp={handleAddXp}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
 
         {/* QUIZ TAB */}
         {activeTab === 'quiz' && (
@@ -1054,41 +910,22 @@ export default function App() {
           </div>
         )}
 
-        {/* FEED TAB */}
-        {activeTab === 'feed' && (
-          <div className="py-4 animate-in fade-in duration-200">
-            <FeedPage user={user} />
-          </div>
-        )}
-
-        {/* CHAT TAB */}
-        {activeTab === 'chat' && (
-          <div className="animate-in fade-in duration-200">
-            <ChatPage user={user} />
-          </div>
-        )}
-
-
-
         {/* LEGAL TABS */}
         {activeTab === 'privacy' && <PrivacyPolicy onBack={() => handleTabChange('home')} />}
         {/* TERMS & CONDITIONS TAB */}
         {activeTab === 'terms' && (
-          <TermsConditions onBackToHome={() => handleTabChange('home')} />
+          <TermsConditions onBack={() => handleTabChange('home')} />
         )}
         {/* FEEDBACK TAB */}
         {activeTab === 'feedback' && (
           <FeedbackPage onBack={() => handleTabChange(previousTab)} />
         )}
-        {/* PRICING TAB */}
-        {activeTab === 'pricing' && (
-          <div className="py-4 animate-in fade-in duration-200">
-            <PricingPage />
-          </div>
-        )}
 
         {/* FAQ Section - ONLY RENDERED ON HOME PAGE */}
         {activeTab === 'home' && <FaqSection />}
+
+        {/* 404 ERROR SCREEN */}
+        {activeTab === '404' && <ErrorScreen />}
       </motion.main>
       </AnimatePresence>
 

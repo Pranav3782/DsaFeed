@@ -62,7 +62,20 @@ export const InteractiveDemo: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-10">
           <h2 className="text-2xl sm:text-3xl font-black text-[#101B3D] mb-2">
-            See how DSAfeed works
+            <motion.span 
+              initial={{ backgroundSize: "0% 100%" }}
+              whileInView={{ backgroundSize: "100% 100%" }}
+              viewport={{ once: true, margin: "-10%" }}
+              transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+              className="inline leading-relaxed"
+              style={{
+                backgroundImage: "linear-gradient(transparent 65%, rgba(245,201,74,0.5) 65%)",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "left top"
+              }}
+            >
+              See how DSAfeed works
+            </motion.span>
           </h2>
           <p className="text-sm sm:text-base text-[#111111]/70 font-medium">
             Learn, practice, and build your problem-solving skills — one step at a time.

@@ -62,7 +62,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           options: {
             data: {
               full_name: name,
-              avatar_url: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`,
+              avatar_url: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`
             },
           },
         });

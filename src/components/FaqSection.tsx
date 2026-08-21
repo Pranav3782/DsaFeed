@@ -28,7 +28,20 @@ export const FaqSection: React.FC = () => {
           <span>Frequently Asked Questions</span>
         </motion.div>
         <h2 className="text-3xl sm:text-4xl font-black text-[#101B3D]">
-          Everything you need to know
+          <motion.span 
+            initial={{ backgroundSize: "0% 100%" }}
+            whileInView={{ backgroundSize: "100% 100%" }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+            className="inline leading-relaxed"
+            style={{
+              backgroundImage: "linear-gradient(transparent 65%, rgba(245,201,74,0.5) 65%)",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "left top"
+            }}
+          >
+            Everything you need to know
+          </motion.span>
         </h2>
         <p className="text-sm text-[#111111]/70 font-medium mt-2">
           New to Data Structures & Algorithms? Here are answers to common beginner questions.

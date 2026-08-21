@@ -91,11 +91,7 @@ export const TopicCard: React.FC<TopicCardProps> = ({
 
       {/* Progress & CTA */}
       <div>
-        <div className="flex items-center justify-between text-xs font-bold text-[#101B3D]  mb-1.5">
-          <span className="flex items-center gap-1 text-[#8C8C8C] ">
-            <Clock className="w-3.5 h-3.5" />
-            {topic.estimatedMinutes} mins
-          </span>
+        <div className="flex items-center justify-end text-xs font-bold text-[#101B3D]  mb-1.5">
           <span className="text-[#3478E5]">{progressPercent}%</span>
         </div>
 

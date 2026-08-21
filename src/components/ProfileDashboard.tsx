@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { UserProgress, DsaTopic, UserBadge, UserProfile } from '../types';
 import { 
   Flame, Zap, Trophy, CheckCircle2, RotateCcw, Award, 
-  User, Edit3, Share2, Github, Settings, LogOut, Check, Sparkles, Copy, Calendar, CheckCheck
+  User, Edit3, Share2, Github, Settings, LogOut, Check, Sparkles, Copy, Calendar, X, Trash2
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSessionState } from '../hooks/useSessionState';
-import { generateCardImage, downloadCardImage } from '../utils/cardGenerator';
 import { toggleUISound } from '../utils/audio';
 import { AvatarBuilderModal } from './AvatarBuilderModal';
-import { AlgorithmicAgenda } from './AlgorithmicAgenda';
 import { DsaProfileCard } from './DsaProfileCard';
 
 interface ProfileDashboardProps {
@@ -52,20 +50,12 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem('dsafeed_muted') === 'true');
   const [showShareModal, setShowShareModal] = useState(false);
   const [soundEnabled, setSoundEnabled] = useSessionState('soundEnabled', true);
-  const [copiedId, setCopiedId] = useState(false);
-
-  const copyConnectionId = () => {
-    if (user?.connectionId) {
-      navigator.clipboard.writeText(user.connectionId);
-      setCopiedId(true);
-      setTimeout(() => setCopiedId(false), 2000);
-    }
-  };
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || PRESET_AVATARS[0]);
   const [selectedBgColor, setSelectedBgColor] = useState(user?.customAvatarBg || '#b6e3f4');
   const [showAllBadges, setShowAllBadges] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<UserBadge | null>(null);
   const [isAvatarBuilderOpen, setIsAvatarBuilderOpen] = useSessionState('isAvatarBuilderOpen', false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const completedTopicsCount = userProgress.completedTopics.length;
   const totalTopics = topics.length;
@@ -75,29 +65,6 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
   const lockedBadgesList = badges.filter(b => !unlockedBadgeIds.includes(b.id));
   const combinedBadges = [...unlockedBadgesList, ...lockedBadgesList];
   const overallPercentage = Math.round((completedTopicsCount / totalTopics) * 100);
-
-  // Generate simulated GitHub activity grid (past 16 weeks, 7 days per week)
-  const generateActivityGrid = () => {
-    const grid = [];
-    const today = new Date();
-    for (let i = 111; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
-      
-      // Seed activity density: high for recent active days
-      let count = 0;
-      if (i === 0 || i === 1 || i === 3 || i === 5 || i === 8 || i === 12 || i === 14 || i === 19 || i === 25 || i === 32) {
-        count = Math.floor(Math.random() * 4) + 1;
-      } else if (i % 3 === 0) {
-        count = (i % 7) % 3;
-      }
-      grid.push({ date: dateStr, count });
-    }
-    return grid;
-  };
-
-  const activityData = generateActivityGrid();
 
   const handleSaveProfile = () => {
     if (!user) return;
@@ -111,12 +78,8 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
     setIsEditingBio(false);
   };
 
-  const handleCopyCard = () => {
-    setCopiedCard(true);
-    setTimeout(() => setCopiedCard(false), 2500);
-  };
-
   return (
+    <>
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-200">
       
       {/* Profile Header Banner */}
@@ -172,38 +135,18 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
               <p className="text-sm text-[#111111]/80  font-medium max-w-lg mt-1">
                 {user?.bio || 'Building problem-solving skills block by block with DSAfeed.'}
               </p>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-sm font-black text-[#101B3D] bg-[#F8F9FA] px-3 py-1 rounded-full border border-[#EAEAEA]">
-                  {user?.connectionId || '#DSA-0000'}
-                </span>
-                <button 
-                  onClick={copyConnectionId}
-                  className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition-colors"
-                  title="Copy Connection ID"
-                >
-                  {copiedId ? <CheckCheck className="w-4 h-4 text-[#55C990]" /> : <Copy className="w-4 h-4" />}
-                </button>
-              </div>
             </div>
           </div>
 
-          {/* Edit Profile & Share Card Buttons */}
-          <div className="flex flex-wrap items-center gap-2.5 self-stretch sm:self-auto">
             <button
-              onClick={() => setIsEditingBio(!isEditingBio)}
+              onClick={() => setIsSettingsOpen(true)}
               className="flex-1 sm:flex-initial px-4 py-2.5 bg-[#FFFDF9]  border border-[#EAEAEA]  hover:border-[#3478E5]  text-[#101B3D]  text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs"
             >
-              <Edit3 className="w-3.5 h-3.5" />
-              <span>Edit Profile</span>
+              <Settings className="w-3.5 h-3.5" />
+              <span>Settings</span>
             </button>
 
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="flex-1 sm:flex-initial px-4 py-2.5 bg-[#3478E5] hover:bg-[#2864C6] text-white text-xs font-extrabold rounded-2xl shadow-md transition flex items-center justify-center gap-2 active:scale-98"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-              <span>DSAfeed Card</span>
-            </button>
+
 
             <button
               onClick={() => {
@@ -298,56 +241,30 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
 
       <div className="max-w-4xl mx-auto w-full space-y-8">
           
-          {/* GitHub-style Activity Matrix */}
+
+
+      {/* Learning Agenda */}
       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Github className="w-5 h-5 text-[#101B3D]" />
-            <h3 className="text-lg font-black text-[#101B3D]">
-              Daily Practice Contribution Matrix
-            </h3>
-          </div>
-          <span className="text-xs text-[#8C8C8C] font-bold flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5" /> Past 16 Weeks
-          </span>
-        </div>
-
-        {/* Matrix Grid */}
-        <div className="bg-[#FFFDF9] border border-[#EAEAEA] p-4 rounded-2xl overflow-x-auto">
-          <div className="inline-grid grid-rows-7 grid-flow-col gap-1.5 min-w-[600px]">
-            {activityData.map((day, idx) => {
-              let bgClass = 'bg-[#EAEAEA]'; // level 0
-              if (day.count === 1) bgClass = 'bg-[#B6E2CE]';
-              if (day.count === 2) bgClass = 'bg-[#70C9A0]';
-              if (day.count === 3) bgClass = 'bg-[#55C990]';
-              if (day.count >= 4) bgClass = 'bg-[#2A9A65]';
-
-              return (
-                <div
-                  key={idx}
-                  title={`${day.date}: ${day.count} DSA sessions completed`}
-                  className={`w-3.5 h-3.5 rounded-xs ${bgClass} transition-transform hover:scale-125 cursor-pointer`}
-                />
-              );
-            })}
-          </div>
-
-          <div className="flex items-center justify-between text-[11px] text-[#8C8C8C] font-semibold mt-3 pt-2 border-t border-[#EAEAEA]">
-            <span>Submissions in the last year: <strong className="text-[#101B3D]">48 streak points</strong></span>
-            <div className="flex items-center gap-1.5">
-              <span>Less</span>
-              <div className="w-3 h-3 rounded-xs bg-[#EAEAEA]" />
-              <div className="w-3 h-3 rounded-xs bg-[#B6E2CE]" />
-              <div className="w-3 h-3 rounded-xs bg-[#55C990]" />
-              <div className="w-3 h-3 rounded-xs bg-[#2A9A65]" />
-              <span>More</span>
+        <h3 className="text-xl font-black text-[#101B3D]">Learning Agenda</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {topics.filter(t => !userProgress.completedTopics.includes(t.id)).length === 0 ? (
+            <div className="col-span-full text-center p-6 text-[#8C8C8C] font-bold">
+              All topics completed! Amazing job!
             </div>
-          </div>
+          ) : (
+            topics.filter(t => !userProgress.completedTopics.includes(t.id)).map(t => (
+              <div 
+                key={t.id} 
+                onClick={() => onSelectTopic(t)} 
+                className="p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA] cursor-pointer hover:border-[#3478E5] transition"
+              >
+                <h4 className="font-bold text-[#101B3D]">{t.name}</h4>
+                <p className="text-sm text-[#8C8C8C] mt-1 line-clamp-2">{t.description}</p>
+              </div>
+            ))
+          )}
         </div>
       </div>
-
-      {/* Algorithmic Agenda */}
-      <AlgorithmicAgenda />
 
       {/* Daily Tasks Section */}
       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-5">
@@ -411,14 +328,16 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         
         {/* Streak Card */}
-        <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FFF1F0] flex items-center justify-center text-[#F26B5B]">
-            <Flame className="w-7 h-7 fill-[#F26B5B]" />
+        <div className={`bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex items-center gap-4 transition-all duration-300 ${userProgress.streakDays >= 7 ? 'border-[#F26B5B]/30 shadow-[#F26B5B]/10' : ''}`}>
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${userProgress.streakDays >= 7 ? 'bg-[#FFF1F0] text-[#F26B5B]' : userProgress.streakDays >= 3 ? 'bg-[#FFFBEA] text-[#F5C94A]' : 'bg-[#F8F9FA] text-[#8C8C8C]'}`}>
+            <Flame className={`w-7 h-7 ${userProgress.streakDays >= 3 ? 'fill-current' : ''}`} />
           </div>
           <div>
             <p className="text-xs font-black text-[#8C8C8C] uppercase">Daily Streak</p>
             <p className="text-2xl font-black text-[#101B3D]">{userProgress.streakDays} Days Active</p>
-            <p className="text-xs text-[#55C990] font-semibold">Consistency Champion!</p>
+            <p className={`text-xs font-semibold ${userProgress.streakDays >= 7 ? 'text-[#F26B5B]' : userProgress.streakDays >= 3 ? 'text-[#F5C94A]' : 'text-[#8C8C8C]'}`}>
+              {userProgress.streakDays >= 7 ? "On Fire! 🔥" : userProgress.streakDays >= 3 ? "Consistency Champion!" : "Keep it up!"}
+            </p>
           </div>
         </div>
 
@@ -430,19 +349,19 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
           <div>
             <p className="text-xs font-black text-[#8C8C8C] uppercase">Total XP</p>
             <p className="text-2xl font-black text-[#101B3D]">{userProgress.xp} XP</p>
-            <p className="text-xs text-[#3478E5] font-semibold">Level {Math.floor(userProgress.xp / 100) + 1} Learner</p>
+            <p className="text-xs text-[#F5C94A] font-semibold">Level {Math.floor(userProgress.xp / 100) + 1} Learner</p>
           </div>
         </div>
 
         {/* Topics Completed Card */}
         <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#EFFCF6] flex items-center justify-center text-[#55C990]">
-            <CheckCircle2 className="w-7 h-7 fill-[#55C990] text-white" />
+          <div className="w-14 h-14 rounded-2xl bg-[#EEF4FF] flex items-center justify-center text-[#3478E5]">
+            <LucideIcons.Activity className="w-7 h-7" />
           </div>
           <div>
             <p className="text-xs font-black text-[#8C8C8C] uppercase">Topics Mastered</p>
             <p className="text-2xl font-black text-[#101B3D]">{completedTopicsCount} / {totalTopics}</p>
-            <p className="text-xs text-[#8C8C8C] font-semibold">{overallPercentage}% Curriculum Completed</p>
+            <p className="text-xs text-[#3478E5] font-semibold">{overallPercentage}% Curriculum Completed</p>
           </div>
         </div>
 
@@ -618,6 +537,67 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
         </div>
       </div>
 
+      {/* Modals */}
+      {isSettingsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl border border-[#EAEAEA]">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black text-[#101B3D]">Account Settings</h3>
+              <button onClick={() => setIsSettingsOpen(false)} className="text-[#8C8C8C] hover:text-[#101B3D]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA]">
+                <div>
+                  <h4 className="font-bold text-[#101B3D]">Theme</h4>
+                  <p className="text-xs text-[#8C8C8C]">Dark mode is disabled for now</p>
+                </div>
+                <div className="w-10 h-6 bg-[#EAEAEA] rounded-full flex items-center p-1 cursor-not-allowed opacity-50">
+                  <div className="w-4 h-4 bg-white rounded-full"></div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA]">
+                <div>
+                  <h4 className="font-bold text-[#101B3D]">Notifications</h4>
+                  <p className="text-xs text-[#8C8C8C]">Manage app alerts</p>
+                </div>
+                <button className="text-sm font-bold text-[#3478E5]">Edit</button>
+              </div>
+
+              <div className="flex justify-between items-center p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA]">
+                <div>
+                  <h4 className="font-bold text-[#101B3D]">Privacy</h4>
+                  <p className="text-xs text-[#8C8C8C]">Profile visibility</p>
+                </div>
+                <button className="text-sm font-bold text-[#3478E5]">Edit</button>
+              </div>
+
+              <button 
+                onClick={onSignOut}
+                className="w-full mt-4 p-4 rounded-2xl border border-red-200 bg-red-50 text-red-600 font-bold hover:bg-red-100 transition text-left flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" /> Sign Out
+              </button>
+
+              <button 
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to delete your account? This cannot be undone.')) {
+                    onResetProgress();
+                    onSignOut();
+                  }
+                }}
+                className="w-full p-4 rounded-2xl text-[#8C8C8C] font-bold hover:text-red-600 hover:bg-red-50 transition text-left flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" /> Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SHAREABLE DSAFEED CARD MODAL */}
       <AnimatePresence>
         {showShareModal && (
@@ -763,6 +743,6 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
         initialBgColor={selectedBgColor}
       />
 
-    </div>
+    </>
   );
 };
