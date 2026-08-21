@@ -36,7 +36,8 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
         panelRef.current && 
         !panelRef.current.contains(target) &&
         !target.closest?.('#notification-bell-btn') &&
-        !target.closest?.('#mobile-notification-bell-btn')
+        !target.closest?.('#mobile-notification-bell-btn') &&
+        !target.closest?.('#clear-confirm-modal')
       ) {
         // Only close if we interact outside the panel and not on the bell button itself
         onClose();
@@ -162,7 +163,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
       {createPortal(
         <AnimatePresence>
           {showClearConfirm && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div id="clear-confirm-modal" className="fixed inset-0 z-[100] flex items-center justify-center p-4">
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
