@@ -27,7 +27,7 @@ import { InteractiveLoader } from './components/InteractiveLoader';
 import { InitialLoader } from './components/InitialLoader';
 import { ErrorScreen } from './components/ErrorScreen';
 
-import { AchievementPopup, AchievementData } from './components/AchievementPopup';
+
 import { QuizLevelSelectorModal } from './components/QuizLevelSelectorModal';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -185,10 +185,21 @@ export default function App() {
   const [isFirstLogin, setIsFirstLogin] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
-  const [achievementPopup, setAchievementPopup] = useState<{isOpen: boolean; data: AchievementData | null}>({isOpen: false, data: null});
-
+  
   // Notifications State
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
+
+  const addNotification = (title: string, message: string, type: 'info' | 'badge_earned' = 'badge_earned') => {
+    const newNotif: AppNotification = {
+      id: `notif-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      title,
+      message,
+      type,
+      timestamp: 'Just now',
+      read: false
+    };
+    setNotifications(prev => [newNotif, ...prev]);
+  };
 
   const handleMarkAsRead = (notificationId: string) => {
     setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
@@ -533,7 +544,7 @@ export default function App() {
   const handleToggleCompleteTopic = (topicId: DsaCategory) => {
     const isCompleted = userProgress.completedTopics.includes(topicId);
     if (!isCompleted) {
-      setAchievementPopup({ isOpen: true, data: { title: 'Topic Mastered!', subtitle: 'Excellent work finishing this topic!', xp: 50 } });
+      addNotification('Topic Mastered!', 'Excellent work finishing this topic! You earned 50 XP.', 'badge_earned');
       handleAddXp(50);
     }
     
@@ -563,7 +574,7 @@ export default function App() {
     
     // Show popup
     if (percentage >= 70) {
-      setAchievementPopup({ isOpen: true, data: { title: 'Quiz Mastered!', subtitle: `You scored ${percentage}% on the quiz!`, xp: 30 } });
+      addNotification('Quiz Mastered!', `You scored ${percentage}% on the quiz! You earned 30 XP.`, 'badge_earned');
       handleAddXp(30);
     }
 
@@ -603,7 +614,7 @@ export default function App() {
   const handleExerciseComplete = (exerciseId: string) => {
     const isCompleted = userProgress.completedExercises.includes(exerciseId);
     if (!isCompleted) {
-      setAchievementPopup({ isOpen: true, data: { title: 'Exercise Solved!', subtitle: 'You reconstructed the code perfectly!', xp: 20 } });
+      addNotification('Exercise Solved!', 'You reconstructed the code perfectly! You earned 20 XP.', 'badge_earned');
     }
 
     setUserProgress(prev => {
@@ -669,14 +680,8 @@ export default function App() {
       
       if (newlyUnlockedBadges.length > 0 && !isInitialLoading && !isRetroactiveBatch) {
         // Show popup for the first newly unlocked badge
-        setAchievementPopup({ 
-          isOpen: true, 
-          data: { 
-            title: 'Badge Unlocked!', 
-            subtitle: newlyUnlockedBadges[0]!.title, 
-            xp: 50 // Bonus XP for unlocking
-          } 
-        });
+        const badge = newlyUnlockedBadges[0]!;
+        addNotification('Badge Unlocked!', `You unlocked the ${badge.title} badge!`, 'badge_earned');
         handleAddXp(50);
       }
 
@@ -1012,11 +1017,7 @@ export default function App() {
         onRefillStreak={handleRefillStreak}
       />
 
-      <AchievementPopup
-        isOpen={achievementPopup.isOpen}
-        data={achievementPopup.data}
-        onClose={() => setAchievementPopup({ ...achievementPopup, isOpen: false })}
-      />
+
     </div>
   );
 }

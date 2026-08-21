@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
-import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Sparkles, ShieldAlert, MessageSquareHeart, CreditCard, Layers, Bell } from 'lucide-react';
+import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Sparkles, ShieldAlert, MessageSquare, CreditCard, Layers, Bell } from 'lucide-react';
 import { UserProgress, UserProfile, NavTab, AppNotification } from '../types';
 import { DsaFeedLogo } from './DsaFeedLogo';
 import { NotificationsPanel } from './NotificationsPanel';
@@ -118,7 +118,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 title="Give Feedback or Suggestions"
                 className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF]  rounded-full transition ml-1"
               >
-                <MessageSquareHeart className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
+                <MessageSquare className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
               </button>
             )}
 
@@ -189,7 +189,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 title="Give Feedback"
                 className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition"
               >
-                <MessageSquareHeart className="w-5 h-5" />
+                <MessageSquare className="w-5 h-5" />
               </button>
             )}
 

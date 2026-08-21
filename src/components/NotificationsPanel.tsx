@@ -30,7 +30,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
         initial={{ opacity: 0, y: 10, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-        className="absolute top-14 sm:top-16 right-0 sm:right-4 w-full sm:w-96 bg-white border border-[#EAEAEA] sm:rounded-3xl shadow-xl z-50 overflow-hidden flex flex-col max-h-[80vh] sm:max-h-[600px]"
+        className="fixed inset-x-4 top-[72px] sm:inset-auto sm:absolute sm:top-12 sm:right-0 sm:w-96 bg-white border border-[#EAEAEA] rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col max-h-[80vh] sm:max-h-[600px]"
       >
         <div className="p-4 border-b border-[#EAEAEA] bg-[#F8F9FA] flex items-center justify-between">
           <div className="flex items-center gap-2">
