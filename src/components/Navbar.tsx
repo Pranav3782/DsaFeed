@@ -126,12 +126,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             {user?.isLoggedIn && (
               <div className="relative ml-1">
                 <button
+                  id="notification-bell-btn"
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
                   className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition relative"
                 >
                   <Bell className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
                   {notifications.filter(n => !n.read).length > 0 && (
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#F26B5B] rounded-full border-2 border-white"></span>
+                    <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#F26B5B] text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white shadow-sm">
+                      {notifications.filter(n => !n.read).length}
+                    </span>
                   )}
                 </button>
                 <NotificationsPanel
@@ -197,12 +200,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             {user?.isLoggedIn && (
               <div className="relative">
                 <button
+                  id="mobile-notification-bell-btn"
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
                   className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition relative"
                 >
                   <Bell className="w-5 h-5" />
                   {notifications.filter(n => !n.read).length > 0 && (
-                    <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#F26B5B] rounded-full border-2 border-white"></span>
+                    <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#F26B5B] text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white shadow-sm">
+                      {notifications.filter(n => !n.read).length}
+                    </span>
                   )}
                 </button>
                 <NotificationsPanel

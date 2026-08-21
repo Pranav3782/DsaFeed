@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AppNotification } from '../types';
 import { Bell, Award, Info, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -16,17 +16,39 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   notifications,
   onMarkAsRead
 }) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (
+        isOpen && 
+        panelRef.current && 
+        !panelRef.current.contains(target) &&
+        !target.closest('#notification-bell-btn') &&
+        !target.closest('#mobile-notification-bell-btn')
+      ) {
+        // Only close if we click outside the panel and not on the bell button itself
+        onClose();
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
     <>
-      {/* Backdrop for mobile to click away */}
+      {/* Backdrop for mobile */}
       <div 
-        className="fixed inset-0 z-40 bg-black/20 md:bg-transparent"
+        className="fixed inset-0 z-40 bg-black/20 sm:hidden"
         onClick={onClose}
       />
       
       <motion.div
+        ref={panelRef}
         initial={{ opacity: 0, y: 10, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 10, scale: 0.95 }}
