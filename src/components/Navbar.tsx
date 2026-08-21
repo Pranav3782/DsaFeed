@@ -14,8 +14,9 @@ interface NavbarProps {
   onOpenAuth?: () => void;
   onSignOut?: () => void;
   onOpenStreakModal?: () => void;
-  notifications?: AppNotification[];
-  onMarkAsRead?: (id: string) => void;
+  notifications: AppNotification[];
+  onMarkAsRead: (notificationId: string) => void;
+  onClearAll: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -26,8 +27,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuth,
   onSignOut,
   onOpenStreakModal,
-  notifications = [],
-  onMarkAsRead = () => {}
+  notifications,
+  onMarkAsRead,
+  onClearAll
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -142,6 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClose={() => setNotificationsOpen(false)}
                   notifications={notifications}
                   onMarkAsRead={onMarkAsRead}
+                  onClearAll={onClearAll}
                 />
               </div>
             )}

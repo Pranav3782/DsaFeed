@@ -190,12 +190,19 @@ export default function App() {
   const [notifications, setNotifications] = useSessionState<AppNotification[]>('app_notifications', []);
 
   const addNotification = (title: string, message: string, type: 'info' | 'badge_earned' = 'badge_earned') => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      month: 'short',
+      day: 'numeric'
+    });
     const newNotif: AppNotification = {
       id: `notif-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       title,
       message,
       type,
-      timestamp: 'Just now',
+      timestamp: formatter.format(new Date()),
       read: false
     };
     setNotifications(prev => [newNotif, ...prev]);
@@ -203,6 +210,10 @@ export default function App() {
 
   const handleMarkAsRead = (notificationId: string) => {
     setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
+  };
+
+  const handleClearAllNotifications = () => {
+    setNotifications([]);
   };
 
   // Topic & Quiz Selection State
@@ -790,6 +801,7 @@ export default function App() {
           onOpenStreakModal={() => setIsStreakModalOpen(true)}
           notifications={notifications}
           onMarkAsRead={handleMarkAsRead}
+          onClearAll={handleClearAllNotifications}
         />
       )}
 

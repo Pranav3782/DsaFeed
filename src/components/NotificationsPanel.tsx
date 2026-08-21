@@ -8,13 +8,15 @@ interface NotificationsPanelProps {
   onClose: () => void;
   notifications: AppNotification[];
   onMarkAsRead: (notificationId: string) => void;
+  onClearAll: () => void;
 }
 
 export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   isOpen,
   onClose,
   notifications,
-  onMarkAsRead
+  onMarkAsRead,
+  onClearAll
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -70,6 +72,14 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             <span className="text-xs font-bold text-[#3478E5] bg-[#EEF4FF] px-2 py-1 rounded-full">
               {notifications.filter(n => !n.read).length} New
             </span>
+            {notifications.length > 0 && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); onClearAll(); }}
+                className="text-xs font-bold text-[#F26B5B] hover:text-[#D94F3F] hover:bg-[#FFF1F0] px-2 py-1 rounded-full transition"
+              >
+                Clear All
+              </button>
+            )}
             <button 
               onClick={onClose}
               className="p-1 text-[#8C8C8C] hover:text-[#101B3D] hover:bg-[#EAEAEA] rounded-full transition"
