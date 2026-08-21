@@ -83,8 +83,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             </span>
             {notifications.length > 0 && (
               <button 
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowClearConfirm(true); }}
-                onPointerDown={(e) => { e.stopPropagation(); setShowClearConfirm(true); }}
+                onClick={() => setShowClearConfirm(true)}
                 className="text-xs font-bold text-[#F26B5B] hover:text-[#D94F3F] hover:bg-[#FFF1F0] px-2 py-1 rounded-full transition"
               >
                 Clear All
