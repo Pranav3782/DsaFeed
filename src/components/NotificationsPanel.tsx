@@ -88,13 +88,13 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
               </div>
             ) : (
               notifications.map((notification) => (
-                <motion.div
+                <motion.button
                   key={notification.id}
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className={`p-3 rounded-2xl flex gap-3 transition-colors ${
-                    notification.read ? 'bg-transparent' : 'bg-[#EEF4FF]/50 cursor-pointer hover:bg-[#EEF4FF]/80'
+                  className={`w-full text-left p-3 rounded-2xl flex gap-3 transition-colors ${
+                    notification.read ? 'bg-transparent cursor-default' : 'bg-[#EEF4FF]/50 cursor-pointer hover:bg-[#EEF4FF]/80'
                   }`}
                   onClick={() => !notification.read && onMarkAsRead(notification.id)}
                 >
@@ -124,7 +124,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
                     <div className="w-2 h-2 rounded-full bg-[#3478E5] shrink-0 mt-2" />
                   )}
 
-                </motion.div>
+                </motion.button>
               ))
             )}
           </AnimatePresence>
