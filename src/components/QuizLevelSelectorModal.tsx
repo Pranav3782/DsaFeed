@@ -84,7 +84,7 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
                     whileHover={{ scale: 1.03, y: -4 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
-                      const isUnlocked = index === 0 || (userProgress.quizScores[quizSets[index - 1].id]?.percentage === 100);
+                      const isUnlocked = index === 0 || (userProgress.quizScores[quizSets[index - 1].id] !== undefined);
                       if (!isUnlocked) {
                         setLockedAttempt(quiz);
                       } else {
@@ -100,8 +100,15 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
                   >
                     {/* Completion Badge */}
                     {isCompleted && (
-                      <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#55C990] text-white flex items-center justify-center shadow-md border-2 border-white">
+                      <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#55C990] text-white flex items-center justify-center shadow-md border-2 border-white z-10">
                         <CheckCircle2 className="w-5 h-5" />
+                      </div>
+                    )}
+
+                    {/* Locked Badge */}
+                    {!(index === 0 || (userProgress.quizScores[quizSets[index - 1].id] !== undefined)) && (
+                      <div className="absolute top-3 left-3 text-[#101B3D]/30 z-10">
+                        <Lock className="w-4 h-4" />
                       </div>
                     )}
 
@@ -151,7 +158,7 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
         <AnimatePresence>
           {lockedAttempt && (() => {
             const unlockedQuiz = quizSets.find((q, i) => {
-              const isUnlocked = i === 0 || (userProgress.quizScores[quizSets[i - 1].id]?.percentage === 100);
+              const isUnlocked = i === 0 || (userProgress.quizScores[quizSets[i - 1].id] !== undefined);
               const isCompleted = userProgress.quizScores[q.id]?.percentage === 100;
               return isUnlocked && !isCompleted;
             }) || quizSets[0];
@@ -172,7 +179,7 @@ export const QuizLevelSelectorModal: React.FC<QuizLevelSelectorModalProps> = ({
                   </div>
                   <h3 className="text-xl font-black text-[#101B3D] mb-2">Level Locked!</h3>
                   <p className="text-sm font-semibold text-[#8C8C8C] mb-6">
-                    You need to score 100% on the previous level to unlock {lockedAttempt.title}.
+                    You need to complete the previous level to unlock {lockedAttempt.title}.
                   </p>
                   <button 
                     onClick={() => {

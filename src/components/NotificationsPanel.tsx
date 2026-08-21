@@ -19,22 +19,29 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleOutsideInteraction = (event: Event) => {
       const target = event.target as Element;
       if (
         isOpen && 
         panelRef.current && 
         !panelRef.current.contains(target) &&
-        !target.closest('#notification-bell-btn') &&
-        !target.closest('#mobile-notification-bell-btn')
+        !target.closest?.('#notification-bell-btn') &&
+        !target.closest?.('#mobile-notification-bell-btn')
       ) {
-        // Only close if we click outside the panel and not on the bell button itself
+        // Only close if we interact outside the panel and not on the bell button itself
         onClose();
       }
     };
     
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleOutsideInteraction);
+    document.addEventListener('touchstart', handleOutsideInteraction, { passive: true });
+    window.addEventListener('scroll', handleOutsideInteraction, { capture: true, passive: true });
+    
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideInteraction);
+      document.removeEventListener('touchstart', handleOutsideInteraction);
+      window.removeEventListener('scroll', handleOutsideInteraction, { capture: true } as any);
+    };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;

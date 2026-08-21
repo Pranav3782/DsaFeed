@@ -578,6 +578,20 @@ export default function App() {
       handleAddXp(30);
     }
 
+    // Check if this unlocks a new level (since any completion unlocks the next)
+    const isFirstTime = !userProgress.quizScores[quizId];
+    if (isFirstTime) {
+      const quizSet = QUIZ_SETS.find(q => q.id === quizId);
+      if (quizSet) {
+        const topicQuizzes = QUIZ_SETS.filter(q => q.topicId === quizSet.topicId);
+        const currentIndex = topicQuizzes.findIndex(q => q.id === quizId);
+        if (currentIndex >= 0 && currentIndex < topicQuizzes.length - 1) {
+          const nextQuiz = topicQuizzes[currentIndex + 1];
+          addNotification('New Level Unlocked!', `You can now play ${nextQuiz.title.split(' - ')[0]}!`, 'info');
+        }
+      }
+    }
+
     // Mark the daily quiz task as completed
     markTaskProgress('quiz');
 
