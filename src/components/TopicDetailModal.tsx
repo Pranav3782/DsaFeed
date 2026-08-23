@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DsaTopic } from '../types';
-import { X, BookOpen, Code, Briefcase, CheckCircle2, ArrowRight, HelpCircle, Lightbulb } from 'lucide-react';
+import { X, BookOpen, Code, Briefcase, CheckCircle2, ArrowRight, HelpCircle, Lightbulb, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface TopicDetailModalProps {
@@ -8,6 +8,7 @@ interface TopicDetailModalProps {
   onClose: () => void;
   onStartQuiz: (topicId: string) => void;
   onStartPractice: (topicId: string) => void;
+  onViewFlashcards: () => void;
   isCompleted: boolean;
   onToggleComplete: (topicId: string) => void;
 }
@@ -17,6 +18,7 @@ export const TopicDetailModal: React.FC<TopicDetailModalProps> = ({
   onClose,
   onStartQuiz,
   onStartPractice,
+  onViewFlashcards,
   isCompleted,
   onToggleComplete
 }) => {
@@ -236,17 +238,32 @@ export const TopicDetailModal: React.FC<TopicDetailModalProps> = ({
 
           {/* Footer Actions */}
           <div className="p-6 bg-[#FFFDF9] border-t border-[#EAEAEA] flex flex-col sm:flex-row items-center justify-between gap-4">
-            <button
-              onClick={() => onToggleComplete(topic.id)}
-              className={`w-full sm:w-auto px-5 py-3 rounded-2xl text-xs font-black transition flex items-center justify-center gap-2 ${
-                isCompleted
-                  ? 'bg-[#EFFCF6] text-[#55C990] border border-[#55C990]/40'
-                  : 'bg-white text-[#101B3D] border border-[#EAEAEA] hover:bg-[#EAEAEA]/30'
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{isCompleted ? 'Marked as Completed' : 'Mark as Completed'}</span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => onToggleComplete(topic.id)}
+                className={`w-full sm:w-auto px-5 py-3 rounded-2xl text-xs font-black transition flex items-center justify-center gap-2 ${
+                  isCompleted
+                    ? 'bg-[#EFFCF6] text-[#55C990] border border-[#55C990]/40'
+                    : 'bg-white text-[#101B3D] border border-[#EAEAEA] hover:bg-[#EAEAEA]/30'
+                }`}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{isCompleted ? 'Marked as Completed' : 'Mark as Completed'}</span>
+              </button>
+
+              {isCompleted && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onViewFlashcards();
+                  }}
+                  className="w-full sm:w-auto px-5 py-3 bg-[#EEF4FF] hover:bg-[#3478E5] text-[#3478E5] hover:text-white border border-[#3478E5]/20 rounded-2xl text-xs font-black transition flex items-center justify-center gap-2 group"
+                >
+                  <Layers className="w-4 h-4" />
+                  <span>View Flashcards</span>
+                </button>
+              )}
+            </div>
 
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <button

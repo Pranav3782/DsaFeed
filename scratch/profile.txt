@@ -1,0 +1,638 @@
+1: import React, { useState } from 'react';
+2: import { UserProgress, DsaTopic, UserBadge, UserProfile } from '../types';
+3: import { 
+4:   Flame, Zap, Trophy, CheckCircle2, RotateCcw, Award, 
+5:   User, Edit3, Share2, Github, Settings, LogOut, Check, Sparkles, Copy, Calendar, X, Trash2
+6: } from 'lucide-react';
+7: import * as LucideIcons from 'lucide-react';
+8: import { motion, AnimatePresence } from 'motion/react';
+9: import { useSessionState } from '../hooks/useSessionState';
+10: import { toggleUISound } from '../utils/audio';
+11: import { AvatarBuilderModal } from './AvatarBuilderModal';
+12: import { DsaProfileCard } from './DsaProfileCard';
+13: 
+14: interface ProfileDashboardProps {
+15:   user: UserProfile | null;
+16:   onUpdateUser: (updated: UserProfile) => void;
+17:   userProgress: UserProgress;
+18:   topics: DsaTopic[];
+19:   badges: UserBadge[];
+20:   onSelectTopic: (topic: DsaTopic) => void;
+21:   onResetProgress: () => void;
+22:   onSignOut: () => void;
+23: }
+24: 
+25: const PRESET_AVATARS = [
+26:   'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+27:   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200',
+28:   'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200',
+29:   'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=200',
+30:   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+31: ];
+32: 
+33: const PRESET_BG_COLORS = [
+34:   '#3478E5', '#55C990', '#F26B5B', '#F5C94A', '#8B5CF6', '#EC4899', '#101B3D'
+35: ];
+36: 
+37: export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
+38:   user,
+39:   onUpdateUser,
+40:   userProgress,
+41:   topics,
+42:   badges,
+43:   onSelectTopic,
+44:   onResetProgress,
+45:   onSignOut,
+46: }) => {
+47:   const [isEditingBio, setIsEditingBio] = useState(false);
+48:   const [bioInput, setBioInput] = useState(user?.bio || 'Building problem-solving skills block by block with DSAfeed.');
+49:   const [nameInput, setNameInput] = useState(user?.name || 'DSA Learner');
+50:   const [isMuted, setIsMuted] = useState(() => localStorage.getItem('dsafeed_muted') === 'true');
+51:   const [showShareModal, setShowShareModal] = useState(false);
+52: 
+53:   const [copiedCard, setCopiedCard] = useState(false);
+54: 
+55:   const handleCopyCard = () => {
+56:     navigator.clipboard.writeText(window.location.href);
+57:     setCopiedCard(true);
+58:     setTimeout(() => setCopiedCard(false), 2000);
+59:   };
+60: 
+61:   const [soundEnabled, setSoundEnabled] = useSessionState('soundEnabled', true);
+62:   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || PRESET_AVATARS[0]);
+63:   const [selectedBgColor, setSelectedBgColor] = useState(user?.customAvatarBg || '#b6e3f4');
+64:   const [showAllBadges, setShowAllBadges] = useState(false);
+65:   const [selectedBadge, setSelectedBadge] = useState<UserBadge | null>(null);
+66:   const [isAvatarBuilderOpen, setIsAvatarBuilderOpen] = useSessionState('isAvatarBuilderOpen', false);
+67:   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+68: 
+69:   const completedTopicsCount = userProgress.completedTopics.length;
+70:   const totalTopics = topics.length;
+71: 
+72:   const unlockedBadgeIds = userProgress.unlockedBadges || [];
+73:   const unlockedBadgesList = badges.filter(b => unlockedBadgeIds.includes(b.id));
+74:   const lockedBadgesList = badges.filter(b => !unlockedBadgeIds.includes(b.id));
+75:   const combinedBadges = [...unlockedBadgesList, ...lockedBadgesList];
+76:   const overallPercentage = Math.round((completedTopicsCount / totalTopics) * 100);
+77: 
+78:   const handleSaveProfile = () => {
+79:     if (!user) return;
+80:     onUpdateUser({
+81:       ...user,
+82:       name: nameInput,
+83:       bio: bioInput,
+84:       avatar: selectedAvatar,
+85:       customAvatarBg: selectedBgColor
+86:     });
+87:     setIsEditingBio(false);
+88:   };
+89: 
+90:   return (
+91:     <>
+92:     <div className="max-w-5xl mx-auto space-y-12 animate-in fade-in duration-200 pb-12">
+93:       
+94:       {/* Profile Header Banner */}
+95:       <div className="bg-white  border border-[#EAEAEA]  rounded-3xl p-6 sm:p-8 shadow-xs">
+96:         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+97:           
+98:           <div className="flex items-center gap-5">
+99:             {/* Avatar with Custom Background */}
+100:             <div className="relative group flex flex-col items-center">
+101:               <div 
+102:                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border-4 border-white  transition-transform group-hover:scale-105 flex items-center justify-center overflow-hidden relative"
+103:                 style={{ backgroundColor: selectedBgColor }}
+104:               >
+105:                 {selectedAvatar ? (
+106:                   <img
+107:                     src={selectedAvatar}
+108:                     alt={user?.name || 'User Avatar'}
+109:                     className="w-full h-full object-cover rounded-full"
+110:                   />
+111:                 ) : (
+112:                   <User className="w-10 h-10 text-[#101B3D]/50" />
+113:                 )}
+114:                 
+115:                 {/* Overlay edit button */}
+116:                 <button 
+117:                   onClick={() => setIsAvatarBuilderOpen(true)}
+118:                   className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+119:                 >
+120:                   <Edit3 className="w-6 h-6 text-white" />
+121:                 </button>
+122:               </div>
+123:               <button 
+124:                 onClick={() => setIsAvatarBuilderOpen(true)}
+125:                 className="mt-3 text-[10px] font-bold text-[#8C8C8C] hover:text-[#3478E5]  uppercase tracking-wider bg-[#FAFAFA]  border border-[#EAEAEA]  px-2 py-1 rounded-full transition-colors"
+126:               >
+127:                 Edit Avatar
+128:               </button>
+129:             </div>
+130: 
+131:             {/* Name & Bio */}
+132:             <div className="space-y-1">
+133:               <div className="flex items-center gap-2">
+134:                 <h2 className="text-2xl sm:text-3xl font-black text-[#101B3D] ">
+135:                   {user?.name || 'DSA Learner'}
+136:                 </h2>
+137:                 <span className="px-2.5 py-0.5 bg-[#EEF4FF] border border-[#3478E5]/30 text-[#3478E5] font-extrabold text-[11px] rounded-full">
+138:                   Level {Math.floor(userProgress.xp / 100) + 1}
+139:                 </span>
+140:               </div>
+141:               <p className="text-xs text-[#8C8C8C]  font-bold">
+142:                 {user?.email || 'learner@dsafeed.com'}
+143:               </p>
+144:               <p className="text-sm text-[#111111]/80  font-medium max-w-lg mt-1">
+145:                 {user?.bio || 'Building problem-solving skills block by block with DSAfeed.'}
+146:               </p>
+147:             </div>
+148:           </div>
+149: 
+150:             <button
+151:               onClick={() => setIsSettingsOpen(true)}
+152:               className="flex-1 sm:flex-initial px-4 py-2.5 bg-[#FFFDF9]  border border-[#EAEAEA]  hover:border-[#3478E5]  text-[#101B3D]  text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs"
+153:             >
+154:               <Settings className="w-3.5 h-3.5" />
+155:               <span>Settings</span>
+156:             </button>
+157: 
+158: 
+159: 
+160:             <button
+161:               onClick={() => {
+162:                 const newMuted = !isMuted;
+163:                 setIsMuted(newMuted);
+164:                 toggleUISound(newMuted);
+165:               }}
+166:               className={`flex-1 sm:flex-initial px-4 py-2.5 border text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-2 shadow-xs ${
+167:                 isMuted 
+168:                   ? 'bg-red-50 border-red-200 text-red-600 hover:bg-red-100' 
+169:                   : 'bg-[#FFFDF9] border-[#EAEAEA] text-[#101B3D] hover:border-[#3478E5]'
+170:               }`}
+171:             >
+172:               <span className="w-3.5 h-3.5 font-black text-center">{isMuted ? '🔇' : '🔊'}</span>
+173:               <span>{isMuted ? 'Sound Off' : 'Sound On'}</span>
+174:             </button>
+175:           </div>
+176: 
+177:         </div>
+178: 
+179:         {/* Profile Customization Drawer */}
+180:         <AnimatePresence>
+181:           {isEditingBio && (
+182:             <motion.div
+183:               initial={{ height: 0, opacity: 0 }}
+184:               animate={{ height: 'auto', opacity: 1 }}
+185:               exit={{ height: 0, opacity: 0 }}
+186:               className="overflow-hidden border-t border-[#EAEAEA] pt-5 mt-6 space-y-4"
+187:             >
+188:               <h3 className="text-sm font-extrabold text-[#101B3D] flex items-center gap-1.5">
+189:                 <Sparkles className="w-4 h-4 text-[#F5C94A]" />
+190:                 <span>Customize Profile & Bio</span>
+191:               </h3>
+192: 
+193:               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+194:                 <div>
+195:                   <label className="block text-[11px] font-black uppercase text-[#8C8C8C] mb-1">
+196:                     Display Name
+197:                   </label>
+198:                   <input
+199:                     type="text"
+200:                     value={nameInput}
+201:                     onChange={(e) => setNameInput(e.target.value)}
+202:                     className="w-full px-3.5 py-2 bg-[#FFFDF9] border border-[#EAEAEA] rounded-xl text-xs font-bold text-[#101B3D] focus:outline-none focus:border-[#3478E5]"
+203:                   />
+204:                 </div>
+205: 
+206:                 <div>
+207:                   <label className="block text-[11px] font-black uppercase text-[#8C8C8C] mb-1">
+208:                     Short Bio
+209:                   </label>
+210:                   <input
+211:                     type="text"
+212:                     value={bioInput}
+213:                     onChange={(e) => setBioInput(e.target.value)}
+214:                     placeholder="e.g. Aiming for Top 1% in Data Structures"
+215:                     className="w-full px-3.5 py-2 bg-[#FFFDF9] border border-[#EAEAEA] rounded-xl text-xs font-bold text-[#101B3D] focus:outline-none focus:border-[#3478E5]"
+216:                   />
+217:                 </div>
+218:               </div>
+219: 
+220:               {/* Avatar Builder Trigger inside Edit Profile */}
+221:               <div>
+222:                 <button
+223:                   onClick={() => setIsAvatarBuilderOpen(true)}
+224:                   className="px-4 py-2 bg-[#EEF4FF]  text-[#3478E5]  border border-[#3478E5]/30 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 hover:bg-[#3478E5] hover:text-white"
+225:                 >
+226:                   <Edit3 className="w-3.5 h-3.5" />
+227:                   <span>Open Avatar Builder</span>
+228:                 </button>
+229:               </div>
+230: 
+231:               <div className="flex justify-end gap-2 pt-2">
+232:                 <button
+233:                   onClick={() => setIsEditingBio(false)}
+234:                   className="px-4 py-2 text-xs font-bold text-[#8C8C8C] hover:text-[#101B3D]"
+235:                 >
+236:                   Cancel
+237:                 </button>
+238:                 <button
+239:                   onClick={handleSaveProfile}
+240:                   className="px-5 py-2 bg-[#101B3D] text-white text-xs font-black rounded-xl shadow-xs"
+241:                 >
+242:                   Save Profile Changes
+243:                 </button>
+244:               </div>
+245:             </motion.div>
+246:           )}
+247:         </AnimatePresence>
+248: 
+249:       </div>
+250: 
+251:       <div className="max-w-4xl mx-auto w-full space-y-12">
+252:           
+253: 
+254: 
+255:       {/* Daily Tasks Section */}
+256:       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-5">
+257:         <div className="flex items-center justify-between">
+258:           <div className="flex items-center gap-2">
+259:             <Zap className="w-5 h-5 text-[#F5C94A] fill-[#F5C94A]" />
+260:             <h3 className="text-xl font-black text-[#101B3D]">Daily Tasks</h3>
+261:           </div>
+262:           <span className="text-xs font-bold bg-[#FFFBEA] text-[#F5C94A] px-3 py-1 rounded-full border border-[#F5C94A]/40">
+263:             {userProgress.monthlyPoints} / 30 Monthly Points
+264:           </span>
+265:         </div>
+266: 
+267:         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+268:           {userProgress.dailyTasks?.map((task) => {
+269:             const isDone = task.completed;
+270:             const progressPercent = Math.min(100, Math.round((task.progress / task.target) * 100));
+271: 
+272:             return (
+273:               <div
+274:                 key={task.id}
+275:                 className={`p-4 rounded-2xl border transition flex flex-col justify-between h-32 ${
+276:                   isDone
+277:                     ? 'bg-[#EFFCF6] border-[#55C990] shadow-xs'
+278:                     : 'bg-[#FFFDF9] border-[#EAEAEA]'
+279:                 }`}
+280:               >
+281:                 <div className="flex items-start justify-between">
+282:                   <p className={`text-sm font-extrabold ${isDone ? 'text-[#101B3D]' : 'text-[#101B3D]'}`}>
+283:                     {task.description}
+284:                   </p>
+285:                   {isDone && <CheckCircle2 className="w-5 h-5 text-[#55C990] shrink-0" />}
+286:                 </div>
+287: 
+288:                 <div className="space-y-2 mt-4">
+289:                   <div className="flex justify-between text-xs font-bold">
+290:                     <span className={isDone ? 'text-[#55C990]' : 'text-[#8C8C8C]'}>
+291:                       {task.progress >= task.target ? task.target : task.progress} / {task.target}
+292:                     </span>
+293:                     <span className={isDone ? 'text-[#55C990]' : 'text-[#8C8C8C]'}>
+294:                       {progressPercent}%
+295:                     </span>
+296:                   </div>
+297:                   <div className="w-full bg-[#EAEAEA] h-2 rounded-full overflow-hidden">
+298:                     <div
+299:                       className="h-full rounded-full transition-all duration-300"
+300:                       style={{
+301:                         width: `${progressPercent}%`,
+302:                         backgroundColor: isDone ? '#55C990' : '#3478E5'
+303:                       }}
+304:                     />
+305:                   </div>
+306:                 </div>
+307:               </div>
+308:             );
+309:           })}
+310:         </div>
+311:       </div>
+312: 
+313:       {/* Hero Stats Grid */}
+314:       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+315:         
+316:         {/* Streak Card */}
+317:         <div className={`bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex items-center gap-4 transition-all duration-300 ${userProgress.streakDays >= 7 ? 'border-[#F26B5B]/30 shadow-[#F26B5B]/10' : ''}`}>
+318:           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${userProgress.streakDays >= 7 ? 'bg-[#FFF1F0] text-[#F26B5B]' : userProgress.streakDays >= 3 ? 'bg-[#FFFBEA] text-[#F5C94A]' : 'bg-[#F8F9FA] text-[#8C8C8C]'}`}>
+319:             <Flame className={`w-7 h-7 ${userProgress.streakDays >= 3 ? 'fill-current' : ''}`} />
+320:           </div>
+321:           <div>
+322:             <p className="text-xs font-black text-[#8C8C8C] uppercase">Daily Streak</p>
+323:             <p className="text-2xl font-black text-[#101B3D]">{userProgress.streakDays} Days Active</p>
+324:             <p className={`text-xs font-semibold ${userProgress.streakDays >= 7 ? 'text-[#F26B5B]' : userProgress.streakDays >= 3 ? 'text-[#F5C94A]' : 'text-[#8C8C8C]'}`}>
+325:               {userProgress.streakDays >= 7 ? "On Fire! 🔥" : userProgress.streakDays >= 3 ? "Consistency Champion!" : "Keep it up!"}
+326:             </p>
+327:           </div>
+328:         </div>
+329: 
+330:         {/* XP Card */}
+331:         <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex items-center gap-4">
+332:           <div className="w-14 h-14 rounded-2xl bg-[#FFFBEA] flex items-center justify-center text-[#F5C94A]">
+333:             <Zap className="w-7 h-7 fill-[#F5C94A]" />
+334:           </div>
+335:           <div>
+336:             <p className="text-xs font-black text-[#8C8C8C] uppercase">Total XP</p>
+337:             <p className="text-2xl font-black text-[#101B3D]">{userProgress.xp} XP</p>
+338:             <p className="text-xs text-[#F5C94A] font-semibold">Level {Math.floor(userProgress.xp / 100) + 1} Learner</p>
+339:           </div>
+340:         </div>
+341: 
+342:         {/* Topics Completed Card */}
+343:         <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex items-center gap-4">
+344:           <div className="w-14 h-14 rounded-2xl bg-[#EEF4FF] flex items-center justify-center text-[#3478E5]">
+345:             <LucideIcons.Activity className="w-7 h-7" />
+346:           </div>
+347:           <div>
+348:             <p className="text-xs font-black text-[#8C8C8C] uppercase">Topics Mastered</p>
+349:             <p className="text-2xl font-black text-[#101B3D]">{completedTopicsCount} / {totalTopics}</p>
+350:             <p className="text-xs text-[#3478E5] font-semibold">{overallPercentage}% Curriculum Completed</p>
+351:           </div>
+352:         </div>
+353: 
+354:       </div>
+355: 
+356:       {/* Badges Section */}
+357:       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
+358:         <div className="flex items-center gap-2">
+359:           <Trophy className="w-5 h-5 text-[#F5C94A]" />
+360:           <h3 className="text-xl font-black text-[#101B3D]">Your Badges</h3>
+361:         </div>
+362: 
+363:         {!showAllBadges ? (
+364:           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+365:             {combinedBadges.slice(0, 3).map((b) => {
+366:               const isUnlocked = unlockedBadgeIds.includes(b.id);
+367:               const IconComp = (LucideIcons as any)[b.icon] || Award;
+368:               return (
+369:                 <div
+370:                   key={b.id}
+371:                   onClick={() => setSelectedBadge(b)}
+372:                   className={`p-4 rounded-2xl border transition flex items-center gap-3.5 cursor-pointer hover:-translate-y-1 ${
+373:                     isUnlocked
+374:                       ? 'bg-[#FFFDF9] border-[#EAEAEA] shadow-xs hover:border-[#F5C94A]'
+375:                       : 'bg-[#F7F5F0]/50 border-dashed border-[#EAEAEA] opacity-60 hover:opacity-100'
+376:                   }`}
+377:                 >
+378:                   <div className={`w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center font-extrabold text-xl ${
+379:                     isUnlocked ? 'bg-[#FFFBEA] text-[#101B3D] border border-[#F5C94A]/40' : 'bg-gray-100 text-gray-400'
+380:                   }`}>
+381:                     <IconComp className={`w-6 h-6 ${isUnlocked ? 'text-[#F5C94A]' : 'text-gray-400'}`} />
+382:                   </div>
+383:                   <div>
+384:                     <h4 className="text-sm font-extrabold text-[#101B3D]">{b.title}</h4>
+385:                     <p className="text-xs text-[#8C8C8C] font-medium leading-snug line-clamp-1">{b.description}</p>
+386:                   </div>
+387:                 </div>
+388:               );
+389:             })}
+390:           </div>
+391:         ) : (
+392:           <div className="space-y-6">
+393:             {/* Unlocked Section */}
+394:             {unlockedBadgesList.length > 0 && (
+395:               <div>
+396:                 <h4 className="text-sm font-black text-[#101B3D] mb-3 uppercase tracking-wider">Unlocked</h4>
+397:                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+398:                   {unlockedBadgesList.map((b) => {
+399:                     const IconComp = (LucideIcons as any)[b.icon] || Award;
+400:                     return (
+401:                       <div
+402:                         key={b.id}
+403:                         onClick={() => setSelectedBadge(b)}
+404:                         className="p-4 rounded-2xl border bg-[#FFFDF9] border-[#EAEAEA] shadow-xs hover:border-[#F5C94A] transition flex items-center gap-3.5 cursor-pointer hover:-translate-y-1"
+405:                       >
+406:                         <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center font-extrabold text-xl bg-[#FFFBEA] text-[#101B3D] border border-[#F5C94A]/40">
+407:                           <IconComp className="w-6 h-6 text-[#F5C94A]" />
+408:                         </div>
+409:                         <div>
+410:                           <h4 className="text-sm font-extrabold text-[#101B3D]">{b.title}</h4>
+411:                           <p className="text-xs text-[#8C8C8C] font-medium leading-snug line-clamp-1">{b.description}</p>
+412:                         </div>
+413:                       </div>
+414:                     );
+415:                   })}
+416:                 </div>
+417:               </div>
+418:             )}
+419:             
+420:             {/* Locked Section */}
+421:             {lockedBadgesList.length > 0 && (
+422:               <div>
+423:                 <h4 className="text-sm font-black text-[#8C8C8C] mb-3 uppercase tracking-wider">Locked</h4>
+424:                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+425:                   {lockedBadgesList.map((b) => {
+426:                     const IconComp = (LucideIcons as any)[b.icon] || Award;
+427:                     return (
+428:                       <div
+429:                         key={b.id}
+430:                         onClick={() => setSelectedBadge(b)}
+431:                         className="p-4 rounded-2xl border bg-[#F7F5F0]/50 border-dashed border-[#EAEAEA] opacity-60 hover:opacity-100 transition flex items-center gap-3.5 cursor-pointer hover:-translate-y-1"
+432:                       >
+433:                         <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center font-extrabold text-xl bg-gray-100 text-gray-400">
+434:                           <IconComp className="w-6 h-6 text-gray-400" />
+435:                         </div>
+436:                         <div>
+437:                           <h4 className="text-sm font-extrabold text-[#101B3D]">{b.title}</h4>
+438:                           <p className="text-xs text-[#8C8C8C] font-medium leading-snug line-clamp-1">{b.description}</p>
+439:                         </div>
+440:                       </div>
+441:                     );
+442:                   })}
+443:                 </div>
+444:               </div>
+445:             )}
+446:           </div>
+447:         )}
+448:         
+449:         {badges.length > 3 && (
+450:           <button 
+451:             onClick={() => setShowAllBadges(!showAllBadges)}
+452:             className="text-xs font-black text-[#3478E5] hover:text-[#2864C6] w-full text-center mt-2 p-2"
+453:           >
+454:             {showAllBadges ? 'Show Less' : `Show ${badges.length - 3} More Badges`}
+455:           </button>
+456:         )}
+457:       </div>
+458: 
+459:       </div>
+460: 
+461:       {/* Settings, Reset Data & Logout Bar */}
+462:       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex flex-col sm:flex-row items-center justify-end gap-4">
+463:         <div className="flex items-center gap-3">
+464:           <div className="p-3 bg-[#EEF4FF] text-[#3478E5] rounded-2xl">
+465:             <Settings className="w-5 h-5" />
+466:           </div>
+467:           <div>
+468:             <h4 className="text-sm font-extrabold text-[#101B3D]">Account & App Settings</h4>
+469:             <p className="text-xs text-[#8C8C8C] font-medium">Manage learning session state or clear local data.</p>
+470:           </div>
+471:         </div>
+472: 
+473:         <div className="flex items-center gap-2.5 w-full sm:w-auto">
+474:           <button
+475:             onClick={onResetProgress}
+476:             className="flex-1 sm:flex-initial px-4 py-2.5 text-xs font-extrabold text-[#8C8C8C] hover:text-[#F26B5B] bg-[#FFFDF9] border border-[#EAEAEA] rounded-2xl transition flex items-center justify-center gap-1.5 active:scale-98"
+477:           >
+478:             <RotateCcw className="w-3.5 h-3.5" /> Reset Progress
+479:           </button>
+480: 
+481:           <button
+482:             onClick={onSignOut}
+483:             className="flex-1 sm:flex-initial px-4 py-2.5 text-xs font-extrabold text-[#F26B5B] hover:bg-[#FFF1F0] border border-[#F26B5B]/30 rounded-2xl transition flex items-center justify-center gap-1.5 active:scale-98"
+484:           >
+485:             <LogOut className="w-3.5 h-3.5" /> Log Out
+486:           </button>
+487:         </div>
+488:       </div>
+489: 
+490:       {/* Modals */}
+491:       {/* SHAREABLE DSAFEED CARD MODAL */}
+492:       <AnimatePresence>
+493:         {showShareModal && (
+494:           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101B3D]/70 backdrop-blur-md animate-in fade-in duration-200">
+495:             <motion.div
+496:               initial={{ opacity: 0, scale: 0.9, y: 15 }}
+497:               animate={{ opacity: 1, scale: 1, y: 0 }}
+498:               exit={{ opacity: 0, scale: 0.9, y: 15 }}
+499:               className="relative w-full max-w-lg bg-[#101B3D] text-white border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden"
+500:             >
+501:               {/* Background Glow Accents */}
+502:               <div className="absolute top-0 right-0 w-48 h-48 bg-[#3478E5]/30 rounded-full blur-3xl pointer-events-none" />
+503:               <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#55C990]/20 rounded-full blur-3xl pointer-events-none" />
+504: 
+505:               <div className="relative z-10 space-y-6">
+506:                 
+507:                 {/* Header */}
+508:                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
+509:                   <div className="flex items-center gap-2">
+510:                     <div className="px-2.5 py-1 bg-[#FFFDF9] text-[#101B3D] rounded-xl font-black text-xs tracking-tight">
+511:                       DSAfeed
+512:                     </div>
+513:                     <span className="text-xs text-slate-300 font-semibold">Official Learner Card</span>
+514:                   </div>
+515:                   <button
+516:                     onClick={() => setShowShareModal(false)}
+517:                     className="p-1.5 rounded-full text-slate-400 hover:text-white bg-white/10"
+518:                   >
+519:                     ✕
+520:                   </button>
+521:                 </div>
+522: 
+523:                 {/* Card Content Preview */}
+524:                 <div className="flex justify-center items-center py-4">
+525:                   <DsaProfileCard user={user} userProgress={userProgress} topics={topics} />
+526:                 </div>
+527: 
+528:                 {/* Modal Action Footer */}
+529:                 <div className="flex items-center justify-between gap-3 pt-2">
+530:                   <p className="text-xs text-slate-300 font-medium">
+531:                     Share your card on Twitter/LinkedIn to showcase your streak!
+532:                   </p>
+533: 
+534:                   <button
+535:                     onClick={handleCopyCard}
+536:                     className="px-5 py-3 bg-[#3478E5] hover:bg-[#2864C6] text-white text-xs font-black rounded-xl transition flex items-center gap-2 shrink-0 active:scale-95"
+537:                   >
+538:                     {copiedCard ? (
+539:                       <>
+540:                         <Check className="w-4 h-4 text-[#55C990]" />
+541:                         <span>Copied Link!</span>
+542:                       </>
+543:                     ) : (
+544:                       <>
+545:                         <Copy className="w-4 h-4" />
+546:                         <span>Copy Card Link</span>
+547:                       </>
+548:                     )}
+549:                   </button>
+550:                 </div>
+551:               </div>
+552:             </motion.div>
+553:           </div>
+554:         )}
+555:       </AnimatePresence>
+556: 
+557:       {/* Badge Detail Modal */}
+558:       <AnimatePresence>
+559:         {selectedBadge && (
+560:           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+561:             <motion.div
+562:               initial={{ opacity: 0, scale: 0.95, y: 10 }}
+563:               animate={{ opacity: 1, scale: 1, y: 0 }}
+564:               exit={{ opacity: 0, scale: 0.95, y: 10 }}
+565:               className="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-6 text-center relative border border-[#EAEAEA]"
+566:             >
+567:               <button 
+568:                 onClick={() => setSelectedBadge(null)}
+569:                 className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition"
+570:               >
+571:                 <X className="w-5 h-5" />
+572:               </button>
+573:               
+574:               <div className="mx-auto w-20 h-20 bg-[#FFFBEA] border-2 border-[#F5C94A]/40 rounded-3xl flex items-center justify-center mb-4">
+575:                 {(() => {
+576:                   const IconComp = (LucideIcons as any)[selectedBadge.icon] || Award;
+577:                   return <IconComp className="w-10 h-10 text-[#F5C94A]" />;
+578:                 })()}
+579:               </div>
+580:               
+581:               <h3 className="text-2xl font-black text-[#101B3D] mb-1">{selectedBadge.title}</h3>
+582:               
+583:               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 rounded-full mb-4">
+584:                 <span className={`w-2 h-2 rounded-full ${
+585:                   selectedBadge.difficulty === 'Simple' ? 'bg-[#55C990]' : 
+586:                   selectedBadge.difficulty === 'Medium' ? 'bg-[#3478E5]' : 'bg-[#F26B5B]'
+587:                 }`}></span>
+588:                 <span className="text-xs font-bold text-[#8C8C8C]">{selectedBadge.difficulty} Level</span>
+589:               </div>
+590: 
+591:               <div className="bg-[#FAFAFA] border border-[#EAEAEA] rounded-2xl p-4 text-left">
+592:                 <p className="text-sm text-[#101B3D] font-bold mb-1">What is this?</p>
+593:                 <p className="text-sm text-[#111111]/70 font-medium mb-3">
+594:                   {selectedBadge.description}
+595:                 </p>
+596:                 
+597:                 <p className="text-sm text-[#101B3D] font-bold mb-1">How to achieve it:</p>
+598:                 <p className="text-sm text-[#3478E5] font-semibold leading-relaxed">
+599:                   {selectedBadge.howToAchieve}
+600:                 </p>
+601:               </div>
+602: 
+603:               <div className="mt-6">
+604:                 <button
+605:                   onClick={() => setSelectedBadge(null)}
+606:                   className="w-full py-3 bg-[#101B3D] hover:bg-[#1a2b5e] text-white rounded-xl font-bold transition"
+607:                 >
+608:                   Got it!
+609:                 </button>
+610:               </div>
+611:             </motion.div>
+612:           </div>
+613:         )}
+614:       </AnimatePresence>
+615: 
+616:       <AvatarBuilderModal
+617:         isOpen={isAvatarBuilderOpen}
+618:         onClose={() => setIsAvatarBuilderOpen(false)}
+619:         onSave={(url, bg) => {
+620:           setSelectedAvatar(url);
+621:           setSelectedBgColor(bg);
+622:           setIsAvatarBuilderOpen(false);
+623:           // Auto-save the profile when avatar is updated
+624:           if (user) {
+625:             onUpdateUser({
+626:               ...user,
+627:               avatar: url,
+628:               customAvatarBg: bg
+629:             });
+630:           }
+631:         }}
+632:         initialAvatarUrl={selectedAvatar}
+633:         initialBgColor={selectedBgColor}
+634:       />
+635: 
+636:     </>
+637:   );
+638: };

@@ -350,6 +350,22 @@ export const CODE_EXERCISES: CodeBlockExercise[] = [
 
 export const USER_BADGES: UserBadge[] = [
   {
+    id: 'badge-dsa-master',
+    title: 'DSA Master',
+    description: 'Complete all available DSA topics and quizzes.',
+    howToAchieve: 'The ultimate challenge. Conquer every single topic and quiz on the platform.',
+    difficulty: 'Hard',
+    icon: 'Trophy'
+  },
+  {
+    id: 'badge-flashcard-explorer',
+    title: 'Flashcard Explorer',
+    description: 'Unlock your first set of flashcards.',
+    howToAchieve: 'Mark your first topic as completed to unlock its flashcards and earn this badge.',
+    difficulty: 'Simple',
+    icon: 'Layers'
+  },
+  {
     id: 'badge-first-step',
     title: 'First Step',
     description: 'Complete your first DSA topic or quiz.',

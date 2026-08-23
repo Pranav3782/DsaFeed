@@ -400,6 +400,32 @@ export default function App() {
   const markTaskProgress = (taskType: 'time' | 'read' | 'quiz', amount = 1) => {
     setUserProgress(prev => {
       const today = new Date().toISOString().split('T')[0];
+      
+      // Real-time streak calculation
+      let newStreak = prev.streakDays;
+      let newLastActive = prev.lastActiveDate;
+      let streakUpdated = false;
+
+      if (newLastActive !== today) {
+        if (!newLastActive) {
+          newStreak = 1;
+        } else {
+          const lastDate = new Date(newLastActive);
+          const currDate = new Date(today);
+          const diffTime = Date.UTC(currDate.getFullYear(), currDate.getMonth(), currDate.getDate()) - 
+                           Date.UTC(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          
+          if (diffDays === 1) {
+            newStreak += 1;
+          } else if (diffDays > 1 || diffDays < 0) {
+            newStreak = 1;
+          }
+        }
+        newLastActive = today;
+        streakUpdated = true;
+      }
+
       let tasks = prev.dailyTasks;
       let mPoints = prev.monthlyPoints;
       
@@ -421,7 +447,7 @@ export default function App() {
         return t;
       });
 
-      if (!updated && prev.lastTaskDate === today) return prev; // No changes
+      if (!updated && !streakUpdated && prev.lastTaskDate === today) return prev; // No changes
 
       // If all tasks are completed just now, add 1 monthly point
       const allCompletedNow = newTasks.every(t => t.completed);
@@ -431,6 +457,8 @@ export default function App() {
 
       const next = {
         ...prev,
+        streakDays: newStreak,
+        lastActiveDate: newLastActive,
         dailyTasks: newTasks,
         monthlyPoints: mPoints,
         lastTaskDate: today
@@ -442,7 +470,7 @@ export default function App() {
       const timeCompletedNow = timeTask?.completed && !tasks.find(t => t.type === 'time')?.completed;
       const hitMinuteMilestone = isTimeTask && (timeTask?.progress || 0) % 60 === 0;
 
-      if (!isTimeTask || timeCompletedNow || hitMinuteMilestone) {
+      if (!isTimeTask || timeCompletedNow || hitMinuteMilestone || streakUpdated) {
         syncProgressToSupabase(next);
       }
 

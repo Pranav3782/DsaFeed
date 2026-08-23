@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
-import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Sparkles, ShieldAlert, MessageSquare, CreditCard, Layers, Bell } from 'lucide-react';
-import { UserProgress, UserProfile, NavTab, AppNotification } from '../types';
-import { DsaFeedLogo } from './DsaFeedLogo';
+import logoVideo from '../assets/videos/dsafeed_nav1.mp4';
+import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Sparkles, ShieldAlert, MessageSquare, CreditCard, Layers } from 'lucide-react';
+import { UserProgress, UserProfile, NavTab,  } from '../types';
 import { NotificationsPanel } from './NotificationsPanel';
 import { ComingSoonPopup } from './ComingSoonPopup';
 
@@ -14,7 +13,7 @@ interface NavbarProps {
   onOpenAuth?: () => void;
   onSignOut?: () => void;
   onOpenStreakModal?: () => void;
-  notifications: AppNotification[];
+  notifications: [];
   onMarkAsRead: (notificationId: string) => void;
   onClearAll: () => void;
 }
@@ -31,8 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onMarkAsRead,
   onClearAll
 }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [comingSoonPopup, setComingSoonPopup] = useState({ isOpen: false, title: '', message: '' });
 
   const navItems = [
@@ -58,7 +56,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('home')}
             className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#3478E5] rounded-xl p-1 transition shrink-0"
           >
-            <DsaFeedLogo className="h-4 sm:h-5 lg:h-6 w-auto object-contain" textColor="#101B3D" accentColor="#3478E5" />
+            <video 
+              src={logoVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="h-10 sm:h-12 lg:h-14 w-auto object-contain mix-blend-multiply scale-125 origin-left"
+              style={{ filter: 'grayscale(1) brightness(50) invert(1)', backgroundColor: 'transparent', pointerEvents: 'none' }}
+            />
           </button>
 
           {/* Desktop Navigation */}
@@ -124,32 +130,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Notifications Bell */}
-            {user?.isLoggedIn && (
-              <div className="relative ml-1">
-                <button
-                  id="notification-bell-btn"
-                  onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="p-1.5 lg:p-2 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition relative"
-                >
-                  <Bell className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
-                  {notifications.filter(n => !n.read).length > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#F26B5B] text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white shadow-sm">
-                      {notifications.filter(n => !n.read).length}
-                    </span>
-                  )}
-                </button>
-                <NotificationsPanel
-                  isOpen={notificationsOpen}
-                  onClose={() => setNotificationsOpen(false)}
-                  notifications={notifications}
-                  onMarkAsRead={onMarkAsRead}
-                  onClearAll={onClearAll}
-                />
-              </div>
-            )}
-
-
             {/* User Profile / Auth State */}
             {user?.isLoggedIn ? (
               <div className="flex items-center gap-1 lg:gap-2 pl-1.5 lg:pl-2 border-l border-[#EAEAEA]">
@@ -199,29 +179,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Notifications Bell Mobile */}
-            {user?.isLoggedIn && (
-              <div className="relative">
-                <button
-                  id="mobile-notification-bell-btn"
-                  onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition relative"
-                >
-                  <Bell className="w-5 h-5" />
-                  {notifications.filter(n => !n.read).length > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#F26B5B] text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white shadow-sm">
-                      {notifications.filter(n => !n.read).length}
-                    </span>
-                  )}
-                </button>
-                <NotificationsPanel
-                  isOpen={notificationsOpen}
-                  onClose={() => setNotificationsOpen(false)}
-                  notifications={notifications}
-                  onMarkAsRead={onMarkAsRead}
-                />
-              </div>
-            )}
             {/* Mobile streak pill - ONLY WHEN LOGGED IN */}
             {user?.isLoggedIn && (
               <button 

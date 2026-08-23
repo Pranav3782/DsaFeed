@@ -155,3 +155,10 @@ export interface AppNotification {
   timestamp: string;
   read: boolean;
 }
+
+export interface Flashcard {
+  id: string;
+  topicId: string;
+  question: string;
+  answer: string;
+}

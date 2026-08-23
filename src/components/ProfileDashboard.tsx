@@ -49,6 +49,15 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
   const [nameInput, setNameInput] = useState(user?.name || 'DSA Learner');
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem('dsafeed_muted') === 'true');
   const [showShareModal, setShowShareModal] = useState(false);
+
+  const [copiedCard, setCopiedCard] = useState(false);
+
+  const handleCopyCard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedCard(true);
+    setTimeout(() => setCopiedCard(false), 2000);
+  };
+
   const [soundEnabled, setSoundEnabled] = useSessionState('soundEnabled', true);
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || PRESET_AVATARS[0]);
   const [selectedBgColor, setSelectedBgColor] = useState(user?.customAvatarBg || '#b6e3f4');
@@ -80,7 +89,7 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
 
   return (
     <>
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-200">
+    <div className="max-w-5xl mx-auto space-y-12 animate-in fade-in duration-200 pb-12">
       
       {/* Profile Header Banner */}
       <div className="bg-white  border border-[#EAEAEA]  rounded-3xl p-6 sm:p-8 shadow-xs">
@@ -239,32 +248,9 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
 
       </div>
 
-      <div className="max-w-4xl mx-auto w-full space-y-8">
+      <div className="max-w-4xl mx-auto w-full space-y-12">
           
 
-
-      {/* Learning Agenda */}
-      <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
-        <h3 className="text-xl font-black text-[#101B3D]">Learning Agenda</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {topics.filter(t => !userProgress.completedTopics.includes(t.id)).length === 0 ? (
-            <div className="col-span-full text-center p-6 text-[#8C8C8C] font-bold">
-              All topics completed! Amazing job!
-            </div>
-          ) : (
-            topics.filter(t => !userProgress.completedTopics.includes(t.id)).map(t => (
-              <div 
-                key={t.id} 
-                onClick={() => onSelectTopic(t)} 
-                className="p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA] cursor-pointer hover:border-[#3478E5] transition"
-              >
-                <h4 className="font-bold text-[#101B3D]">{t.name}</h4>
-                <p className="text-sm text-[#8C8C8C] mt-1 line-clamp-2">{t.description}</p>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
 
       {/* Daily Tasks Section */}
       <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-5">
@@ -469,135 +455,38 @@ export const ProfileDashboard: React.FC<ProfileDashboardProps> = ({
           </button>
         )}
       </div>
-
-      {/* Topics Progress Breakdown */}
-      <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
-        <h3 className="text-xl font-black text-[#101B3D]">Topic Progress Breakdown</h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {topics.map((t) => {
-            const isDone = userProgress.completedTopics.includes(t.id);
-            const progressVal = userProgress.topicProgress[t.id] || (isDone ? 100 : 0);
-
-            return (
-              <div
-                key={t.id}
-                onClick={() => onSelectTopic(t)}
-                className="p-4 rounded-2xl bg-[#FFFDF9] border border-[#EAEAEA] hover:border-[#3478E5] transition cursor-pointer flex flex-col justify-between"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-extrabold text-[#101B3D]">{t.name}</span>
-                  <span className={`text-xs font-black ${isDone ? 'text-[#55C990]' : 'text-[#8C8C8C]'}`}>
-                    {progressVal}%
-                  </span>
-                </div>
-
-                <div className="w-full bg-[#EAEAEA] h-2 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-300"
-                    style={{
-                      width: `${progressVal}%`,
-                      backgroundColor: isDone ? '#55C990' : t.accentColor
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      </div>
-
       {/* Settings, Reset Data & Logout Bar */}
-      <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-[#EEF4FF] text-[#3478E5] rounded-2xl">
-            <Settings className="w-5 h-5" />
+      <div className="bg-white border border-[#EAEAEA] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-[#EEF4FF] text-[#3478E5] rounded-2xl shrink-0">
+            <Settings className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-extrabold text-[#101B3D]">Account & App Settings</h4>
-            <p className="text-xs text-[#8C8C8C] font-medium">Manage learning session state or clear local data.</p>
+            <h4 className="text-base font-extrabold text-[#101B3D]">Account & App Settings</h4>
+            <p className="text-sm text-[#8C8C8C] font-medium mt-0.5">Manage learning session state or clear local data.</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
           <button
             onClick={onResetProgress}
-            className="flex-1 sm:flex-initial px-4 py-2.5 text-xs font-extrabold text-[#8C8C8C] hover:text-[#F26B5B] bg-[#FFFDF9] border border-[#EAEAEA] rounded-2xl transition flex items-center justify-center gap-1.5 active:scale-98"
+            className="px-5 py-3 text-sm font-extrabold text-[#8C8C8C] hover:text-[#F26B5B] bg-[#FFFDF9] border border-[#EAEAEA] rounded-2xl transition flex items-center justify-center gap-2 active:scale-98 w-full sm:w-auto"
           >
-            <RotateCcw className="w-3.5 h-3.5" /> Reset Progress
+            <RotateCcw className="w-4 h-4" /> Reset Progress
           </button>
 
           <button
             onClick={onSignOut}
-            className="flex-1 sm:flex-initial px-4 py-2.5 text-xs font-extrabold text-[#F26B5B] hover:bg-[#FFF1F0] border border-[#F26B5B]/30 rounded-2xl transition flex items-center justify-center gap-1.5 active:scale-98"
+            className="px-5 py-3 text-sm font-extrabold text-[#F26B5B] hover:bg-[#FFF1F0] border border-[#F26B5B]/30 rounded-2xl transition flex items-center justify-center gap-2 active:scale-98 w-full sm:w-auto"
           >
-            <LogOut className="w-3.5 h-3.5" /> Log Out
+            <LogOut className="w-4 h-4" /> Log Out
           </button>
         </div>
       </div>
 
+      </div>
+
       {/* Modals */}
-      {isSettingsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl border border-[#EAEAEA]">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-black text-[#101B3D]">Account Settings</h3>
-              <button onClick={() => setIsSettingsOpen(false)} className="text-[#8C8C8C] hover:text-[#101B3D]">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex justify-between items-center p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA]">
-                <div>
-                  <h4 className="font-bold text-[#101B3D]">Theme</h4>
-                  <p className="text-xs text-[#8C8C8C]">Dark mode is disabled for now</p>
-                </div>
-                <div className="w-10 h-6 bg-[#EAEAEA] rounded-full flex items-center p-1 cursor-not-allowed opacity-50">
-                  <div className="w-4 h-4 bg-white rounded-full"></div>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA]">
-                <div>
-                  <h4 className="font-bold text-[#101B3D]">Notifications</h4>
-                  <p className="text-xs text-[#8C8C8C]">Manage app alerts</p>
-                </div>
-                <button className="text-sm font-bold text-[#3478E5]">Edit</button>
-              </div>
-
-              <div className="flex justify-between items-center p-4 rounded-2xl border border-[#EAEAEA] bg-[#F8F9FA]">
-                <div>
-                  <h4 className="font-bold text-[#101B3D]">Privacy</h4>
-                  <p className="text-xs text-[#8C8C8C]">Profile visibility</p>
-                </div>
-                <button className="text-sm font-bold text-[#3478E5]">Edit</button>
-              </div>
-
-              <button 
-                onClick={onSignOut}
-                className="w-full mt-4 p-4 rounded-2xl border border-red-200 bg-red-50 text-red-600 font-bold hover:bg-red-100 transition text-left flex items-center gap-2"
-              >
-                <LogOut className="w-4 h-4" /> Sign Out
-              </button>
-
-              <button 
-                onClick={() => {
-                  if (window.confirm('Are you sure you want to delete your account? This cannot be undone.')) {
-                    onResetProgress();
-                    onSignOut();
-                  }
-                }}
-                className="w-full p-4 rounded-2xl text-[#8C8C8C] font-bold hover:text-red-600 hover:bg-red-50 transition text-left flex items-center gap-2"
-              >
-                <Trash2 className="w-4 h-4" /> Delete Account
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* SHAREABLE DSAFEED CARD MODAL */}
       <AnimatePresence>
         {showShareModal && (

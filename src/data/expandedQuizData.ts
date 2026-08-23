@@ -3351,7 +3351,7 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "id": "quiz-strings-set-16-q5",
         "question": "Which technique is commonly combined with memoization to solve Word Break II?",
         "options": [
-          "Backtracking",
+          "backtracking",
           "Binary search",
           "Heap sort",
           "Union-Find"
@@ -18804,8 +18804,10 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
   {
     "id": "quiz-dp-set-1",
     "title": "Dynamic Programming - Level 1",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-1-q1",
@@ -18891,14 +18893,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Clearly defining what each DP state means makes the transition and base cases much easier to derive."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-2",
     "title": "Dynamic Programming - Level 2",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-2-q1",
@@ -18984,14 +18987,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Without caching, many Fibonacci values are calculated repeatedly."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-3",
     "title": "Dynamic Programming - Level 3",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-3-q1",
@@ -19077,14 +19081,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The same smaller Fibonacci values appear repeatedly in the recursive solution."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-4",
     "title": "Dynamic Programming - Level 4",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-4-q1",
@@ -19170,14 +19175,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "A single index representing the current step is sufficient to describe the state."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-5",
     "title": "Dynamic Programming - Level 5",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-5-q1",
@@ -19263,14 +19269,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Descending capacity ensures the current item does not reuse an already updated state from the same iteration."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-6",
     "title": "Dynamic Programming - Level 6",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-6-q1",
@@ -19356,14 +19363,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Greedy works for some denomination systems but fails for others, while DP handles arbitrary positive denominations."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-7",
     "title": "Dynamic Programming - Level 7",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-7-q1",
@@ -19449,14 +19457,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The complete two-dimensional table stores one result for every pair of prefix lengths."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-8",
     "title": "Dynamic Programming - Level 8",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-8-q1",
@@ -19542,14 +19551,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Each pair of prefixes corresponds to one DP state."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-9",
     "title": "Dynamic Programming - Level 9",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-9-q1",
@@ -19635,14 +19645,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 1,
         "explanation": "One LIS is [2,3,7,101], giving length 4."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-10",
     "title": "Dynamic Programming - Level 10",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-10-q1",
@@ -19728,14 +19739,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Each position involves a decision between taking the current element or skipping it."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-11",
     "title": "Dynamic Programming - Level 11",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-11-q1",
@@ -19821,14 +19833,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The problem optimizes over contiguous intervals and possible split points."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-12",
     "title": "Dynamic Programming - Level 12",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-12-q1",
@@ -19914,14 +19927,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Smaller intervals must be solved before the larger intervals that depend on them."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-13",
     "title": "Dynamic Programming - Level 13",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-13-q1",
@@ -20007,14 +20021,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "There are O(n2^n) states and each may consider O(n) transitions."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-14",
     "title": "Dynamic Programming - Level 14",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-14-q1",
@@ -20100,14 +20115,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The absence of cycles allows subtrees to be solved independently and combined."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-15",
     "title": "Dynamic Programming - Level 15",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-15-q1",
@@ -20193,14 +20209,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Space optimization can make the implementation more subtle and may remove information useful for recovering choices."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-16",
     "title": "Dynamic Programming - Level 16",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-16-q1",
@@ -20286,14 +20303,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Graph edges naturally describe how one state can transition to another."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-17",
     "title": "Dynamic Programming - Level 17",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-17-q1",
@@ -20379,14 +20397,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The state tracks enough information to determine which future digits are valid."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-18",
     "title": "Dynamic Programming - Level 18",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-18-q1",
@@ -20472,14 +20491,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Exponential growth in the number of subsets limits the technique to relatively small state dimensions."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-19",
     "title": "Dynamic Programming - Level 19",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-19-q1",
@@ -20565,14 +20585,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "If information does not affect future states, it may not need to be part of the DP state."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-dp-set-20",
     "title": "Dynamic Programming - Level 20",
-    "category": "Dynamic Programming",
+    "topicId": "dp",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-dp-set-20-q1",
@@ -20658,14 +20679,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Advanced DP is less about memorizing formulas and more about identifying the right states, transitions, and optimization opportunities."
       }
-    ],
-    "topicId": "dp"
+    ]
   },
   {
     "id": "quiz-backtracking-set-1",
     "title": "Backtracking - Level 1",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-1-q1",
@@ -20751,14 +20773,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "A list or array is commonly modified as choices are added and removed."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-2",
     "title": "Backtracking - Level 2",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-2-q1",
@@ -20844,14 +20867,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The decision tree models all possible choices and their resulting branches."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-3",
     "title": "Backtracking - Level 3",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-3-q1",
@@ -20937,14 +20961,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Each bit in a mask can represent whether the corresponding element is selected."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-4",
     "title": "Backtracking - Level 4",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-4-q1",
@@ -21030,14 +21055,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Factorial growth eventually becomes much larger than exponential 2^n growth."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-5",
     "title": "Backtracking - Level 5",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-5-q1",
@@ -21123,14 +21149,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Early rejection dramatically reduces the number of branches that need to be explored."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-6",
     "title": "Backtracking - Level 6",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-6-q1",
@@ -21216,14 +21243,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Subset Sum has overlapping subproblems and can be solved using DP based on index and remaining sum."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-7",
     "title": "Backtracking - Level 7",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-7-q1",
@@ -21309,14 +21337,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Effective pruning is powerful, but incorrect pruning can eliminate valid answers."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-8",
     "title": "Backtracking - Level 8",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-8-q1",
@@ -21402,14 +21431,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Combination Sum II contains duplicate candidates and requires avoiding duplicate combinations."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-9",
     "title": "Backtracking - Level 9",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-9-q1",
@@ -21495,14 +21525,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Maintaining an ordering ensures equivalent combinations are not generated multiple times."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-10",
     "title": "Backtracking - Level 10",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-10-q1",
@@ -21588,14 +21619,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "A starting cell that does not match the first character cannot produce a valid path."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-11",
     "title": "Backtracking - Level 11",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-11-q1",
@@ -21681,14 +21713,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "A placement is only part of the solution; the remaining cells must still be solved."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-12",
     "title": "Backtracking - Level 12",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-12-q1",
@@ -21774,14 +21807,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Invalid partial colorings cannot become valid by assigning more vertices."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-13",
     "title": "Backtracking - Level 13",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-13-q1",
@@ -21867,14 +21901,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Detecting impossible partial paths early can significantly reduce exploration."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-14",
     "title": "Backtracking - Level 14",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-14-q1",
@@ -21960,14 +21995,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Worst-case exponential behavior can remain even when pruning works extremely well in practice."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-15",
     "title": "Backtracking - Level 15",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-15-q1",
@@ -22053,14 +22089,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Incorrect index progression can cause the same combination to appear in multiple orders."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-16",
     "title": "Backtracking - Level 16",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-16-q1",
@@ -22146,14 +22183,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "A large maze can contain an enormous number of possible paths."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-17",
     "title": "Backtracking - Level 17",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-17-q1",
@@ -22239,14 +22277,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Heuristics often improve practical performance but do not necessarily change worst-case complexity."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-18",
     "title": "Backtracking - Level 18",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-18-q1",
@@ -22332,14 +22371,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Efficient restoration is essential because many alternative branches must be explored."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-19",
     "title": "Backtracking - Level 19",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-19-q1",
@@ -22425,14 +22465,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The choose-explore-unchoose pattern keeps sibling branches independent."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-backtracking-set-20",
     "title": "Backtracking - Level 20",
-    "category": "Backtracking",
+    "topicId": "backtracking",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-backtracking-set-20-q1",
@@ -22518,14 +22559,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Backtracking still explores a potentially exponential search space, but it avoids many unnecessary branches through intelligent pruning."
       }
-    ],
-    "topicId": "backtracking"
+    ]
   },
   {
     "id": "quiz-greedy-set-1",
     "title": "Greedy Algorithms - Level 1",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-1-q1",
@@ -22611,14 +22653,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Greedy algorithms typically commit to their choices instead of exploring alternatives."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-2",
     "title": "Greedy Algorithms - Level 2",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-2-q1",
@@ -22704,14 +22747,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Greedy strategies can fail when the problem does not have the necessary greedy-choice property."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-3",
     "title": "Greedy Algorithms - Level 3",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-3-q1",
@@ -22797,14 +22841,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "An early finish leaves the largest possible remaining time window."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-4",
     "title": "Greedy Algorithms - Level 4",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-4-q1",
@@ -22890,14 +22935,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The inability to split items makes the fractional greedy proof invalid for the 0/1 version."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-5",
     "title": "Greedy Algorithms - Level 5",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-5-q1",
@@ -22963,7 +23009,7 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "id": "quiz-greedy-set-5-q6",
         "question": "What technique can reliably solve minimum Coin Change for arbitrary positive denominations?",
         "options": [
-          "Dynamic Programming",
+          "dp",
           "Greedy only",
           "Binary Search",
           "Merge Sort"
@@ -22983,14 +23029,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Greedy correctness depends on the structure of the problem, not simply on choosing the largest value."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-6",
     "title": "Greedy Algorithms - Level 6",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Beginner",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-6-q1",
@@ -23076,14 +23123,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The correctness of Huffman Coding relies on repeatedly making this specific greedy choice."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-7",
     "title": "Greedy Algorithms - Level 7",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-7-q1",
@@ -23169,14 +23217,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The strategy balances profit with the limited deadline slots."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-8",
     "title": "Greedy Algorithms - Level 8",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-8-q1",
@@ -23262,14 +23311,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The farthest-reach invariant summarizes all relevant jump choices."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-9",
     "title": "Greedy Algorithms - Level 9",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-9-q1",
@@ -23355,14 +23405,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The greedy range-based approach evaluates all positions reachable with the current jump before committing to the next boundary."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-10",
     "title": "Greedy Algorithms - Level 10",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-10-q1",
@@ -23448,14 +23499,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "The candidate start is shifted whenever the current segment cannot be completed."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-11",
     "title": "Greedy Algorithms - Level 11",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-11-q1",
@@ -23541,14 +23593,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Ending earlier would place the same character in multiple partitions."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-12",
     "title": "Greedy Algorithms - Level 12",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-12-q1",
@@ -23634,14 +23687,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "An early endpoint provides a tighter and more flexible position for covering overlapping intervals."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-13",
     "title": "Greedy Algorithms - Level 13",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-13-q1",
@@ -23727,14 +23781,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Boundary conventions determine whether simultaneous arrival and departure require another platform."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-14",
     "title": "Greedy Algorithms - Level 14",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Intermediate",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-14-q1",
@@ -23820,14 +23875,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Non-negative edge weights guarantee that no later path can improve the finalized minimum."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-15",
     "title": "Greedy Algorithms - Level 15",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-15-q1",
@@ -23913,14 +23969,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Distinct edge weights eliminate ties in the MST construction, resulting in a unique MST."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-16",
     "title": "Greedy Algorithms - Level 16",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-16-q1",
@@ -24006,14 +24063,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "A proof establishes why the greedy choice is safe rather than merely observing that it works on examples."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-17",
     "title": "Greedy Algorithms - Level 17",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-17-q1",
@@ -24099,14 +24157,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Relative advantage is what matters when every person must be assigned to one of two constrained groups."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-18",
     "title": "Greedy Algorithms - Level 18",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-18-q1",
@@ -24192,14 +24251,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Each digit is pushed and popped at most once."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-19",
     "title": "Greedy Algorithms - Level 19",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-19-q1",
@@ -24285,14 +24345,15 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "A $5 bill is a fundamental component of many possible change combinations."
       }
-    ],
-    "topicId": "greedy"
+    ]
   },
   {
     "id": "quiz-greedy-set-20",
     "title": "Greedy Algorithms - Level 20",
-    "category": "Greedy Algorithms",
+    "topicId": "greedy",
     "difficulty": "Advanced",
+    "subtitle": "Practice Set",
+    "questionCount": 10,
     "questions": [
       {
         "id": "quiz-greedy-set-20-q1",
@@ -24378,7 +24439,6 @@ export const EXPANDED_QUIZ_SETS: QuizSet[] = [
         "correctIndex": 0,
         "explanation": "Greedy is about a provably safe strategy, not simply choosing the largest or smallest value."
       }
-    ],
-    "topicId": "greedy"
+    ]
   }
 ];

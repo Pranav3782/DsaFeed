@@ -38,12 +38,12 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
     
     document.addEventListener('mousedown', handleOutsideInteraction);
     document.addEventListener('touchstart', handleOutsideInteraction, { passive: true });
-    window.addEventListener('scroll', handleOutsideInteraction, { capture: true, passive: true });
+    // Removed window scroll listener so it doesn't close on scroll
     
     return () => {
       document.removeEventListener('mousedown', handleOutsideInteraction);
       document.removeEventListener('touchstart', handleOutsideInteraction);
-      window.removeEventListener('scroll', handleOutsideInteraction, { capture: true } as any);
+      // Removed window scroll listener
     };
   }, [isOpen, onClose]);
 
@@ -75,7 +75,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             </span>
             {notifications.length > 0 && (
               <button 
-                onClick={onClearAll}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClearAll(); }}
                 className="text-xs font-bold text-[#F26B5B] hover:text-[#D94F3F] hover:bg-[#FFF1F0] px-2 py-1 rounded-full transition"
               >
                 Clear All
@@ -90,7 +90,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2 space-y-1 relative">
+        <div className="flex-1 overflow-y-auto p-2 space-y-1 relative max-h-[160px] scrollbar-thin">
           <AnimatePresence>
             {notifications.length === 0 ? (
               <div className="text-center p-8 text-[#8C8C8C]">
