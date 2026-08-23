@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import logoImage from '../assets/images/dsafeed_logo_1786289035045.jpg';
 import { Flame, Zap, Menu, X, BookOpen, Code2, HelpCircle, User, LogOut, LogIn, Sparkles, ShieldAlert, MessageSquare, CreditCard, Layers, Bell } from 'lucide-react';
 import { UserProgress, UserProfile, NavTab, AppNotification } from '../types';
-import { DsaFeedLogo } from './DsaFeedLogo';
+import { AnimatedDsaFeedLogo } from './AnimatedDsaFeedLogo';
 import { NotificationsPanel } from './NotificationsPanel';
 import { ComingSoonPopup } from './ComingSoonPopup';
 
@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('home')}
             className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#3478E5] rounded-xl p-1 transition shrink-0"
           >
-            <DsaFeedLogo className="h-4 sm:h-5 lg:h-6 w-auto object-contain" textColor="#101B3D" accentColor="#3478E5" />
+            <AnimatedDsaFeedLogo className="h-4 sm:h-5 lg:h-6 w-auto" textColor="#101B3D" accentColor="#3478E5" />
           </button>
 
           {/* Desktop Navigation */}
@@ -204,7 +204,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative">
                 <button
                   id="mobile-notification-bell-btn"
-                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  onClick={() => setNotificationsOpen(anotificationsOpen)}
                   className="p-1.5 text-[#8C8C8C] hover:text-[#3478E5] hover:bg-[#EEF4FF] rounded-full transition relative"
                 >
                   <Bell className="w-5 h-5" />
