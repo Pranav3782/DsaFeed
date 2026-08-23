@@ -37,7 +37,7 @@ import { playUISound } from './utils/audio';
 
 import { DSA_TOPICS, QUIZ_SETS, CODE_EXERCISES, USER_BADGES } from './data/dsaData';
 import { DsaTopic, QuizSet, UserProgress, DsaCategory, UserProfile, NavTab, DailyTask, AppNotification } from './types';
-import { Filter, BookOpen, Code2, HelpCircle, Sparkles, Layers } from 'lucide-react';
+import { Filter, BookOpen, Code2, HelpCircle, Sparkles, Layers, X } from 'lucide-react';
 import { useSessionState } from './hooks/useSessionState';
 
 const generateDailyTasks = (): DailyTask[] => {
@@ -190,7 +190,7 @@ export default function App() {
   const [notifications, setNotifications] = useSessionState<AppNotification[]>('app_notifications', []);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
-  const addNotification = (title: string, message: string, type: 'info' | 'badge_earned' = 'badge_earned') => {
+  const addNotification = (title: string, message: string, type: 'system' | 'badge_earned' = 'badge_earned') => {
     const formatter = new Intl.DateTimeFormat('en-US', {
       hour: 'numeric',
       minute: 'numeric',
@@ -627,7 +627,7 @@ export default function App() {
         const currentIndex = topicQuizzes.findIndex(q => q.id === quizId);
         if (currentIndex >= 0 && currentIndex < topicQuizzes.length - 1) {
           const nextQuiz = topicQuizzes[currentIndex + 1];
-          addNotification('New Level Unlocked!', `You can now play ${nextQuiz.title.split(' - ')[0]}!`, 'info');
+          addNotification('New Level Unlocked!', `You can now play ${nextQuiz.title.split(' - ')[0]}!`, 'system');
         }
       }
     }
