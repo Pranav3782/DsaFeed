@@ -25,6 +25,20 @@ const PlatformBadgeSet = () => (
 export const PlatformBadges: React.FC = () => {
   return (
     <div className="py-12 border-b border-[#EAEAEA] bg-transparent overflow-hidden flex flex-col items-center">
+      <style>
+        {`
+          @keyframes scroll-marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-scroll-marquee {
+            animation: scroll-marquee 25s linear infinite;
+          }
+          .group:hover .animate-scroll-marquee {
+            animation-play-state: paused;
+          }
+        `}
+      </style>
       <div className="text-center max-w-xl mx-auto px-4 mb-10">
         <h2 className="text-2xl sm:text-3xl font-black text-[#101B3D]">
           <motion.span 
@@ -44,23 +58,14 @@ export const PlatformBadges: React.FC = () => {
         </h2>
       </div>
 
-      <div className="w-full relative flex overflow-hidden">
+      <div className="w-full relative flex overflow-hidden group py-4">
         {/* Left gradient mask */}
         <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-[#FFFDF9] to-transparent z-10 pointer-events-none" />
         
         {/* Right gradient mask */}
         <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-[#FFFDF9] to-transparent z-10 pointer-events-none" />
         
-        <motion.div
-          className="flex w-max"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{
-            repeat: Infinity,
-            repeatType: 'loop',
-            duration: 25,
-            ease: 'linear'
-          }}
-        >
+        <div className="flex w-max animate-scroll-marquee">
           {/* First set */}
           <div className="flex items-center justify-around gap-12 sm:gap-24 px-6 sm:px-12 w-max">
             <PlatformBadgeSet />
@@ -69,7 +74,7 @@ export const PlatformBadges: React.FC = () => {
           <div className="flex items-center justify-around gap-12 sm:gap-24 px-6 sm:px-12 w-max">
             <PlatformBadgeSet />
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
