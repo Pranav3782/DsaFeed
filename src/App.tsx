@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { PlatformBadges } from './components/PlatformBadges';
 import { TopicCard } from './components/TopicCard';
 import { TopicDetailModal } from './components/TopicDetailModal';
 import { QuizCard } from './components/QuizCard';
@@ -855,6 +856,7 @@ export default function App() {
                   isLoggedIn={!!user?.isLoggedIn}
                 />
 
+                <PlatformBadges />
 
             {/* Interactive Demo */}
             <InteractiveDemo />
