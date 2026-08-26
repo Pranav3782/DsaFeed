@@ -131,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
 
             {/* User Profile / Auth State */}
-            {user?.isLoggedIn ? (
+            {user?.isLoggedIn && (
               <div className="flex items-center gap-1 lg:gap-2 pl-1.5 lg:pl-2 border-l border-[#EAEAEA]">
                 <button
                   onClick={() => setActiveTab('profile')}
@@ -154,14 +154,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <LogOut className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={onOpenAuth}
-                className="px-3.5 lg:px-4 py-2 bg-[#3478E5] hover:bg-[#2864C6] text-white rounded-full text-xs font-extrabold shadow-xs transition flex items-center gap-1.5 active:scale-98 whitespace-nowrap"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>Log In</span>
-              </button>
             )}
           </div>
 
@@ -190,14 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {!user?.isLoggedIn && (
-              <button
-                onClick={onOpenAuth}
-                className="px-3 py-1.5 bg-[#3478E5] text-white rounded-full text-xs font-bold"
-              >
-                Log In
-              </button>
-            )}
+
             
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

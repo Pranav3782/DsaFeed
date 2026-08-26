@@ -19,6 +19,40 @@ const PlatformBadgeSet = () => (
     <a href="https://peerlist.io/suryapranav/project/dsafeed" target="_blank" rel="noreferrer" className="shrink-0 transition-transform hover:scale-105">
         <img src="https://peerlist.io/api/v1/projects/embed/PRJHGNQOEMJJDD88O18O8NBNGOBKM9?showUpvote=false&theme=light" alt="DSAfeed" style={{ width: 'auto', height: '54px' }} />
     </a>
+    {/* JustHunt */}
+    <a 
+      href="https://justhunt.co/startups/dsafeed-data-structures-algorithms-made-simple" 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      className="shrink-0 transition-transform hover:scale-105"
+    >
+      <div style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '12px',
+        padding: '8px 16px',
+        background: '#ffffff',
+        color: '#111827',
+        border: '1px solid #e5e7eb',
+        borderRadius: '12px',
+        textDecoration: 'none',
+        fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif",
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        height: '54px'
+      }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '8px', overflow: 'hidden', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid #e5e7eb' }}>
+          <img src="https://dsafeed.com/./favicon.jpg" alt="DSAfeed" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, gap: '1px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: '#f59e0b', letterSpacing: '0.8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>FEATURED ON
+          </span>
+          <span style={{ fontSize: '12px', color: '#6b7280', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 500, marginTop: '2px' }}>
+            <img src="https://justhunt.co/logo.png" alt="JH" style={{ width: '14px', height: '14px', borderRadius: '3px' }} />JustHunt
+          </span>
+        </div>
+      </div>
+    </a>
   </>
 );
 

@@ -11,7 +11,7 @@ interface Message {
 const INITIAL_MESSAGE: Message = {
   id: 'msg-0',
   sender: 'bot',
-  text: "Hey there! 👋 I'm Byte, your personal DSA sidekick. I'm designed to help simplify complex coding topics. What's your biggest burning question about Data Structures or Algorithms?"
+  text: "Hey there! 👋 I'm Byte, your friendly DSA sidekick. I can help you understand complex coding concepts using super simple, real-world examples, or tell you all about the cool features of DSAfeed. What's on your mind?"
 };
 
 // Friendly heuristic brain
@@ -27,18 +27,22 @@ const getBotResponse = (input: string, contextInfo?: string): string => {
     }
   }
 
-  if (lower.includes('array')) return "An Array is just a parking lot for your data! Everything is parked in a numbered spot so you can find it instantly.";
-  if (lower.includes('linked list')) return "A Linked List is a treasure hunt. Instead of numbered parking spots, each piece of data holds a map pointing to the exact location of the next one!";
-  if (lower.includes('stack')) return "Think of a Stack like a pile of heavy plates. The last plate you put on top is the very first one you have to take off (LIFO).";
-  if (lower.includes('queue')) return "A Queue is exactly like waiting in line for a movie. The first person in line gets served first (FIFO). No cutting!";
-  if (lower.includes('tree') || lower.includes('graph')) return "Trees and Graphs are just webs of connected data! Think of a family tree, or how cities are connected by roads. Perfect for finding the shortest path.";
-  if (lower.includes('hash map') || lower.includes('dictionary')) return "A Hash Map is a magical dictionary. You give it a 'word', and it instantly gives you the 'definition' without having to read the whole book.";
-  if (lower.includes('big o') || lower.includes('complexity')) return "Big O notation is just a way to measure how a piece of code performs as it gets more data. Will it crash with 1 million users, or run smoothly? Big O tells you!";
-  if (lower.includes('hi') || lower.includes('hello') || lower.includes('hey')) return "Hello! Got any tricky DSA concepts you want me to explain simply?";
+  if (lower.includes('feature') || lower.includes('what is dsafeed') || lower.includes('about dsafeed') || lower.includes('can you do')) {
+    return "DSAfeed is packed with awesome features! We've got 10 Core Topics to explore, Interactive Quizzes to test your knowledge, Code Block Exercises for hands-on practice, and a Concept Hub for deep dives. Plus, you can track your progress with our Streak & XP Tracker, unlock cool Badges, and follow Beginner Roadmaps! What do you want to try first?";
+  }
+
+  if (lower.includes('array')) return "An Array is just like a parking lot for your data! Every piece of data is parked in a numbered spot (an index) so you can find it instantly.";
+  if (lower.includes('linked list')) return "A Linked List is like a treasure hunt. Instead of numbered parking spots, each piece of data holds a map (a pointer) pointing exactly to the location of the next one!";
+  if (lower.includes('stack')) return "Think of a Stack like a pile of heavy plates at a buffet. The last plate you put on top is the very first one you have to take off! We call this LIFO (Last-In, First-Out).";
+  if (lower.includes('queue')) return "A Queue is exactly like waiting in line for a movie or a rollercoaster. The first person in line gets served first! We call this FIFO (First-In, First-Out). No cutting!";
+  if (lower.includes('tree') || lower.includes('graph')) return "Trees and Graphs are just webs of connected data! Think of a family tree, or how cities are connected by highways on a map. They're perfect for finding the shortest path from A to B.";
+  if (lower.includes('hash map') || lower.includes('dictionary')) return "A Hash Map is like a magical dictionary or a contact list on your phone. You give it a name (the 'key'), and it instantly gives you the phone number (the 'value') without you having to read the whole book.";
+  if (lower.includes('big o') || lower.includes('complexity')) return "Big O notation is just a way to measure how a piece of code performs as it gets more data. It's like asking: will this app crash if 1 million people use it, or will it run smoothly? Big O tells you exactly that!";
+  if (lower.includes('hi') || lower.includes('hello') || lower.includes('hey')) return "Hello! Got any tricky DSA concepts you want me to explain simply, or want to know about DSAfeed's features?";
   if (lower.includes('thanks') || lower.includes('thank you')) return "You're very welcome! Keep practicing, you're going to crush it. 🚀";
   
   // Generic friendly fallback
-  return "That's a fantastic question! Since I'm currently running as a lightweight, lightning-fast demonstration AI right in your browser, my knowledge is focused specifically on core DSA concepts. Try asking me to explain Arrays, Linked Lists, Big O, Trees, or Hash Maps!";
+  return "That's a fantastic question! Since I'm currently running as a lightweight, lightning-fast demonstration AI right in your browser, my knowledge is focused specifically on core DSA concepts and DSAfeed's features. Try asking me to explain Arrays, Linked Lists, Big O, Trees, or Hash Maps, or ask me about our features!";
 };
 
 export const Chatbot: React.FC<{ contextInfo?: string }> = ({ contextInfo }) => {
