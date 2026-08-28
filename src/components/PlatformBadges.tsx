@@ -53,6 +53,42 @@ const PlatformBadgeSet = () => (
         </div>
       </div>
     </a>
+    {/* LaunchPad India */}
+    <a 
+      href="https://launchpadindia.co/listing/dsafeed" 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      aria-label="Featured on LaunchPad India" 
+      className="shrink-0 transition-transform hover:scale-105"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0,
+        height: '60px',
+        boxSizing: 'border-box',
+        padding: '0 18px 0 6px',
+        background: '#ffffff',
+        border: '2px solid #f97316',
+        borderRadius: '14px',
+        textDecoration: 'none',
+        fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif",
+        boxShadow: '0 1px 2px rgba(249,115,22,0.08), 0 8px 20px -10px rgba(249,115,22,0.25)',
+        lineHeight: 1,
+        maxWidth: '100%'
+      }}
+    >
+      <img 
+        src="https://launchpadindia.co/logo.png" 
+        alt="" 
+        width="40" 
+        height="40" 
+        style={{ objectFit: 'contain', display: 'block', flex: 'none' }} 
+      />
+      <span style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: '4px', lineHeight: 1, textAlign: 'left' }}>
+        <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.16em', color: '#78716c', textTransform: 'uppercase', whiteSpace: 'nowrap', textAlign: 'left' }}>FEATURED ON</span>
+        <span style={{ fontSize: '21px', fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a', whiteSpace: 'nowrap' }}>LaunchPad<span style={{ color: '#f97316' }}>India</span></span>
+      </span>
+    </a>
   </>
 );
 
