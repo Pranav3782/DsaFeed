@@ -103,8 +103,8 @@ const PlatformBadgeSet = () => (
         display: 'inline-flex',
         alignItems: 'center',
         gap: '0.5rem',
-        backgroundColor: '#111827',
-        border: '1px solid #374151',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e5e7eb',
         padding: '0.5rem 0.75rem',
         borderRadius: '0.5rem',
         textDecoration: 'none',
@@ -113,10 +113,10 @@ const PlatformBadgeSet = () => (
         boxSizing: 'border-box'
       }}
     >
-      <img src="https://www.agenthunter.io/logo-dark.svg" alt="AgentHunter Badge" style={{ height: '2.5rem', width: '2.5rem' }} />
+      <img src="https://www.agenthunter.io/logo-light.svg" alt="AgentHunter Badge" style={{ height: '2.5rem', width: '2.5rem' }} />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <p style={{ margin: 0, fontSize: '0.75rem', color: '#9ca3af' }}>AgentHunter</p>
-        <p style={{ margin: 0, fontSize: '0.875rem', color: '#f9fafb', fontWeight: 600 }}>Featured AI Agent</p>
+        <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>AgentHunter</p>
+        <p style={{ margin: 0, fontSize: '0.875rem', color: '#111827', fontWeight: 600 }}>Featured AI Agent</p>
       </div>
     </a>
     {/* DANG! */}
