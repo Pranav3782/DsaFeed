@@ -107,6 +107,14 @@ export const Footer: React.FC<FooterProps> = ({ user }) => {
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-[#AAB2C5] text-center md:text-left">
           <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-6">
             <p>© 2026 DSAfeed. Built with simplicity for learners worldwide.</p>
+            <a
+              href="https://www.agenthunter.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#AAB2C5] hover:text-white transition-colors"
+            >
+              Featured on AgentHunter
+            </a>
           </div>
           <p className="mt-2 md:mt-0">
             Crafted with <span className="text-[#F26B5B]">❤️</span> for smooth learning
