@@ -123,6 +123,10 @@ const PlatformBadgeSet = () => (
     <a href="https://dang.ai" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
       <img src="https://assets.dang.ai/badges/dang-verified-light.png" alt="Verified on DANG!" style={{ height: '54px', width: 'auto' }} />
     </a>
+    {/* ShowMeBestAI */}
+    <a href="https://showmebest.ai" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://showmebest.ai/badge/feature-badge-dark.webp" alt="Featured on ShowMeBestAI" style={{ height: '54px', width: 'auto' }} />
+    </a>
   </>
 );
 
