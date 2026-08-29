@@ -95,7 +95,7 @@ const PlatformBadgeSet = () => (
     </a>
     {/* AgentHunter */}
     <a
-      href="https://www.agenthunter.io?utm_source=badge&utm_medium=embed&utm_campaign=DSAfeed"
+      href="https://www.agenthunter.io"
       target="_blank"
       rel="noopener noreferrer"
       className="shrink-0 transition-all hover:scale-105"
