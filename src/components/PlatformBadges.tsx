@@ -127,6 +127,10 @@ const PlatformBadgeSet = () => (
     <a href="https://showmebest.ai" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
       <img src="https://showmebest.ai/badge/feature-badge-white.webp" alt="Featured on ShowMeBestAI" style={{ height: '54px', width: 'auto' }} />
     </a>
+    {/* That App Show */}
+    <a href="https://thatappshow.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://thatappshow.com/assets/images/badge.png" alt="That App Show" style={{ height: '54px', width: 'auto' }} />
+    </a>
   </>
 );
 
