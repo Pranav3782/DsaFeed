@@ -89,6 +89,10 @@ const PlatformBadgeSet = () => (
         <span style={{ fontSize: '21px', fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a', whiteSpace: 'nowrap' }}>LaunchPad<span style={{ color: '#f97316' }}>India</span></span>
       </span>
     </a>
+    {/* Turbo0 */}
+    <a href="https://turbo0.com/item/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://img.turbo0.com/badge-listed-light.svg" alt="Listed on Turbo0" style={{ height: '54px', width: 'auto' }} />
+    </a>
   </>
 );
 
