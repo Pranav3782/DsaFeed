@@ -125,7 +125,7 @@ const PlatformBadgeSet = () => (
     </a>
     {/* ShowMeBestAI */}
     <a href="https://showmebest.ai" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
-      <img src="https://showmebest.ai/badge/feature-badge-dark.webp" alt="Featured on ShowMeBestAI" style={{ height: '54px', width: 'auto' }} />
+      <img src="https://showmebest.ai/badge/feature-badge-white.webp" alt="Featured on ShowMeBestAI" style={{ height: '54px', width: 'auto' }} />
     </a>
   </>
 );
