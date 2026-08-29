@@ -93,6 +93,32 @@ const PlatformBadgeSet = () => (
     <a href="https://turbo0.com/item/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
       <img src="https://img.turbo0.com/badge-listed-light.svg" alt="Listed on Turbo0" style={{ height: '54px', width: 'auto' }} />
     </a>
+    {/* AgentHunter */}
+    <a
+      href="https://www.agenthunter.io?utm_source=badge&utm_medium=embed&utm_campaign=DSAfeed"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="shrink-0 transition-all hover:scale-105"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        backgroundColor: '#111827',
+        border: '1px solid #374151',
+        padding: '0.5rem 0.75rem',
+        borderRadius: '0.5rem',
+        textDecoration: 'none',
+        fontFamily: 'sans-serif',
+        height: '54px',
+        boxSizing: 'border-box'
+      }}
+    >
+      <img src="https://www.agenthunter.io/logo-dark.svg" alt="AgentHunter Badge" style={{ height: '2.5rem', width: '2.5rem' }} />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <p style={{ margin: 0, fontSize: '0.75rem', color: '#9ca3af' }}>AgentHunter</p>
+        <p style={{ margin: 0, fontSize: '0.875rem', color: '#f9fafb', fontWeight: 600 }}>Featured AI Agent</p>
+      </div>
+    </a>
   </>
 );
 
