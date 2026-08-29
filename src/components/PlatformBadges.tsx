@@ -119,6 +119,10 @@ const PlatformBadgeSet = () => (
         <p style={{ margin: 0, fontSize: '0.875rem', color: '#f9fafb', fontWeight: 600 }}>Featured AI Agent</p>
       </div>
     </a>
+    {/* DANG! */}
+    <a href="https://dang.ai" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://assets.dang.ai/badges/dang-verified-light.png" alt="Verified on DANG!" style={{ height: '54px', width: 'auto' }} />
+    </a>
   </>
 );
 
