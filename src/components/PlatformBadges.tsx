@@ -131,6 +131,114 @@ const PlatformBadgeSet = () => (
     <a href="https://thatappshow.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
       <img src="https://thatappshow.com/assets/images/badge.png" alt="That App Show" style={{ height: '54px', width: 'auto' }} />
     </a>
+    {/* DeepLaunch */}
+    <a href="https://deeplaunch.io" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://deeplaunch.io/badge/badge_light.svg" alt="Featured on DeepLaunch.io" width="200" height="54" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Dironix */}
+    <a href="https://dironix.com" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://dironix.com/bage.png" alt="Featured on dironix.com" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Twelve Tools */}
+    <a href="https://twelve.tools" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://twelve.tools/badge3-white.svg" alt="Featured on Twelve Tools" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Web Review */}
+    <a href="https://web-review.com" target="_blank" rel="dofollow noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://web-review.com/badge.png" alt="Featured on Web Review" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Wired Business */}
+    <a href="https://wired.business" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://wired.business/badge1-white.svg" alt="Featured on Wired Business" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Startup Benchmarks */}
+    <a href="https://startupbenchmarks.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://startupbenchmarks.com/assets/images/badge.png" alt="Startup Benchmarks" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* Better Launch */}
+    <a href="https://www.betterlaunch.co/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://www.betterlaunch.co/badge-launching-gradient.svg" alt="DSAfeed on Better Launch" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* NewTool.site */}
+    <a href="https://newtool.site/item/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://newtool.site/badges/newtool-light.svg" alt="Featured on NewTool.site" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* SaaS Wheel */}
+    <a href="https://saaswheel.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://saaswheel.com/assets/images/badge.png" alt="SaaS Wheel" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* SaaSBison */}
+    <a href="https://saasbison.com" target="_blank" rel="dofollow noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://saasbison.com/badge.png" alt="Featured on SaaSBison" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Good AI Tools */}
+    <a href="https://goodaitools.com/ai/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://goodaitools.com/assets/images/badge.png" alt="Good AI Tools" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* Startup Fame */}
+    <a href="https://startupfa.me/s/dsafeed?utm_source=dsafeed.com" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://startupfa.me/badges/featured/default-rounded.webp" alt="DSAfeed - Featured on Startup Fame" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Top Trend Tools */}
+    <a href="https://toptrendtools.com/tool/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://toptrendtools.com/assets/images/badge.png" alt="Top Trend Tools" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* Findly.tools */}
+    <a href="https://findly.tools/dsafeed?utm_source=dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://findly.tools/badges/findly-tools-badge-light.svg" alt="Featured on Findly.tools" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* ShinyLaunch */}
+    <a href="https://shinylaunch.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://shinylaunch.com/assets/images/badge.png" alt="ShinyLaunch" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* ufind.best */}
+    <a href="https://ufind.best/products/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://ufind.best/badges/ufind-best-badge-light.svg" alt="Featured on ufind.best" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Appa List */}
+    <a href="https://appalist.com/ai/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://appalist.com/assets/images/badge.png" alt="Appa List" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* AI X Collection */}
+    <a href="https://aixcollection.com/ai/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://aixcollection.com/assets/images/badge.png" alt="AI X Collection" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* Launch Scroll */}
+    <a href="https://launchscroll.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://launchscroll.com/assets/images/badge.png" alt="Launch Scroll" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* Submit AI Tools */}
+    <a href="https://submitaitools.org" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://submitaitools.org/static_submitaitools/images/submitaitools.png" alt="Submit AI Tools" style={{ borderRadius: '10px', height: '54px', width: 'auto' }} />
+    </a>
+    {/* Tool Signal */}
+    <a href="https://toolsignal.com/tool/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://toolsignal.com/assets/images/badge.png" alt="Tool Signal" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* SaaS Roots */}
+    <a href="https://saasroots.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://saasroots.com/assets/images/badge.png" alt="SaaS Roots" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* neeed.directory */}
+    <a href="https://neeed.directory" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://neeed.directory/badges/neeed-badge-light.svg" alt="Featured on neeed.directory" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* We Like Tools */}
+    <a href="https://weliketools.com/tool/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://weliketools.com/assets/images/badge.png" alt="We Like Tools" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* Toshi List */}
+    <a href="https://toshilist.com/product/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://toshilist.com/assets/images/badge.png" alt="Toshi List" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
+    {/* Fazier */}
+    <a href="https://fazier.com" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=light" alt="Fazier badge" style={{ height: '54px', width: 'auto' }} />
+    </a>
+    {/* Hunt for Tools */}
+    <a href="https://huntfortools.com/tool/dsafeed" target="_blank" rel="noopener noreferrer" className="shrink-0 transition-transform hover:scale-105">
+      <img src="https://huntfortools.com/assets/images/badge.png" alt="Hunt for Tools" style={{ height: '54px', width: 'auto' }} loading="lazy" />
+    </a>
   </>
 );
 
@@ -144,7 +252,7 @@ export const PlatformBadges: React.FC = () => {
             100% { transform: translateX(-50%); }
           }
           .animate-scroll-marquee {
-            animation: scroll-marquee 25s linear infinite;
+            animation: scroll-marquee 80s linear infinite;
           }
           .group:hover .animate-scroll-marquee {
             animation-play-state: paused;
